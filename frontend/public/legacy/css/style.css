@@ -1,0 +1,144 @@
+/*creaciones mias para mejorar*/
+/* .content-wrapper {
+    background-image: url(../img/fondo.png);
+} */
+
+.login-page {
+    background-image: url(../img/inicio.png);
+    background-repeat: no-repeat;
+  background-position: bottom right;
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+input[data-readonly] {
+  pointer-events: none;
+  background-color: transparent;
+}
+
+.campo {
+    border-top-style: none;
+    border-right-style: none;
+    border-bottom-style: none;
+    border-left-style: none;
+    background-color: transparent;
+    font-weight: bolder;
+    pointer-events: none;
+    width: 100%;
+}
+
+.bg-buscador{
+  background-color: #d2f7f7 !important;
+  font-size: 0.78rem;
+}
+
+.bg-buscador a:focus {
+  background: #95e6e6 !important;
+  color: #353c3c;
+}
+
+.panel-sidebar{
+  padding: 5px;
+  display: block;
+}
+
+.panel-sidebar.active{
+  background-color: #6f8888
+}
+
+.form-control {
+    border: 1px solid #6E62DF;
+    border-radius: 0.7rem;
+}
+
+.form-control:focus {
+  border: 1.8px solid #6E62DF;
+  box-shadow: 0 0 4px #6d6dd4ab;
+}
+
+.btn {
+    border-radius: 0.5rem;
+}
+
+.table-responsive thead tr th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+
+
+@media screen and (max-width: 565px) {
+  .priority{
+    display:none;
+  }
+
+}
+
+.login-card-body, .register-card-body {
+    background-color: rgb(28, 2, 90);
+    border: 1px solid #6E62DF; 
+    color: #fff; 
+    padding: 25px; 
+    border-radius: 15px;
+}
+[class*=sidebar-dark-] {
+    background-color: #00134E;
+}
+.sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active,
+.sidebar-light-primary .nav-sidebar > .nav-item > .nav-link.active {
+  background-color: #6e62df;
+  color: #fff;
+  box-shadow: 0 1px 3px rgba(61, 52, 139, 0.3);
+  transition: all 0.3s ease-in-out;
+}
+
+[class*=sidebar-dark-] .nav-treeview > .nav-item > .nav-link.active,
+[class*=sidebar-dark-] .nav-treeview > .nav-item > .nav-link.active:focus,
+[class*=sidebar-dark-] .nav-treeview > .nav-item > .nav-link.active:hover {
+  background-color: rgb(255, 255, 255);
+  color: #343a40;
+  box-shadow: 0 2px 8px rgba(60, 105, 252, 0.2);
+  transition: all 0.3s ease-in-out;
+}
+
+.nav-link {
+  transition: all 0.25s ease;
+}
+[class*=sidebar-dark-] .sidebar a {
+    color: #CCCCFF;
+}
+.form-control {
+    border: 1px solid #6E62DF;
+    border-radius: 0.7rem;
+    /* box-shadow: 0 0 10px #CCCCFF; */
+}
+
+.card {
+    box-shadow: 0 0 3px #6e62df85;
+}
+
+body {
+    color:#000078;
+}
+
+label:not(.form-check-label):not(.custom-file-label) {
+    font-weight: 400;
+}
+
+.pl-1, .px-1 {
+    padding-left: 0.25rem!important;
+    font-weight: 600;
+}
+
+.text-sm .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+/*color texto ventas*/
+a {
+    color: #000078;
+    text-decoration: none;
+    background-color: transparent;
+}
+

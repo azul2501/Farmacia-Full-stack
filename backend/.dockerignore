@@ -1,0 +1,17 @@
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.git/
+.vscode/
+.idea/
+.env
+.env.*
+*.log
+.pytest_cache/
+.ruff_cache/
+.coverage
+media/
+staticfiles/
+
