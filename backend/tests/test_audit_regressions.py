@@ -135,3 +135,38 @@ def test_fefo_consumes_earliest_lot_even_when_later_lot_covers_sale(domain):
     checkout(domain, quantity="5", received="5")
     first.refresh_from_db()
     assert first.quantity == Decimal("0")
+
+
+def test_discount_is_split_across_fefo_lots_and_totals_match(domain):
+    receive_purchase(domain, quantity=Decimal("3"))
+    lot = Lot.objects.create(
+        company=domain["company"],
+        variant=domain["variant"],
+        batch_number="SECOND",
+        expiry_date=timezone.localdate() + timedelta(days=400),
+    )
+    Stock.objects.create(
+        company=domain["company"], warehouse=domain["origin_warehouse"], variant=domain["variant"], lot=lot, quantity=3
+    )
+    session = CashService.open_session(
+        company=domain["company"], register_id=domain["register"].id, user=domain["user"], opening_amount=Decimal("0")
+    )
+    sale, _ = SaleService.checkout(
+        company=domain["company"],
+        branch=domain["origin_branch"],
+        warehouse=domain["origin_warehouse"],
+        terminal=domain["terminal"],
+        cash_session_id=session.id,
+        user=domain["user"],
+        idempotency_key="audit-split",
+        lines=[
+            SaleLineInput(
+                variant_id=domain["variant"].id, quantity=Decimal("5"), discount=Decimal("1"), discount_reason="Cliente"
+            )
+        ],
+        payments=[PaymentInput(method=PaymentMethod.CASH, amount=Decimal("4"))],
+    )
+    items = list(sale.items.order_by("lot__expiry_date"))
+    assert [item.quantity for item in items] == [Decimal("3"), Decimal("2")]
+    assert sum(item.discount for item in items) == Decimal("1")
+    assert sum(item.line_total for item in items) == sale.total == Decimal("4")

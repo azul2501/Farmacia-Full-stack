@@ -3,6 +3,7 @@ from decimal import ROUND_HALF_UP, Decimal
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.db.models import F
 from django.utils import timezone
 
 from apps.audit.services import record_audit
@@ -57,17 +58,21 @@ class SaleService:
         return f"{sequence.prefix}-{sequence.current_number:08d}"
 
     @staticmethod
-    def _resolve_lot(*, company, warehouse, variant, quantity, lot_id=None):
+    def _allocate_lots(*, company, warehouse, variant, quantity, lot_id=None):
+        """Devuelve [(lote, cantidad)] aplicando FEFO; un lote explicito debe estar vigente."""
+        today = timezone.localdate()
         if lot_id:
             lot = Lot.objects.get(id=lot_id, company=company, variant=variant, is_blocked=False)
+            if lot.expiry_date and lot.expiry_date < today:
+                raise ValidationError("El lote seleccionado esta vencido.")
             stock = Stock.objects.select_for_update().get(
                 company=company, warehouse=warehouse, variant=variant, lot=lot
             )
             if stock.available_quantity < quantity:
                 raise ValidationError("Stock insuficiente en el lote seleccionado.")
-            return lot
+            return [(lot, quantity)]
         if not variant.product.requires_lot:
-            return None
+            return [(None, quantity)]
 
         candidates = (
             Stock.objects.select_for_update()
@@ -79,15 +84,43 @@ class SaleService:
                 lot__is_blocked=False,
                 quantity__gt=0,
             )
-            .order_by("lot__expiry_date", "lot__created_at")
+            .order_by(F("lot__expiry_date").asc(nulls_last=True), "lot__created_at")
         )
-        today = timezone.localdate()
+        allocations = []
+        remaining = quantity
         for stock in candidates:
             if stock.lot.expiry_date and stock.lot.expiry_date < today:
                 continue
-            if stock.available_quantity >= quantity:
-                return stock.lot
-        raise ValidationError("No existe un lote vigente con stock suficiente.")
+            take = min(stock.available_quantity, remaining)
+            if take <= 0:
+                continue
+            allocations.append((stock.lot, take))
+            remaining -= take
+            if remaining <= 0:
+                return allocations
+        raise ValidationError("No existe stock vigente suficiente en los lotes disponibles.")
+
+    @classmethod
+    def _split_line(cls, *, allocations, official_price, discount, taxed):
+        """Reparte el descuento de una linea entre sus lotes; el ultimo absorbe el redondeo."""
+        total_quantity = sum((qty for _, qty in allocations), Decimal("0"))
+        parts = []
+        remaining_discount = discount
+        for index, (lot, qty) in enumerate(allocations):
+            if index == len(allocations) - 1:
+                part_discount = remaining_discount
+            else:
+                part_discount = (discount * qty / total_quantity).quantize(cls.MONEY, rounding=ROUND_HALF_UP)
+                remaining_discount -= part_discount
+            part_subtotal = (qty * official_price).quantize(cls.MONEY, rounding=ROUND_HALF_UP)
+            part_total = (part_subtotal - part_discount).quantize(cls.MONEY, rounding=ROUND_HALF_UP)
+            tax_amount = Decimal("0")
+            if taxed:
+                tax_amount = (part_total * cls.IGV_RATE / (Decimal("1") + cls.IGV_RATE)).quantize(
+                    cls.MONEY, rounding=ROUND_HALF_UP
+                )
+            parts.append((lot, qty, part_discount, part_total, tax_amount))
+        return parts
 
     @classmethod
     @transaction.atomic
@@ -163,22 +196,23 @@ class SaleService:
             line_total = (line_subtotal - line.discount).quantize(cls.MONEY, rounding=ROUND_HALF_UP)
             if line_total < 0:
                 raise ValidationError("El total de una linea no puede ser negativo.")
-            tax_amount = Decimal("0")
-            if variant.product.tax_affectation == variant.product.TaxAffectation.TAXED:
-                tax_amount = (line_total * cls.IGV_RATE / (Decimal("1") + cls.IGV_RATE)).quantize(
-                    cls.MONEY, rounding=ROUND_HALF_UP
-                )
-            lot = cls._resolve_lot(
+            allocations = cls._allocate_lots(
                 company=company,
                 warehouse=warehouse,
                 variant=variant,
                 quantity=line.quantity,
                 lot_id=line.lot_id,
             )
-            normalized_lines.append((line, variant, lot, official_price, line_total, tax_amount))
+            parts = cls._split_line(
+                allocations=allocations,
+                official_price=official_price,
+                discount=line.discount,
+                taxed=variant.product.tax_affectation == variant.product.TaxAffectation.TAXED,
+            )
+            normalized_lines.append((line, variant, official_price, parts))
             subtotal += line_subtotal
             discount_total += line.discount
-            tax_total += tax_amount
+            tax_total += sum((part[4] for part in parts), Decimal("0"))
             if line.discount > 0:
                 discount_events.append(
                     {
@@ -225,7 +259,7 @@ class SaleService:
             if payment.amount <= 0:
                 raise ValidationError("Cada pago debe ser mayor que cero.")
             if payment.method == PaymentMethod.CASH:
-                received = payment.received_amount or payment.amount
+                received = payment.amount if payment.received_amount is None else payment.received_amount
                 if received < payment.amount:
                     raise ValidationError("El efectivo recibido es insuficiente.")
                 change_total += received - payment.amount
@@ -252,33 +286,34 @@ class SaleService:
             sold_by=user,
             sold_at=timezone.now(),
         )
-        for line, variant, lot, official_price, line_total, tax_amount in normalized_lines:
-            SaleItem.objects.create(
-                company=company,
-                sale=sale,
-                variant=variant,
-                lot=lot,
-                quantity=line.quantity,
-                unit_price=official_price,
-                discount=line.discount,
-                discount_reason=line.discount_reason.strip(),
-                tax_amount=tax_amount,
-                line_total=line_total,
-            )
-            InventoryService.apply_movement(
-                MovementCommand(
+        for line, variant, official_price, parts in normalized_lines:
+            for lot, quantity, part_discount, part_total, tax_amount in parts:
+                SaleItem.objects.create(
                     company=company,
-                    warehouse=warehouse,
+                    sale=sale,
                     variant=variant,
                     lot=lot,
-                    movement_type=MovementType.SALE_OUT,
-                    quantity=line.quantity,
-                    reference_type="sales.sale",
-                    reference_id=sale.id,
-                    document_number=sale.number,
-                    performed_by=user,
+                    quantity=quantity,
+                    unit_price=official_price,
+                    discount=part_discount,
+                    discount_reason=line.discount_reason.strip(),
+                    tax_amount=tax_amount,
+                    line_total=part_total,
                 )
-            )
+                InventoryService.apply_movement(
+                    MovementCommand(
+                        company=company,
+                        warehouse=warehouse,
+                        variant=variant,
+                        lot=lot,
+                        movement_type=MovementType.SALE_OUT,
+                        quantity=quantity,
+                        reference_type="sales.sale",
+                        reference_id=sale.id,
+                        document_number=sale.number,
+                        performed_by=user,
+                    )
+                )
 
         if discount_events:
             record_audit(
@@ -340,9 +375,7 @@ class SaleService:
 
         receivable = getattr(sale, "receivable", None)
         if receivable is not None and receivable.collected_amount > 0:
-            raise ValidationError(
-                "No se puede anular una venta con cobros ya registrados en su cuenta por cobrar."
-            )
+            raise ValidationError("No se puede anular una venta con cobros ya registrados en su cuenta por cobrar.")
 
         for item in sale.items.select_related("variant", "lot"):
             InventoryService.apply_movement(

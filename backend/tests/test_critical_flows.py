@@ -1135,9 +1135,7 @@ def test_sale_cancel_reverses_stock_and_cash_and_is_not_repeatable(domain):
     assert cancelled.status == "CANCELLED"
     assert stock.quantity == Decimal("20")
     assert session.expected_cash == Decimal("50")
-    assert (
-        InventoryMovement.objects.filter(reference_id=sale.id, movement_type=MovementType.RETURN_IN).count() == 1
-    )
+    assert InventoryMovement.objects.filter(reference_id=sale.id, movement_type=MovementType.RETURN_IN).count() == 1
 
     with pytest.raises(ValidationError):
         SaleService.cancel(sale_id=sale.id, company=domain["company"], user=domain["user"], reason="Otra vez")

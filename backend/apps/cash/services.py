@@ -141,7 +141,7 @@ class CashService:
     def expected_breakdown(*, session):
         from apps.core.choices import PaymentMethod
         from apps.finance.models import FinancialDirection, FinancialMovement, FinancialMovementStatus
-        from apps.sales.models import SalePayment
+        from apps.sales.models import SalePayment, SaleStatus
 
         breakdown = {
             "opening": session.opening_amount,
@@ -180,7 +180,11 @@ class CashService:
             PaymentMethod.CARD: "card_sales",
             PaymentMethod.TRANSFER: "transfer_sales",
         }
-        for payment in SalePayment.objects.filter(sale__cash_session=session).exclude(method=PaymentMethod.CASH):
+        for payment in (
+            SalePayment.objects.filter(sale__cash_session=session)
+            .exclude(method=PaymentMethod.CASH)
+            .exclude(sale__status=SaleStatus.CANCELLED)
+        ):
             breakdown[payment_keys[payment.method]] += payment.amount
 
         # Non-cash finance movements remain visible without affecting expected cash.

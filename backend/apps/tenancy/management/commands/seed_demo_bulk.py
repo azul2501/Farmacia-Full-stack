@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils import timezone
 
-from apps.accounts.models import Membership, Role, User
+from apps.accounts.models import User
 from apps.cash.models import CashRegister, CashSession, CashSessionStatus
 from apps.cash.services import CashService
 from apps.catalog.models import (
@@ -29,14 +29,102 @@ from apps.tenancy.models import Branch, Company, POSTerminal, Warehouse
 
 EXTRA_PRODUCTS = [
     # code, name, ingredient, category, therapeutic action, sku, presentation, price, cost, barcode
-    ("MED-0003", "Ibuprofeno 400 mg", "Ibuprofeno", "Antiinflamatorios", "Antiinflamatoria", "IBU-400-TAB", "Blister x 10 tab", "3.20", "1.10", "7750000000035"),
-    ("MED-0004", "Clorfenamina 4 mg", "Clorfenamina", "Antihistaminicos", "Antihistaminica", "CLF-004-TAB", "Blister x 20 tab", "0.30", "0.10", "7750000000042"),
-    ("MED-0005", "Omeprazol 20 mg", "Omeprazol", "Gastrointestinal", "Antiulcerosa", "OME-020-CAP", "Caja x 14 cap", "0.80", "0.30", "7750000000059"),
-    ("MED-0006", "Loratadina 10 mg", "Loratadina", "Antihistaminicos", "Antihistaminica", "LOR-010-TAB", "Caja x 10 tab", "0.60", "0.20", "7750000000066"),
-    ("MED-0007", "Metformina 850 mg", "Metformina", "Cardiovascular", "Antidiabetica", "MET-850-TAB", "Caja x 30 tab", "0.40", "0.15", "7750000000073"),
-    ("MED-0008", "Losartan 50 mg", "Losartan", "Cardiovascular", "Antihipertensiva", "LOS-050-TAB", "Caja x 30 tab", "0.70", "0.25", "7750000000080"),
-    ("MED-0009", "Vitamina C 1 g", "Acido ascorbico", "Vitaminas", "Suplemento", "VIT-C1G-TAB", "Tubo x 10 tab", "0.90", "0.35", "7750000000097"),
-    ("MED-0010", "Salbutamol inhalador", "Salbutamol", "Respiratorio", "Broncodilatadora", "SAL-INH-100", "Inhalador 100 dosis", "12.50", "6.80", "7750000000103"),
+    (
+        "MED-0003",
+        "Ibuprofeno 400 mg",
+        "Ibuprofeno",
+        "Antiinflamatorios",
+        "Antiinflamatoria",
+        "IBU-400-TAB",
+        "Blister x 10 tab",
+        "3.20",
+        "1.10",
+        "7750000000035",
+    ),
+    (
+        "MED-0004",
+        "Clorfenamina 4 mg",
+        "Clorfenamina",
+        "Antihistaminicos",
+        "Antihistaminica",
+        "CLF-004-TAB",
+        "Blister x 20 tab",
+        "0.30",
+        "0.10",
+        "7750000000042",
+    ),
+    (
+        "MED-0005",
+        "Omeprazol 20 mg",
+        "Omeprazol",
+        "Gastrointestinal",
+        "Antiulcerosa",
+        "OME-020-CAP",
+        "Caja x 14 cap",
+        "0.80",
+        "0.30",
+        "7750000000059",
+    ),
+    (
+        "MED-0006",
+        "Loratadina 10 mg",
+        "Loratadina",
+        "Antihistaminicos",
+        "Antihistaminica",
+        "LOR-010-TAB",
+        "Caja x 10 tab",
+        "0.60",
+        "0.20",
+        "7750000000066",
+    ),
+    (
+        "MED-0007",
+        "Metformina 850 mg",
+        "Metformina",
+        "Cardiovascular",
+        "Antidiabetica",
+        "MET-850-TAB",
+        "Caja x 30 tab",
+        "0.40",
+        "0.15",
+        "7750000000073",
+    ),
+    (
+        "MED-0008",
+        "Losartan 50 mg",
+        "Losartan",
+        "Cardiovascular",
+        "Antihipertensiva",
+        "LOS-050-TAB",
+        "Caja x 30 tab",
+        "0.70",
+        "0.25",
+        "7750000000080",
+    ),
+    (
+        "MED-0009",
+        "Vitamina C 1 g",
+        "Acido ascorbico",
+        "Vitaminas",
+        "Suplemento",
+        "VIT-C1G-TAB",
+        "Tubo x 10 tab",
+        "0.90",
+        "0.35",
+        "7750000000097",
+    ),
+    (
+        "MED-0010",
+        "Salbutamol inhalador",
+        "Salbutamol",
+        "Respiratorio",
+        "Broncodilatadora",
+        "SAL-INH-100",
+        "Inhalador 100 dosis",
+        "12.50",
+        "6.80",
+        "7750000000103",
+    ),
 ]
 
 PAYMENT_MIX = [
@@ -77,10 +165,23 @@ class Command(BaseCommand):
         )
         existing_codes = {variant.product.internal_code for variant in variants}
         new_variants = []
-        for code, name, ingredient, category_name, action_name, sku, presentation, price, cost, barcode in EXTRA_PRODUCTS:
+        for (
+            code,
+            name,
+            ingredient,
+            category_name,
+            action_name,
+            sku,
+            presentation,
+            price,
+            cost,
+            barcode,
+        ) in EXTRA_PRODUCTS:
             if code in existing_codes:
                 continue
-            category, _ = Category.objects.get_or_create(company=company, name=category_name, defaults={"is_active": True})
+            category, _ = Category.objects.get_or_create(
+                company=company, name=category_name, defaults={"is_active": True}
+            )
             active_ingredient, _ = ActiveIngredient.objects.get_or_create(company=company, name=ingredient)
             therapeutic_action, _ = TherapeuticAction.objects.get_or_create(company=company, name=action_name)
             product, _ = Product.objects.update_or_create(
@@ -159,13 +260,9 @@ class Command(BaseCommand):
                 PurchaseService.receive(purchase_id=purchase.id, company=company, user=owner)
                 self.stdout.write(self.style.SUCCESS(f"{len(new_variants)} productos nuevos con stock recibido."))
 
-        all_variants = list(
-            ProductVariant.objects.filter(company=company, is_active=True).select_related("product")
-        )
+        all_variants = list(ProductVariant.objects.filter(company=company, is_active=True).select_related("product"))
 
-        session = CashSession.objects.filter(
-            company=company, register=register, status=CashSessionStatus.OPEN
-        ).first()
+        session = CashSession.objects.filter(company=company, register=register, status=CashSessionStatus.OPEN).first()
         if session is None:
             session = CashService.open_session(
                 company=company,
@@ -195,7 +292,11 @@ class Command(BaseCommand):
 
                 if condition == PaymentCondition.CASH:
                     method = rng.choices([m for m, _ in PAYMENT_MIX], weights=[w for _, w in PAYMENT_MIX])[0]
-                    received = line_total if method != PaymentMethod.CASH else (line_total + Decimal(rng.choice([0, 0, 1, 2, 5])))
+                    received = (
+                        line_total
+                        if method != PaymentMethod.CASH
+                        else (line_total + Decimal(rng.choice([0, 0, 1, 2, 5])))
+                    )
                     payments = [PaymentInput(method=method, amount=line_total, received_amount=received)]
                     due_date = None
                     if customer is None and rng.random() < 0.3:
@@ -216,7 +317,11 @@ class Command(BaseCommand):
                         idempotency_key=idempotency_key,
                         payment_condition=condition,
                         payment_due_date=due_date,
-                        lines=[SaleLineInput(variant_id=variant.id, quantity=quantity, unit_price=unit_price, discount=Decimal("0"))],
+                        lines=[
+                            SaleLineInput(
+                                variant_id=variant.id, quantity=quantity, unit_price=unit_price, discount=Decimal("0")
+                            )
+                        ],
                         payments=payments,
                     )
                 except Exception as exc:  # noqa: BLE001 - seed best-effort, skip lines without stock
@@ -224,14 +329,16 @@ class Command(BaseCommand):
                     continue
 
                 if created:
-                    fake_time = timezone.make_aware(
-                        datetime.combine(sale_date, datetime.min.time())
-                    ) + timedelta(hours=rng.randint(8, 20), minutes=rng.randint(0, 59))
+                    fake_time = timezone.make_aware(datetime.combine(sale_date, datetime.min.time())) + timedelta(
+                        hours=rng.randint(8, 20), minutes=rng.randint(0, 59)
+                    )
                     Sale.objects.filter(id=sale.id).update(sold_at=fake_time)
                     created_count += 1
 
         self.stdout.write(self.style.SUCCESS(f"{created_count} ventas de historial creadas en {days} dias."))
-        self.stdout.write(self.style.SUCCESS(f"Catalogo total: {ProductVariant.objects.filter(company=company).count()} variantes."))
+        self.stdout.write(
+            self.style.SUCCESS(f"Catalogo total: {ProductVariant.objects.filter(company=company).count()} variantes.")
+        )
 
     @staticmethod
     def _customers(company):

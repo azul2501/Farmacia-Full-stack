@@ -4386,6 +4386,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/Sale'
           description: ''
+  /api/v1/sales/{id}/cancel/:
+    post:
+      operationId: api_v1_sales_cancel_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: Un Cadena UUID que identifique este sale.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sale'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Sale'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Sale'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sale'
+          description: ''
   /api/v1/sales/checkout/:
     post:
       operationId: api_v1_sales_checkout_create
@@ -6117,9 +6150,12 @@ components:
           type: string
           maxLength: 30
         email:
-          type: string
-          format: email
-          maxLength: 254
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
         is_active:
           type: boolean
       required:
@@ -6133,6 +6169,9 @@ components:
         id:
           type: string
           format: uuid
+          readOnly: true
+        code:
+          type: string
           readOnly: true
         items:
           type: array
@@ -6155,9 +6194,6 @@ components:
         updated_at:
           type: string
           format: date-time
-          readOnly: true
-        code:
-          type: string
           readOnly: true
         contact_phone:
           type: string
@@ -6421,6 +6457,7 @@ components:
         attachment:
           type: string
           format: uri
+          nullable: true
           readOnly: true
         source_type:
           type: string
@@ -6580,7 +6617,6 @@ components:
       - base_sale_price
       - conversion_factor
       - minimum_stock
-      - presentation
       - purchase_factor
       - purchase_pack_price
       - sale_factor
@@ -6823,6 +6859,9 @@ components:
         branch:
           type: string
           format: uuid
+        branch_name:
+          type: string
+          readOnly: true
         code:
           type: string
           maxLength: 32
@@ -6833,6 +6872,7 @@ components:
           type: boolean
       required:
       - branch
+      - branch_name
       - code
       - id
       - name
@@ -7671,9 +7711,12 @@ components:
           type: string
           maxLength: 30
         email:
-          type: string
-          format: email
-          maxLength: 254
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
         is_active:
           type: boolean
     PatchedCustomerRequest:
@@ -7682,6 +7725,9 @@ components:
         id:
           type: string
           format: uuid
+          readOnly: true
+        code:
+          type: string
           readOnly: true
         items:
           type: array
@@ -7704,9 +7750,6 @@ components:
         updated_at:
           type: string
           format: date-time
-          readOnly: true
-        code:
-          type: string
           readOnly: true
         contact_phone:
           type: string
@@ -7813,6 +7856,9 @@ components:
         branch:
           type: string
           format: uuid
+        branch_name:
+          type: string
+          readOnly: true
         code:
           type: string
           maxLength: 32
@@ -8206,9 +8252,12 @@ components:
           type: string
           maxLength: 30
         email:
-          type: string
-          format: email
-          maxLength: 254
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
         is_active:
           type: boolean
     PatchedTherapeuticAction:
@@ -8230,6 +8279,9 @@ components:
           type: string
           format: uuid
           readOnly: true
+        number:
+          type: string
+          readOnly: true
         items:
           type: array
           items:
@@ -8247,9 +8299,6 @@ components:
           type: string
           format: date-time
           readOnly: true
-        number:
-          type: string
-          maxLength: 40
         status:
           allOf:
           - $ref: '#/components/schemas/TransferStatusEnum'
@@ -9362,6 +9411,9 @@ components:
         idempotency_key:
           type: string
           readOnly: true
+        notes:
+          type: string
+          readOnly: true
         sold_at:
           type: string
           format: date-time
@@ -9405,6 +9457,7 @@ components:
       - id
       - idempotency_key
       - items
+      - notes
       - number
       - payment_condition
       - payment_due_date
@@ -9595,10 +9648,6 @@ components:
           $ref: '#/components/schemas/Company'
         membership:
           $ref: '#/components/schemas/Membership'
-        available_companies:
-          type: array
-          items:
-            $ref: '#/components/schemas/Company'
         available_branches:
           type: array
           items:
@@ -9610,7 +9659,6 @@ components:
       required:
       - active_company
       - available_branches
-      - available_companies
       - membership
       - permissions
       - user
@@ -9719,9 +9767,12 @@ components:
           type: string
           maxLength: 30
         email:
-          type: string
-          format: email
-          maxLength: 254
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
         is_active:
           type: boolean
       required:
@@ -9792,6 +9843,9 @@ components:
           type: string
           format: uuid
           readOnly: true
+        number:
+          type: string
+          readOnly: true
         items:
           type: array
           items:
@@ -9809,9 +9863,6 @@ components:
           type: string
           format: date-time
           readOnly: true
-        number:
-          type: string
-          maxLength: 40
         status:
           allOf:
           - $ref: '#/components/schemas/TransferStatusEnum'

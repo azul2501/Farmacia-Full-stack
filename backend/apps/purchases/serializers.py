@@ -107,7 +107,13 @@ class PurchaseSerializer(serializers.ModelSerializer):
                 Decimal("0.0001"), rounding=ROUND_HALF_UP
             )
             line_subtotal = pack_quantity * purchase_pack_price
-            line_total = line_subtotal - item.get("discount", 0) + item.get("tax", 0)
+            discount = item.get("discount", 0)
+            tax = item.get("tax", 0)
+            if pack_quantity <= 0 or purchase_pack_price < 0 or discount < 0 or tax < 0:
+                raise serializers.ValidationError({"items": "Cantidad, precio, descuento o impuesto invalido."})
+            if discount > line_subtotal:
+                raise serializers.ValidationError({"items": "El descuento no puede superar el subtotal de la linea."})
+            line_total = line_subtotal - discount + tax
             item["line_total"] = line_total
             subtotal += line_subtotal
             discount_total += item.get("discount", 0)

@@ -35,6 +35,7 @@ def _set_refresh_cookie(response, refresh_token):
         httponly=True,
         secure=settings.JWT_COOKIE_SECURE,
         samesite=settings.JWT_COOKIE_SAMESITE,
+        domain=settings.JWT_COOKIE_DOMAIN,
         path="/",
     )
 
@@ -97,6 +98,7 @@ class CookieTokenLogoutView(APIView):
         response.delete_cookie(
             settings.JWT_REFRESH_COOKIE_NAME,
             path="/",
+            domain=settings.JWT_COOKIE_DOMAIN,
             samesite=settings.JWT_COOKIE_SAMESITE,
         )
         return response
