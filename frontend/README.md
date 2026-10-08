@@ -17,6 +17,9 @@ npm run dev
 npm run build
 ```
 
+Imagen de produccion: `frontend/Dockerfile` (salida `standalone`). Las variables `NEXT_PUBLIC_*`
+se incrustan al construir, por eso se pasan como `build args` (ver `compose.yml` en la raiz).
+
 ## Configuracion
 
 Crear `.env.local` desde `.env.local.example` y ajustar la URL del backend:

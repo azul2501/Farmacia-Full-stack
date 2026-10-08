@@ -9,3 +9,4 @@ django-cors-headers>=4.7,<5
 django-filter>=25,<27
 drf-spectacular>=0.28,<1
 gunicorn>=23,<24
+whitenoise>=6.9,<7

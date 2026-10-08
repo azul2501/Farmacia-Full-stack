@@ -143,7 +143,7 @@ No se publica ningun secreto de Django mediante variables `NEXT_PUBLIC_*`.
 Desde la raiz del repositorio:
 
 ```bash
-docker compose -f backend/compose.yml up --build -d
+docker compose up --build -d  # compose.yml ahora esta en la raiz
 docker compose -f backend/compose.yml ps
 docker compose -f backend/compose.yml exec api python manage.py migrate
 docker compose -f backend/compose.yml exec api python manage.py check
