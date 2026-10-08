@@ -97,6 +97,8 @@ class ProductVariantSerializer(serializers.ModelSerializer):
     product_name = serializers.CharField(source="product.commercial_name", read_only=True)
     unit_gain = serializers.DecimalField(max_digits=14, decimal_places=4, read_only=True)
     margin_on_cost = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True, allow_null=True)
+    requires_lot = serializers.BooleanField(source="product.requires_lot", read_only=True)
+    requires_expiry = serializers.BooleanField(source="product.requires_expiry", read_only=True)
 
     class Meta:
         model = ProductVariant

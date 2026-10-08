@@ -113,6 +113,11 @@ class PurchaseSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({"items": "Cantidad, precio, descuento o impuesto invalido."})
             if discount > line_subtotal:
                 raise serializers.ValidationError({"items": "El descuento no puede superar el subtotal de la linea."})
+            product = item["variant"].product
+            if product.requires_expiry and not item.get("expiry_date"):
+                raise serializers.ValidationError(
+                    {"items": f"El vencimiento es obligatorio para {product.commercial_name}."}
+                )
             line_total = line_subtotal - discount + tax
             item["line_total"] = line_total
             subtotal += line_subtotal

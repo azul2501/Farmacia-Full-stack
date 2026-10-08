@@ -2255,6 +2255,16 @@ paths:
       operationId: api_v1_inventory_movements_list
       parameters:
       - in: query
+        name: created_at__date__gte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: created_at__date__lte
+        schema:
+          type: string
+          format: date
+      - in: query
         name: lot
         schema:
           type: string
@@ -4323,12 +4333,32 @@ paths:
         description: Número de resultados a devolver por página.
         schema:
           type: integer
+      - in: query
+        name: payment_condition
+        schema:
+          type: string
+          enum:
+          - CASH
+          - CREDIT
+        description: |-
+          * `CASH` - Contado
+          * `CREDIT` - Credito
       - name: search
         required: false
         in: query
         description: Un término de búsqueda.
         schema:
           type: string
+      - in: query
+        name: sold_at__date__gte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: sold_at__date__lte
+        schema:
+          type: string
+          format: date
       - in: query
         name: sold_by
         schema:
@@ -4482,6 +4512,16 @@ paths:
         schema:
           type: string
           format: uuid
+      - in: query
+        name: variant__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: uuid
+        description: Múltiples valores separados por comas.
+        explode: false
+        style: form
       - in: query
         name: warehouse
         schema:
@@ -8007,6 +8047,12 @@ components:
           pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
           readOnly: true
           nullable: true
+        requires_lot:
+          type: boolean
+          readOnly: true
+        requires_expiry:
+          type: boolean
+          readOnly: true
         created_at:
           type: string
           format: date-time
@@ -8723,6 +8769,12 @@ components:
           pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
           readOnly: true
           nullable: true
+        requires_lot:
+          type: boolean
+          readOnly: true
+        requires_expiry:
+          type: boolean
+          readOnly: true
         created_at:
           type: string
           format: date-time
@@ -8791,6 +8843,8 @@ components:
       - presentation
       - product
       - product_name
+      - requires_expiry
+      - requires_lot
       - sale_unit
       - sku
       - unit_gain

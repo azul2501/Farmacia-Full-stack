@@ -1,3 +1,4 @@
+import { roleLabels } from "@/features/auth/types/session";
 import { apiEndpoints } from "@/features/shared/api/endpoints";
 import type { ResourceConfig } from "@/features/shared/resources/resource-types";
 
@@ -331,15 +332,34 @@ export const userListResource: ResourceConfig = {
   endpoint: "/users/",
   title: "Usuarios",
   singular: "usuario",
-  description: "Usuarios, roles y asignaciones devueltos por la empresa activa.",
+  description: "Personas con acceso a la empresa, su rol y las sucursales donde pueden operar.",
   permission: "users.view",
-  readOnly: true,
+  deactivateOnly: true,
   columns: [
     { name: "email", label: "Correo" },
     { name: "full_name", label: "Nombre" },
     { name: "phone", label: "Telefono" },
-    { name: "role", label: "Rol" },
+    { name: "role", label: "Rol", labels: roleLabels },
     { name: "is_active", label: "Estado", format: "status" },
   ],
-  fields: [],
+  fields: [
+    { name: "email", label: "Correo", type: "email", required: true, createOnly: true },
+    { name: "full_name", label: "Nombre completo", required: true, createOnly: true },
+    { name: "phone", label: "Telefono", createOnly: true },
+    { name: "password", label: "Clave inicial", type: "password", createOnly: true, hint: "Minimo 8 caracteres. Si el correo ya existe en otra empresa, dejala vacia." },
+    {
+      name: "role",
+      label: "Rol",
+      type: "select",
+      required: true,
+      options: [
+        { value: "BRANCH_ADMIN", label: roleLabels.BRANCH_ADMIN },
+        { value: "CASHIER", label: roleLabels.CASHIER },
+        { value: "WAREHOUSE_OPERATOR", label: roleLabels.WAREHOUSE_OPERATOR },
+        { value: "OWNER", label: roleLabels.OWNER },
+      ],
+    },
+    { name: "branch_ids", label: "Sucursales autorizadas", type: "multiselect", optionSource: "branches" },
+    { name: "is_active", label: "Activo", type: "checkbox" },
+  ],
 };

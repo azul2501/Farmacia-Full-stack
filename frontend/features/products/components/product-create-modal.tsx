@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/features/shared/api/client";
+import { apiRequest, apiRequestAll } from "@/features/shared/api/client";
 import { apiErrorMessage } from "@/features/shared/api/error-message";
 import { apiEndpoints } from "@/features/shared/api/endpoints";
 import type { ApiPage } from "@/features/shared/api/types";
@@ -96,9 +96,9 @@ export function ProductCreateModal({ open, onClose, product }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, product?.id]);
 
-  const categoriesQuery = useQuery({ queryKey: ["catalog", "categories"], queryFn: () => apiRequest<ApiPage<NamedOption>>(apiEndpoints.categories, { query: { pageSize: 100, is_active: true, ordering: "name" } }) });
-  const laboratoriesQuery = useQuery({ queryKey: ["catalog", "laboratories"], queryFn: () => apiRequest<ApiPage<NamedOption>>(apiEndpoints.laboratories, { query: { pageSize: 100, is_active: true, ordering: "name" } }) });
-  const ingredientsQuery = useQuery({ queryKey: ["catalog", "active-ingredients"], queryFn: () => apiRequest<ApiPage<NamedOption>>(apiEndpoints.activeIngredients, { query: { pageSize: 100, is_active: true, ordering: "name" } }) });
+  const categoriesQuery = useQuery({ queryKey: ["catalog", "categories"], queryFn: () => apiRequestAll<NamedOption>(apiEndpoints.categories, { query: { is_active: true, ordering: "name" } }) });
+  const laboratoriesQuery = useQuery({ queryKey: ["catalog", "laboratories"], queryFn: () => apiRequestAll<NamedOption>(apiEndpoints.laboratories, { query: { is_active: true, ordering: "name" } }) });
+  const ingredientsQuery = useQuery({ queryKey: ["catalog", "active-ingredients"], queryFn: () => apiRequestAll<NamedOption>(apiEndpoints.activeIngredients, { query: { is_active: true, ordering: "name" } }) });
 
   const quickCreateMutation = useMutation({
     mutationFn: () => apiRequest<NamedOption>(quickEndpoints[quick as QuickType], { method: "POST", body: { name: quickName.trim(), is_active: true } }),
@@ -267,12 +267,12 @@ export function ProductCreateModal({ open, onClose, product }: Props) {
               </label>
               <label>
                 <span>Precio de venta *</span>
-                <input required type="number" min="0.1" step="0.1" placeholder="S/" value={form.base_sale_price} onChange={(event) => field("base_sale_price", event.target.value)} onBlur={(event) => field("base_sale_price", String(roundDecimal(Number(event.target.value))))} />
+                <input required type="number" min="0.1" step="0.01" placeholder="S/" value={form.base_sale_price} onChange={(event) => field("base_sale_price", event.target.value)} onBlur={(event) => field("base_sale_price", String(roundDecimal(Number(event.target.value))))} />
                 {errors.base_sale_price ? <small className="field-error">{errors.base_sale_price}</small> : null}
               </label>
               <label>
                 <span>Costo de compra</span>
-                <input type="number" min="0" step="0.1" placeholder="S/ (opcional)" value={form.purchase_pack_price} onChange={(event) => field("purchase_pack_price", event.target.value)} onBlur={(event) => field("purchase_pack_price", String(roundDecimal(Number(event.target.value))))} />
+                <input type="number" min="0" step="0.01" placeholder="S/ (opcional)" value={form.purchase_pack_price} onChange={(event) => field("purchase_pack_price", event.target.value)} onBlur={(event) => field("purchase_pack_price", String(roundDecimal(Number(event.target.value))))} />
               </label>
             </>
           ) : null}

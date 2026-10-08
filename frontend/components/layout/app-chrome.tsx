@@ -1,12 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
-import { Sidebar } from "@/components/sidebar";
+import { requiredPermissionFor, Sidebar } from "@/components/sidebar";
 import { useSession } from "@/features/auth/context/session-context";
 import { roleLabels } from "@/features/auth/types/session";
 import { useAppLayout } from "@/features/shared/context/layout-context";
-import { useToast } from "@/features/shared/ui/toast/toast-provider";
+import { apiRequest } from "@/features/shared/api/client";
+import { apiEndpoints } from "@/features/shared/api/endpoints";
+
+type TopbarAlerts = { lowStock: number; expiringLots: number; expiredLots: number };
 
 type AppChromeProps = {
   children: React.ReactNode;
@@ -39,7 +43,15 @@ export function AppChrome({ children }: AppChromeProps) {
     openMobileSidebar,
     closeMobileSidebar,
   } = useAppLayout();
-  const { showToast } = useToast();
+  // Alertas reales del dashboard; solo roles de gestion pueden verlo (otros reciben 403 y se ocultan).
+  const alertsQuery = useQuery({
+    queryKey: ["dashboard", "topbar-alerts", activeBranchId],
+    queryFn: () => apiRequest<TopbarAlerts>(apiEndpoints.dashboard),
+    enabled: status === "authenticated" && !isDemoMode && permissions.includes("dashboard.view"),
+    retry: false,
+    staleTime: 60_000,
+  });
+  const alerts = alertsQuery.data;
 
   useEffect(() => {
     if (pathname !== "/login" && status === "unauthenticated") router.replace("/login");
@@ -49,6 +61,7 @@ export function AppChrome({ children }: AppChromeProps) {
   }, [pathname, permissions, role, router, status]);
 
   if (pathname === "/login") return <>{children}</>;
+  const requiredPermission = pathname === "/" ? null : requiredPermissionFor(pathname);
   if (status === "blocked") {
     return (
       <main className="session-loading" aria-live="polite">
@@ -132,12 +145,16 @@ export function AppChrome({ children }: AppChromeProps) {
             </label>
           </div>
           <div className="topbar-actions">
-            <button type="button" className="topbar-icon-button" title="Stock minimo" onClick={() => showToast({ title: "Datos de demostracion", description: "Hay 3 productos con stock bajo.", tone: "warning" })}>
-              <i className="fa fa-cubes" /> <span>3</span>
-            </button>
-            <button type="button" className="topbar-icon-button" title="Proximo a vencer" onClick={() => showToast({ title: "Datos de demostracion", description: "Hay 2 lotes proximos a vencer.", tone: "info" })}>
-              <i className="fa fa-calendar-alt" /> <span>2</span>
-            </button>
+            {alerts ? (
+              <>
+                <button type="button" className="topbar-icon-button" title={`${alerts.lowStock} producto(s) en stock minimo`} aria-label="Stock minimo" onClick={() => router.push("/inventario")}>
+                  <i className="fa fa-cubes" /> {alerts.lowStock > 0 ? <span>{alerts.lowStock}</span> : null}
+                </button>
+                <button type="button" className="topbar-icon-button" title={`${alerts.expiringLots} lote(s) por vencer en 30 dias, ${alerts.expiredLots} vencido(s)`} aria-label="Lotes por vencer" onClick={() => router.push("/inventario")}>
+                  <i className="fa fa-calendar-alt" /> {alerts.expiringLots + alerts.expiredLots > 0 ? <span>{alerts.expiringLots + alerts.expiredLots}</span> : null}
+                </button>
+              </>
+            ) : null}
             <div className="user-menu-shell">
               <button type="button" className="user-menu-trigger" aria-expanded={userMenuOpen} onClick={() => setUserMenuOpen((current) => !current)}>
                 <span className="user-avatar">{user.initials}</span>
@@ -164,9 +181,17 @@ export function AppChrome({ children }: AppChromeProps) {
             </div>
           </div>
         </header>
-        <main className="app-content">{children}</main>
+        <main className="app-content">
+          {status === "authenticated" && requiredPermission && !permissions.includes(requiredPermission) ? (
+            <div className="content-state empty-content-state" role="alert">
+              <i className="fas fa-lock" aria-hidden="true" />
+              <strong>No tienes acceso a esta seccion</strong>
+              <p>Tu rol ({roleLabels[role]}) no incluye este modulo. Pide acceso al dueno o administrador.</p>
+            </div>
+          ) : children}
+        </main>
         <footer className="app-footer">
-          <span>{isDemoMode ? "Frontend Next - Datos simulados" : "Botica Farma - API conectada"}</span>
+          <span>{isDemoMode ? "Modo demostracion - datos simulados" : company.tradeName}</span>
           <span>Copyright {new Date().getFullYear()}. Todos los derechos reservados.</span>
         </footer>
       </div>

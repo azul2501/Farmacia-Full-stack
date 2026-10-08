@@ -8,6 +8,7 @@ import { apiRequest } from "@/features/shared/api/client";
 import { apiErrorMessage } from "@/features/shared/api/error-message";
 import { apiEndpoints } from "@/features/shared/api/endpoints";
 import { ErrorState, LoadingState } from "@/features/shared/ui/states/async-state";
+import { localDateIso, daysAgoIso, formatDate } from "@/features/shared/utils/formatters";
 
 type SalesReport = {
   total: string;
@@ -16,17 +17,11 @@ type SalesReport = {
 };
 
 function money(value: string | number) {
-  return new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN", minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(Number(value || 0));
+  return new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(value || 0));
 }
 
 function todayIso() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function daysAgoIso(days: number) {
-  const date = new Date();
-  date.setDate(date.getDate() - days);
-  return date.toISOString().slice(0, 10);
+  return localDateIso();
 }
 
 function downloadCsv(filename: string, rows: string[][]) {
@@ -137,7 +132,7 @@ export function ReportsPage() {
                   {reportQuery.data.byDay.length ? (
                     reportQuery.data.byDay.map((row) => (
                       <tr key={row.day}>
-                        <td>{row.day}</td>
+                        <td>{formatDate(`${row.day}T00:00:00`)}</td>
                         <td>{row.count}</td>
                         <td>{money(row.total)}</td>
                       </tr>

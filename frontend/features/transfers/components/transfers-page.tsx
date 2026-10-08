@@ -4,7 +4,7 @@ import { FormEvent, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PageHeader } from "@/components/ui/page-header";
 import { useSession } from "@/features/auth/context/session-context";
-import { apiRequest } from "@/features/shared/api/client";
+import { apiRequest, apiRequestAll } from "@/features/shared/api/client";
 import { apiErrorMessage } from "@/features/shared/api/error-message";
 import { apiEndpoints } from "@/features/shared/api/endpoints";
 import type { ApiPage } from "@/features/shared/api/types";
@@ -110,14 +110,14 @@ export function TransfersPage() {
 
   const transfersQuery = useQuery({
     queryKey: ["transfers"],
-    queryFn: () => apiRequest<ApiPage<Transfer>>(apiEndpoints.transfers, { query: { pageSize: 100, ordering: "-created_at" } }),
+    queryFn: () => apiRequestAll<Transfer>(apiEndpoints.transfers, { query: { ordering: "-created_at" } }),
   });
   const originStockQuery = useQuery({
     queryKey: ["stock", "by-warehouse", header.origin_warehouse],
     enabled: Boolean(header.origin_warehouse),
     queryFn: () =>
-      apiRequest<ApiPage<StockRow>>(apiEndpoints.stock, {
-        query: { pageSize: 200, warehouse: header.origin_warehouse },
+      apiRequestAll<StockRow>(apiEndpoints.stock, {
+        query: { warehouse: header.origin_warehouse },
       }),
   });
 

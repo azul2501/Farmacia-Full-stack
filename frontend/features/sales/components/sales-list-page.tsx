@@ -4,7 +4,7 @@ import { FormEvent, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PageHeader } from "@/components/ui/page-header";
 import { useSession } from "@/features/auth/context/session-context";
-import { apiRequest } from "@/features/shared/api/client";
+import { apiRequest, apiRequestAll } from "@/features/shared/api/client";
 import { apiErrorMessage } from "@/features/shared/api/error-message";
 import { apiEndpoints } from "@/features/shared/api/endpoints";
 import type { ApiPage } from "@/features/shared/api/types";
@@ -12,6 +12,7 @@ import { DataTable, type DataTableColumn } from "@/features/shared/ui/data-table
 import { Modal } from "@/features/shared/ui/modal/modal";
 import { ErrorState, LoadingState } from "@/features/shared/ui/states/async-state";
 import { useToast } from "@/features/shared/ui/toast/toast-provider";
+import { daysAgoIso } from "@/features/shared/utils/formatters";
 
 type SaleRow = {
   id: string;
@@ -70,11 +71,12 @@ type SaleFilters = {
   dateTo: string;
 };
 
+// Por defecto se cargan los ultimos 30 dias; el rango de fechas se filtra en el servidor.
 const emptyFilters: SaleFilters = {
   branch: "",
   status: "",
   condition: "",
-  dateFrom: "",
+  dateFrom: daysAgoIso(30),
   dateTo: "",
 };
 
@@ -109,7 +111,7 @@ function message(error: unknown) {
 }
 
 function money(value: string) {
-  return new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN", minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(Number(value || 0));
+  return new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(value || 0));
 }
 
 function dateTime(value: string) {
@@ -164,8 +166,14 @@ export function SalesListPage() {
   const [saleToCancel, setSaleToCancel] = useState<SaleRow | null>(null);
   const [cancelReason, setCancelReason] = useState("");
   const salesQuery = useQuery({
-    queryKey: ["sales", "list"],
-    queryFn: () => apiRequest<ApiPage<SaleRow>>(apiEndpoints.sales, { query: { pageSize: 500, ordering: "-sold_at" } }),
+    queryKey: ["sales", "list", filters.dateFrom, filters.dateTo],
+    queryFn: () => apiRequestAll<SaleRow>(apiEndpoints.sales, {
+      query: {
+        ordering: "-sold_at",
+        sold_at__date__gte: filters.dateFrom || undefined,
+        sold_at__date__lte: filters.dateTo || undefined,
+      },
+    }),
   });
   const saleDetailQuery = useQuery({
     queryKey: ["sales", "detail", selectedSaleId],
@@ -220,7 +228,7 @@ export function SalesListPage() {
     };
   }, [salesQuery.data?.items]);
 
-  const hasFilters = Object.values(filters).some(Boolean);
+  const hasFilters = (Object.keys(filters) as Array<keyof SaleFilters>).some((key) => filters[key] !== emptyFilters[key]);
   const selectedSale = saleDetailQuery.data;
   const canCancel = hasPermission("sales.cancel");
   const columns: DataTableColumn<SaleRow>[] = [

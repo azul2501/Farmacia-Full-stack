@@ -170,3 +170,12 @@ def test_discount_is_split_across_fefo_lots_and_totals_match(domain):
     assert [item.quantity for item in items] == [Decimal("3"), Decimal("2")]
     assert sum(item.discount for item in items) == Decimal("1")
     assert sum(item.line_total for item in items) == sale.total == Decimal("4")
+
+
+def test_product_with_expiry_always_tracks_lots(domain):
+    product = domain["variant"].product
+    product.requires_lot = False
+    product.requires_expiry = True
+    product.save()
+    product.refresh_from_db()
+    assert product.requires_lot is True

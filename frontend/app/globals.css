@@ -1011,6 +1011,9 @@ textarea {
 .metric-card a {
   align-self: end;
   font-weight: 700;
+  color: #ffffff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .pos-screen {
@@ -1648,7 +1651,7 @@ textarea {
 
 .pos-cart-lines { overflow-y: auto; }
 .pos-cart-lines article { display: flex; flex-direction: column; gap: 9px; padding: 14px 18px; border-bottom: 1px solid #f2f5f7; }
-.pos-cart-lines > div:first-child { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.pos-cart-lines > article > div:first-child { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .pos-cart-lines strong.pos-line-name { font-size: 13.5px; font-weight: 600; }
 .pos-cart-lines small { display: block; margin-top: 2px; color: var(--muted-soft); font-size: 11.5px; }
 .pos-cart-lines > article > div:first-child > strong { font-size: 14px; font-variant-numeric: tabular-nums; }
@@ -2828,4 +2831,21 @@ input:disabled {
     top: 10px;
     right: 10px;
   }
+}
+
+.checkbox-group { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.checkbox-group .checkbox-field { display: inline-flex; align-items: center; gap: 6px; font-weight: 500; text-transform: none; }
+.field-hint { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+/* POS en tablet y celular: catalogo arriba y carrito debajo, sin desbordar el ancho. */
+@media (max-width: 1100px) {
+  .pos-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .pos-catalog { padding: 12px; }
+  .pos-cart-lines article { padding: 12px; }
+  .app-content { overflow-x: hidden; }
 }

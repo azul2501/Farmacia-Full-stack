@@ -128,6 +128,15 @@ class Product(CompanyScopedModel):
     def __str__(self):
         return self.commercial_name
 
+    def save(self, *args, **kwargs):
+        # El vencimiento se guarda en el lote: un producto con vencimiento siempre maneja lotes.
+        if self.requires_expiry:
+            self.requires_lot = True
+            update_fields = kwargs.get("update_fields")
+            if update_fields is not None and "requires_expiry" in update_fields:
+                kwargs["update_fields"] = {*update_fields, "requires_lot"}
+        super().save(*args, **kwargs)
+
 
 class ProductVariant(CompanyScopedModel):
     product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name="variants")

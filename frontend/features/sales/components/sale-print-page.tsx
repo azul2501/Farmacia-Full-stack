@@ -24,7 +24,7 @@ type SaleDetail = {
 };
 
 function money(value: string) {
-  return new Intl.NumberFormat("es-PE", { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(Number(value));
+  return new Intl.NumberFormat("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(value));
 }
 
 function integer(value: string) {

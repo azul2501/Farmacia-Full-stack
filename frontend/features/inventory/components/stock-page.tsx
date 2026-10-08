@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { PageHeader } from "@/components/ui/page-header";
 import { useSession } from "@/features/auth/context/session-context";
-import { apiRequest } from "@/features/shared/api/client";
+import { apiRequest, apiRequestAll } from "@/features/shared/api/client";
 import { apiErrorMessage } from "@/features/shared/api/error-message";
 import { apiEndpoints } from "@/features/shared/api/endpoints";
 import type { ApiPage } from "@/features/shared/api/types";
@@ -71,7 +71,7 @@ export function StockPage() {
 
   const stockQuery = useQuery({
     queryKey: ["stock", "list"],
-    queryFn: () => apiRequest<ApiPage<StockRow>>(apiEndpoints.stock, { query: { pageSize: 500, ordering: "lot__expiry_date" } }),
+    queryFn: () => apiRequestAll<StockRow>(apiEndpoints.stock, { query: { ordering: "lot__expiry_date" } }),
   });
 
   const rows = stockQuery.data?.items ?? [];

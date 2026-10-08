@@ -79,6 +79,25 @@ const sidebarGroups: SidebarGroup[] = [
   },
 ];
 
+// Rutas alternativas que no aparecen en el menu pero muestran el mismo modulo.
+const routeAliases: Array<{ href: string; permission: Permission }> = [
+  { href: "/productos", permission: "products.view" },
+  { href: "/compras", permission: "purchases.view" },
+  { href: "/ventas", permission: "sales.view" },
+  { href: "/clientes", permission: "customers.view" },
+  { href: "/reportes", permission: "reports.view" },
+  { href: "/consulta", permission: "inventory.view" },
+];
+
+/** Permiso necesario para ver una ruta del portal, o null si la ruta no esta protegida por menu. */
+export function requiredPermissionFor(pathname: string): Permission | null {
+  const candidates = [...sidebarGroups.flatMap((group) => group.items), ...routeAliases];
+  const match = candidates
+    .filter((item) => routeIsActive(pathname, item.href))
+    .sort((left, right) => right.href.length - left.href.length)[0];
+  return match?.permission ?? null;
+}
+
 function routeIsActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }

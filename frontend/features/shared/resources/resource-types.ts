@@ -7,8 +7,11 @@ export type ResourceOption = { value: string; label: string };
 export type ResourceField = {
   name: string;
   label: string;
-  type?: "text" | "email" | "number" | "select" | "checkbox" | "textarea";
+  type?: "text" | "email" | "number" | "password" | "select" | "multiselect" | "checkbox" | "textarea";
   required?: boolean;
+  /** Solo se muestra y envia al crear (p. ej. correo y clave inicial de un usuario). */
+  createOnly?: boolean;
+  hint?: string;
   options?: ResourceOption[];
   optionSource?: "branches" | "warehouses" | "categories" | "laboratories" | "productVariants";
 };
@@ -17,6 +20,7 @@ export type ResourceColumn = {
   name: string;
   label: string;
   format?: "status" | "boolean" | "currency" | "count";
+  labels?: Record<string, string>;
 };
 
 export type ResourceConfig = {

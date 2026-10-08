@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PageHeader } from "@/components/ui/page-header";
 import { useSession } from "@/features/auth/context/session-context";
-import { apiDownload, apiRequest } from "@/features/shared/api/client";
+import { apiDownload, apiRequest, apiRequestAll } from "@/features/shared/api/client";
 import { apiErrorMessage } from "@/features/shared/api/error-message";
 import { apiEndpoints } from "@/features/shared/api/endpoints";
 import type { ApiPage } from "@/features/shared/api/types";
@@ -22,7 +22,7 @@ function apiMessage(error: unknown) {
 }
 
 function money(value?: string) {
-  return new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN", minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(Number(value || 0));
+  return new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(value || 0));
 }
 
 function primaryBarcode(product: Product) {
@@ -59,7 +59,7 @@ export function ProductManagementPage() {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const key = ["products", company?.id];
-  const productsQuery = useQuery({ queryKey: key, queryFn: () => apiRequest<ApiPage<Product>>(apiEndpoints.products, { query: { pageSize: 100, ordering: "commercial_name" } }) });
+  const productsQuery = useQuery({ queryKey: key, queryFn: () => apiRequestAll<Product>(apiEndpoints.products, { query: { ordering: "commercial_name" } }) });
 
   const laboratories = useMemo(() => {
     const names = (productsQuery.data?.items ?? []).map((product) => product.laboratory_name).filter((name): name is string => Boolean(name));
@@ -162,6 +162,7 @@ export function ProductManagementPage() {
     const averageMargin = margins.length ? margins.reduce((sum, value) => sum + value, 0) / margins.length : 0;
     return {
       active: products.filter((product) => product.is_active).length,
+      variantCount: variants.length,
       withBarcodeCount: withBarcode.length,
       withoutPriceCount: withoutPrice.length,
       averageMargin,
@@ -206,8 +207,8 @@ export function ProductManagementPage() {
         </div>
         <div className="stat-card">
           <span className="stat-label">Presentaciones</span>
-          <strong className="stat-value">{stats.withBarcodeCount.toLocaleString("es-PE")}</strong>
-          <span className="stat-caption">con codigo de barras</span>
+          <strong className="stat-value">{stats.variantCount.toLocaleString("es-PE")}</strong>
+          <span className="stat-caption">{stats.withBarcodeCount.toLocaleString("es-PE")} con codigo de barras</span>
         </div>
         <div className="stat-card">
           <span className="stat-label">Sin precio de venta</span>

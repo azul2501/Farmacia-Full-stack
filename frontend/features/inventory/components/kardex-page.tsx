@@ -4,11 +4,12 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { PageHeader } from "@/components/ui/page-header";
 import { useSession } from "@/features/auth/context/session-context";
-import { apiRequest } from "@/features/shared/api/client";
+import { apiRequest, apiRequestAll } from "@/features/shared/api/client";
 import { apiErrorMessage } from "@/features/shared/api/error-message";
 import { apiEndpoints } from "@/features/shared/api/endpoints";
 import type { ApiPage } from "@/features/shared/api/types";
 import { DataTable, type DataTableColumn } from "@/features/shared/ui/data-table/data-table";
+import { daysAgoIso } from "@/features/shared/utils/formatters";
 
 type MovementRow = {
   id: string;
@@ -76,10 +77,19 @@ export function KardexPage() {
   const { warehouses } = useSession();
   const [warehouseFilter, setWarehouseFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
+  const [dateFrom, setDateFrom] = useState(() => daysAgoIso(30));
+  const [dateTo, setDateTo] = useState("");
 
   const movementsQuery = useQuery({
-    queryKey: ["inventory-movements", "list"],
-    queryFn: () => apiRequest<ApiPage<MovementRow>>(apiEndpoints.inventoryMovements, { query: { pageSize: 500, ordering: "-created_at" } }),
+    queryKey: ["inventory-movements", "list", warehouseFilter, dateFrom, dateTo],
+    queryFn: () => apiRequestAll<MovementRow>(apiEndpoints.inventoryMovements, {
+      query: {
+        ordering: "-created_at",
+        warehouse: warehouseFilter || undefined,
+        created_at__date__gte: dateFrom || undefined,
+        created_at__date__lte: dateTo || undefined,
+      },
+    }),
   });
 
   const rows = movementsQuery.data?.items ?? [];
@@ -138,6 +148,14 @@ export function KardexPage() {
                 <option value="">Todos los movimientos</option>
                 {Object.entries(movementLabels).map(([value, label]) => <option value={value} key={value}>{label}</option>)}
               </select>
+              <label>
+                <span>Desde</span>
+                <input type="date" value={dateFrom} onChange={(event) => setDateFrom(event.target.value)} />
+              </label>
+              <label>
+                <span>Hasta</span>
+                <input type="date" value={dateTo} onChange={(event) => setDateTo(event.target.value)} />
+              </label>
             </>
           }
           loading={movementsQuery.isLoading}
