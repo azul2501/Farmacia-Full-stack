@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+  body { margin:0; background:#eceff2; font-family: Helvetica, "Helvetica Neue", -apple-system, "Segoe UI", Arial, sans-serif; color:#16232e; -webkit-font-smoothing:antialiased; }
+  * { box-sizing:border-box; }
+  input, select, textarea, button { font:inherit; }
+  a { color:#0b7285; text-decoration:none; }
+  a:hover { color:#0e8fa3; }
+</style>
+</helmet>
+
+<div style="display:flex; flex-direction:column; gap:14px; padding:18px 18px 40px; min-height:100vh; min-width:1420px">
+
+  <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:6px 2px">
+    <span style="font-size:11px; letter-spacing:.09em; text-transform:uppercase; color:#8494a1; margin-right:4px">Pantalla</span>
+    <button type="button" onClick="{{ goPos }}" style="border:1px solid #dbe3e8; background:#ffffff; color:#16232e; padding:7px 14px; border-radius:8px; cursor:pointer; font-size:13px; box-shadow:0 1px 2px rgba(16,35,46,.05)" style-hover="border-color:#0e8fa3; color:#0b7285">Punto de venta</button>
+    <button type="button" onClick="{{ goSales }}" style="border:1px solid #dbe3e8; background:#ffffff; color:#16232e; padding:7px 14px; border-radius:8px; cursor:pointer; font-size:13px; box-shadow:0 1px 2px rgba(16,35,46,.05)" style-hover="border-color:#0e8fa3; color:#0b7285">Ventas</button>
+    <button type="button" onClick="{{ goLogin }}" style="border:1px solid #dbe3e8; background:#ffffff; color:#16232e; padding:7px 14px; border-radius:8px; cursor:pointer; font-size:13px; box-shadow:0 1px 2px rgba(16,35,46,.05)" style-hover="border-color:#0e8fa3; color:#0b7285">Login</button>
+    <button type="button" onClick="{{ goProducts }}" style="border:1px solid #dbe3e8; background:#ffffff; color:#16232e; padding:7px 14px; border-radius:8px; cursor:pointer; font-size:13px; box-shadow:0 1px 2px rgba(16,35,46,.05)" style-hover="border-color:#0e8fa3; color:#0b7285">Productos</button>
+    <button type="button" onClick="{{ goPurchases }}" style="border:1px solid #dbe3e8; background:#ffffff; color:#16232e; padding:7px 14px; border-radius:8px; cursor:pointer; font-size:13px; box-shadow:0 1px 2px rgba(16,35,46,.05)" style-hover="border-color:#0e8fa3; color:#0b7285">Compras</button>
+    <button type="button" onClick="{{ goStock }}" style="border:1px solid #dbe3e8; background:#ffffff; color:#16232e; padding:7px 14px; border-radius:8px; cursor:pointer; font-size:13px; box-shadow:0 1px 2px rgba(16,35,46,.05)" style-hover="border-color:#0e8fa3; color:#0b7285">Stock e inventario</button>
+    <button type="button" onClick="{{ goCash }}" style="border:1px solid #dbe3e8; background:#ffffff; color:#16232e; padding:7px 14px; border-radius:8px; cursor:pointer; font-size:13px; box-shadow:0 1px 2px rgba(16,35,46,.05)" style-hover="border-color:#0e8fa3; color:#0b7285">Caja</button>
+    <button type="button" onClick="{{ goExpenses }}" style="border:1px solid #dbe3e8; background:#ffffff; color:#16232e; padding:7px 14px; border-radius:8px; cursor:pointer; font-size:13px; box-shadow:0 1px 2px rgba(16,35,46,.05)" style-hover="border-color:#0e8fa3; color:#0b7285">Gastos</button>
+    <button type="button" onClick="{{ goPayables }}" style="border:1px solid #dbe3e8; background:#ffffff; color:#16232e; padding:7px 14px; border-radius:8px; cursor:pointer; font-size:13px; box-shadow:0 1px 2px rgba(16,35,46,.05)" style-hover="border-color:#0e8fa3; color:#0b7285">Por pagar</button>
+    <button type="button" onClick="{{ goCatalogs }}" style="border:1px solid #dbe3e8; background:#ffffff; color:#16232e; padding:7px 14px; border-radius:8px; cursor:pointer; font-size:13px; box-shadow:0 1px 2px rgba(16,35,46,.05)" style-hover="border-color:#0e8fa3; color:#0b7285">Catalogos</button>
+    <button type="button" onClick="{{ goSuppliers }}" style="border:1px solid #dbe3e8; background:#ffffff; color:#16232e; padding:7px 14px; border-radius:8px; cursor:pointer; font-size:13px; box-shadow:0 1px 2px rgba(16,35,46,.05)" style-hover="border-color:#0e8fa3; color:#0b7285">Proveedores</button>
+    <span style="margin-left:auto; font-size:12px; color:#8494a1">{{ screenLabel }}</span>
+  </div>
+
+  <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ false }}">
+    <section data-screen-label="Login" style="background:#f7f9fa; border:1px solid #e3e9ed; border-radius:14px; min-height:760px; display:grid; place-items:center; padding:40px; box-shadow:0 18px 40px rgba(16,35,46,.07)">
+      <div style="width:100%; max-width:412px; background:#ffffff; border:1px solid #e6ebef; border-radius:12px; padding:34px 32px 30px; display:flex; flex-direction:column; gap:20px; box-shadow:0 8px 28px rgba(16,35,46,.06)">
+        <div style="display:flex; flex-direction:column; gap:12px; align-items:flex-start">
+          <span style="display:grid; place-items:center; width:42px; height:42px; border-radius:10px; background:#e8f6f8; color:#0b7285; font-size:14px; font-weight:700; letter-spacing:.04em">BF</span>
+          <div style="display:flex; flex-direction:column; gap:4px">
+            <h1 style="margin:0; font-size:21px; font-weight:600; letter-spacing:-.01em">Sistema Botica</h1>
+            <p style="margin:0; font-size:13.5px; color:#6b7a87">Inicio de sesion</p>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px; align-items:flex-start; background:#f4f8fa; border:1px solid #e2ecf0; border-radius:9px; padding:11px 13px; font-size:12.5px; color:#4d6472; line-height:1.45">
+          <i class="fas fa-circle-info" style="color:#0e8fa3; margin-top:2px"></i>
+          <span>Acceso visual de desarrollo. Las credenciales no se validan ni se almacenan.</span>
+        </div>
+
+        <label style="display:flex; flex-direction:column; gap:7px">
+          <span style="font-size:12.5px; color:#4d6472; font-weight:500">Correo electronico</span>
+          <span style="position:relative; display:block">
+            <input type="email" placeholder="nombre@empresa.com" style="width:100%; border:1px solid #dbe3e8; border-radius:9px; padding:11px 38px 11px 13px; font-size:14px; color:#16232e; background:#ffffff; outline:none" style-focus="border-color:#0e8fa3; box-shadow:0 0 0 3px rgba(14,143,163,.13)">
+            <i class="fas fa-envelope" style="position:absolute; right:13px; top:12px; color:#a4b2bd; font-size:13px"></i>
+          </span>
+        </label>
+
+        <label style="display:flex; flex-direction:column; gap:7px">
+          <span style="font-size:12.5px; color:#4d6472; font-weight:500">Clave</span>
+          <span style="position:relative; display:block">
+            <input type="password" placeholder="Ingrese la clave" style="width:100%; border:1px solid #dbe3e8; border-radius:9px; padding:11px 40px 11px 13px; font-size:14px; color:#16232e; background:#ffffff; outline:none" style-focus="border-color:#0e8fa3; box-shadow:0 0 0 3px rgba(14,143,163,.13)">
+            <button type="button" aria-label="Mostrar clave" style="position:absolute; right:8px; top:7px; border:0; background:transparent; color:#a4b2bd; padding:5px 6px; border-radius:6px; cursor:pointer" style-hover="color:#0b7285; background:#f1f5f7"><i class="fas fa-eye"></i></button>
+          </span>
+        </label>
+
+        <button type="button" style="align-self:flex-start; border:0; background:transparent; color:#8494a1; font-size:12.5px; padding:0; cursor:not-allowed">Olvide mi contrasena</button>
+
+        <button type="button" style="display:flex; align-items:center; justify-content:center; gap:9px; border:0; border-radius:9px; background:#0e8fa3; color:#ffffff; font-size:14.5px; font-weight:500; padding:13px 16px; cursor:pointer; box-shadow:0 2px 8px rgba(14,143,163,.28)" style-hover="background:#0b7285">
+          <i class="fas fa-arrow-right-to-bracket"></i> Iniciar sesion
+        </button>
+      </div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ isApp }}" hint-placeholder-val="{{ true }}">
+    <section style="display:grid; grid-template-columns:250px minmax(0,1fr); min-width:1380px; background:#f7f9fa; border:1px solid #e3e9ed; border-radius:14px; overflow:hidden; min-height:900px; box-shadow:0 18px 40px rgba(16,35,46,.07)">
+
+      <aside style="background:#ffffff; border-right:1px solid #e9eef1; display:flex; flex-direction:column; padding:0 12px 16px">
+        <div style="display:flex; align-items:center; gap:10px; min-height:62px; padding:0 4px; border-bottom:1px solid #eef2f5; margin:0 -12px 12px; padding-left:16px; padding-right:12px">
+          <span style="display:grid; place-items:center; width:30px; height:30px; border-radius:8px; background:#e8f6f8; color:#0b7285; font-size:11px; font-weight:700">BF</span>
+          <span style="font-size:15px; font-weight:600; letter-spacing:-.01em">Botica Farma</span>
+          <button type="button" aria-label="Colapsar menu" style="margin-left:auto; border:0; background:transparent; color:#a4b2bd; width:26px; height:26px; border-radius:6px; cursor:pointer" style-hover="background:#f1f5f7; color:#4d6472"><i class="fas fa-chevron-left" style="font-size:11px"></i></button>
+        </div>
+
+        <nav style="display:flex; flex-direction:column; gap:2px; overflow:hidden">
+          <a href="#dashboard" style="display:flex; align-items:center; gap:11px; padding:9px 11px; border-radius:8px; color:#4d6472; font-size:13.5px" style-hover="background:#f4f7f9; color:#16232e">
+            <i class="fas fa-gauge-high" style="width:16px; text-align:center; font-size:13px; color:#a4b2bd"></i><span>Dashboard</span>
+          </a>
+
+          <button type="button" onClick="{{ goSales }}" style="display:flex; align-items:center; gap:11px; padding:9px 11px; border:0; border-radius:8px; background:{{ ventasBg }}; color:{{ ventasFg }}; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left; width:100%">
+            <i class="fas fa-cash-register" style="width:16px; text-align:center; font-size:13px"></i><span>Ventas</span>
+            <i class="fas fa-angle-down" style="margin-left:auto; font-size:11px; color:#8fb8c1"></i>
+          </button>
+          <sc-if value="{{ isSalesGroup }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex; flex-direction:column; gap:1px; margin:2px 0 6px 14px; padding-left:12px; border-left:1px solid #eef2f5">
+            <a href="#pos" onClick="{{ goPos }}" style="display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; font-size:13px; font-weight:500; background:{{ posBg }}; color:{{ posFg }}" style-hover="background:#f4f7f9">
+              <i class="fas fa-table-cells-large" style="width:14px; text-align:center; font-size:12px"></i><span>Punto de venta</span>
+            </a>
+            <a href="#ventas" onClick="{{ goSales }}" style="display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; font-size:13px; background:{{ ventaLinkBg }}; color:{{ ventaLinkFg }}" style-hover="background:#f4f7f9">
+              <i class="fas fa-receipt" style="width:14px; text-align:center; font-size:12px"></i><span>Ventas</span>
+            </a>
+            <a href="#solicitudes" style="display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; color:#5b6c78; font-size:13px" style-hover="background:#f4f7f9; color:#16232e">
+              <i class="fas fa-calendar-check" style="width:14px; text-align:center; font-size:12px; color:#a4b2bd"></i><span>Solicitudes programadas</span>
+            </a>
+            <a href="#clientes" style="display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; color:#5b6c78; font-size:13px" style-hover="background:#f4f7f9; color:#16232e">
+              <i class="fas fa-user-tag" style="width:14px; text-align:center; font-size:12px; color:#a4b2bd"></i><span>Clientes</span>
+            </a>
+            <a href="#cobrar" style="display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; color:#5b6c78; font-size:13px" style-hover="background:#f4f7f9; color:#16232e">
+              <i class="fas fa-hand-holding-dollar" style="width:14px; text-align:center; font-size:12px; color:#a4b2bd"></i><span>Cuentas por cobrar</span>
+            </a>
+          </div>
+          </sc-if>
+
+          <button type="button" onClick="{{ goProducts }}" style="display:flex; align-items:center; gap:11px; padding:9px 11px; border:0; border-radius:8px; background:{{ almacenBg }}; color:{{ almacenFg }}; font-size:13.5px; cursor:pointer; text-align:left; width:100%" style-hover="background:#f4f7f9">
+            <i class="fas fa-boxes-stacked" style="width:16px; text-align:center; font-size:13px"></i><span>Almacen</span>
+            <i class="fas fa-angle-down" style="margin-left:auto; font-size:11px; color:#8fb8c1"></i>
+          </button>
+          <sc-if value="{{ isStockGroup }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; flex-direction:column; gap:1px; margin:2px 0 6px 14px; padding-left:12px; border-left:1px solid #eef2f5">
+            <a href="#productos" onClick="{{ goProducts }}" style="display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; font-size:13px; font-weight:500; background:{{ prodBg }}; color:{{ prodFg }}">
+              <i class="fas fa-capsules" style="width:14px; text-align:center; font-size:12px"></i><span>Productos</span>
+            </a>
+            <a href="#compras" onClick="{{ goPurchases }}" style="display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; font-size:13px; background:{{ compBg }}; color:{{ compFg }}" style-hover="background:#f4f7f9">
+              <i class="fas fa-cart-plus" style="width:14px; text-align:center; font-size:12px"></i><span>Compras</span>
+            </a>
+            <a href="#inventario" onClick="{{ goStock }}" style="display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; font-size:13px; background:{{ stockBg }}; color:{{ stockFg }}" style-hover="background:#f4f7f9">
+              <i class="fas fa-warehouse" style="width:14px; text-align:center; font-size:12px"></i><span>Stock e inventario</span>
+            </a>
+            <a href="#kardex" style="display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; color:#5b6c78; font-size:13px" style-hover="background:#f4f7f9; color:#16232e">
+              <i class="fas fa-right-left" style="width:14px; text-align:center; font-size:12px; color:#a4b2bd"></i><span>Kardex</span>
+            </a>
+            <a href="#traslados" style="display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; color:#5b6c78; font-size:13px" style-hover="background:#f4f7f9; color:#16232e">
+              <i class="fas fa-truck-ramp-box" style="width:14px; text-align:center; font-size:12px; color:#a4b2bd"></i><span>Transferencias</span>
+            </a>
+          </div>
+          </sc-if>
+          <button type="button" onClick="{{ goCash }}" style="display:flex; align-items:center; gap:11px; padding:9px 11px; border:0; border-radius:8px; background:{{ cajaBg }}; color:{{ cajaFg }}; font-size:13.5px; cursor:pointer; text-align:left; width:100%" style-hover="background:#f4f7f9">
+            <i class="fas fa-coins" style="width:16px; text-align:center; font-size:13px"></i><span>Caja y finanzas</span>
+            <i class="fas fa-angle-down" style="margin-left:auto; font-size:11px; color:#8fb8c1"></i>
+          </button>
+          <sc-if value="{{ isCashGroup }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; flex-direction:column; gap:1px; margin:2px 0 6px 14px; padding-left:12px; border-left:1px solid #eef2f5">
+            <a href="#caja" onClick="{{ goCash }}" style="display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; font-size:13px; font-weight:500; background:{{ cajaLinkBg }}; color:{{ cajaLinkFg }}">
+              <i class="fas fa-cash-register" style="width:14px; text-align:center; font-size:12px"></i><span>Caja y arqueo</span>
+            </a>
+            <a href="#gastos" onClick="{{ goExpenses }}" style="display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; font-size:13px; background:{{ gastoBg }}; color:{{ gastoFg }}" style-hover="background:#f4f7f9">
+              <i class="fas fa-file-invoice-dollar" style="width:14px; text-align:center; font-size:12px"></i><span>Gastos</span>
+            </a>
+            <a href="#ingresos" style="display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; color:#5b6c78; font-size:13px" style-hover="background:#f4f7f9; color:#16232e">
+              <i class="fas fa-circle-plus" style="width:14px; text-align:center; font-size:12px; color:#a4b2bd"></i><span>Ingresos adicionales</span>
+            </a>
+            <a href="#pagar" onClick="{{ goPayables }}" style="display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; font-size:13px; background:{{ pagarBg }}; color:{{ pagarFg }}" style-hover="background:#f4f7f9">
+              <i class="fas fa-money-check-dollar" style="width:14px; text-align:center; font-size:12px"></i><span>Cuentas por pagar</span>
+            </a>
+          </div>
+          </sc-if>
+
+          <button type="button" onClick="{{ goCatalogs }}" style="display:flex; align-items:center; gap:11px; padding:9px 11px; border:0; border-radius:8px; background:{{ catBg }}; color:{{ catFg }}; font-size:13.5px; cursor:pointer; text-align:left; width:100%" style-hover="background:#f4f7f9">
+            <i class="fas fa-tags" style="width:16px; text-align:center; font-size:13px"></i><span>Catalogos</span>
+            <i class="fas fa-angle-down" style="margin-left:auto; font-size:11px; color:#8fb8c1"></i>
+          </button>
+          <sc-if value="{{ isCatalogsGroup }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; flex-direction:column; gap:1px; margin:2px 0 6px 14px; padding-left:12px; border-left:1px solid #eef2f5">
+            <a href="#atributos" onClick="{{ goCatalogs }}" style="display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; font-size:13px; font-weight:500; background:{{ atrBg }}; color:{{ atrFg }}">
+              <i class="fas fa-tags" style="width:14px; text-align:center; font-size:12px"></i><span>Atributos de producto</span>
+            </a>
+            <a href="#proveedores" onClick="{{ goSuppliers }}" style="display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; font-size:13px; background:{{ provBg }}; color:{{ provFg }}" style-hover="background:#f4f7f9">
+              <i class="fas fa-truck" style="width:14px; text-align:center; font-size:12px"></i><span>Proveedores</span>
+            </a>
+          </div>
+          </sc-if>
+          <button type="button" onClick="{{ goBranches }}" style="display:flex; align-items:center; gap:11px; padding:9px 11px; border:0; border-radius:8px; background:{{ adminBg }}; color:{{ adminFg }}; font-size:13.5px; cursor:pointer; text-align:left; width:100%" style-hover="background:#f4f7f9">
+            <i class="fas fa-building" style="width:16px; text-align:center; font-size:13px"></i><span>Administracion</span>
+            <i class="fas fa-angle-down" style="margin-left:auto; font-size:11px; color:#8fb8c1"></i>
+          </button>
+          <sc-if value="{{ isAdminGroup }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; flex-direction:column; gap:1px; margin:2px 0 6px 14px; padding-left:12px; border-left:1px solid #eef2f5">
+            <a href="#sucursales" onClick="{{ goBranches }}" style="display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; font-size:13px; font-weight:500; background:{{ sucBg }}; color:{{ sucFg }}" style-hover="background:#f4f7f9">
+              <i class="fas fa-store" style="width:14px; text-align:center; font-size:12px"></i><span>Sucursales</span>
+            </a>
+            <a href="#almacenes" onClick="{{ goWarehouses }}" style="display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; font-size:13px; background:{{ almBg }}; color:{{ almFg }}" style-hover="background:#f4f7f9">
+              <i class="fas fa-warehouse" style="width:14px; text-align:center; font-size:12px"></i><span>Almacenes</span>
+            </a>
+            <a href="#cajas" onClick="{{ goRegisters }}" style="display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; font-size:13px; background:{{ cajasBg }}; color:{{ cajasFg }}" style-hover="background:#f4f7f9">
+              <i class="fas fa-cash-register" style="width:14px; text-align:center; font-size:12px"></i><span>Cajas</span>
+            </a>
+            <a href="#usuarios" onClick="{{ goUsers }}" style="display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; font-size:13px; background:{{ usrBg }}; color:{{ usrFg }}" style-hover="background:#f4f7f9">
+              <i class="fas fa-users" style="width:14px; text-align:center; font-size:12px"></i><span>Usuarios</span>
+            </a>
+            <div style="display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; color:#b3bec7; font-size:13px">
+              <i class="fas fa-user-shield" style="width:14px; text-align:center; font-size:12px; color:#c8d2d9"></i><span>Roles y permisos</span>
+              <small style="margin-left:auto; font-size:10px; color:#b3bec7">Proximamente</small>
+            </div>
+            <a href="#reportes" onClick="{{ goReports }}" style="display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; font-size:13px; background:{{ repBg }}; color:{{ repFg }}" style-hover="background:#f4f7f9">
+              <i class="fas fa-chart-column" style="width:14px; text-align:center; font-size:12px"></i><span>Reportes</span>
+            </a>
+            <div style="display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:7px; color:#b3bec7; font-size:13px">
+              <i class="fas fa-gear" style="width:14px; text-align:center; font-size:12px; color:#c8d2d9"></i><span>Configuracion</span>
+              <small style="margin-left:auto; font-size:10px; color:#b3bec7">Proximamente</small>
+            </div>
+          </div>
+          </sc-if>
+        </nav>
+
+        <div style="margin-top:auto; display:flex; align-items:center; gap:10px; padding:10px; border-radius:9px; background:#f7f9fa">
+          <span style="display:grid; place-items:center; width:30px; height:30px; border-radius:50%; background:#dfeff2; color:#0b7285; font-size:11.5px; font-weight:600">RC</span>
+          <div style="display:flex; flex-direction:column; gap:1px; min-width:0">
+            <strong style="font-size:12.5px; font-weight:600">Rosa Cordova</strong>
+            <span style="font-size:11px; color:#8494a1">Cajera</span>
+          </div>
+          <button type="button" aria-label="Salir" style="margin-left:auto; border:0; background:transparent; color:#a4b2bd; width:26px; height:26px; border-radius:6px; cursor:pointer" style-hover="background:#ffffff; color:#4d6472"><i class="fas fa-arrow-right-from-bracket" style="font-size:12px"></i></button>
+        </div>
+      </aside>
+
+      <div style="display:flex; flex-direction:column; min-width:0">
+        <header style="display:flex; align-items:center; gap:14px; min-height:62px; padding:0 24px; background:#ffffff; border-bottom:1px solid #e9eef1">
+          <div style="display:flex; align-items:center; gap:8px; font-size:12.5px; color:#8494a1">
+            <span>{{ groupLabel }}</span><i class="fas fa-angle-right" style="font-size:10px; color:#c2ced6"></i><span style="color:#16232e; font-weight:500">{{ screenLabel }}</span>
+          </div>
+          <div style="margin-left:auto; display:flex; align-items:center; gap:10px">
+            <div style="display:flex; align-items:center; gap:8px; border:1px solid #e3e9ed; border-radius:8px; padding:7px 11px; font-size:12.5px; color:#4d6472; background:#ffffff">
+              <i class="fas fa-store" style="color:#a4b2bd; font-size:12px"></i><span>Sucursal Centro</span><i class="fas fa-angle-down" style="color:#c2ced6; font-size:10px"></i>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; border:1px solid #e3e9ed; border-radius:8px; padding:7px 11px; font-size:12.5px; color:#4d6472; background:#ffffff">
+              <i class="fas fa-warehouse" style="color:#a4b2bd; font-size:12px"></i><span>Almacen principal</span><i class="fas fa-angle-down" style="color:#c2ced6; font-size:10px"></i>
+            </div>
+            <button type="button" aria-label="Notificaciones" style="border:1px solid #e3e9ed; background:#ffffff; color:#6b7a87; width:34px; height:34px; border-radius:8px; cursor:pointer" style-hover="border-color:#cfdbe2; color:#16232e"><i class="fas fa-bell" style="font-size:13px"></i></button>
+          </div>
+        </header>
+        <sc-if value="{{ isPos }}" hint-placeholder-val="{{ true }}">
+          <div data-screen-label="POS" style="display:grid; grid-template-columns:60% 40%; gap:18px; padding:22px 24px; align-items:start">
+
+            <section style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+              <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px">
+                <div style="display:flex; flex-direction:column; gap:4px">
+                  <h1 style="margin:0; font-size:22px; font-weight:600; letter-spacing:-.015em">Punto de venta</h1>
+                  <span style="font-size:13px; color:#6b7a87">Sucursal Centro · Almacen principal</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px; background:#eaf7f0; border:1px solid #cfeadd; color:#127a4f; border-radius:999px; padding:7px 14px; font-size:12.5px; font-weight:500">
+                  <i class="fas fa-lock-open" style="font-size:11px"></i> Caja 01 abierta
+                </div>
+              </div>
+
+              <div style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:14px; box-shadow:0 1px 2px rgba(16,35,46,.04)">
+                <label style="display:flex; align-items:center; gap:12px; border:1px solid #dbe3e8; border-radius:10px; padding:13px 16px; background:#fbfdfd" style-focus="border-color:#0e8fa3">
+                  <i class="fas fa-barcode" style="color:#0e8fa3; font-size:17px"></i>
+                  <input type="search" placeholder="Buscar por nombre o escanear codigo + Enter" style="flex:1; border:0; background:transparent; outline:none; font-size:15px; color:#16232e">
+                  <span style="font-size:11px; color:#8494a1; border:1px solid #e3e9ed; border-radius:5px; padding:3px 7px; background:#ffffff">Enter</span>
+                </label>
+
+                <div style="display:flex; flex-direction:column; gap:8px">
+                  <div style="display:flex; align-items:center; justify-content:space-between; padding:0 2px">
+                    <span style="font-size:11px; letter-spacing:.09em; text-transform:uppercase; color:#8494a1">Resultados</span>
+                    <span style="font-size:12px; color:#8494a1">4 de 12</span>
+                  </div>
+
+                  <button type="button" style="display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:16px; width:100%; text-align:left; border:1px solid #eef2f5; border-radius:10px; background:#ffffff; padding:13px 15px; cursor:pointer" style-hover="border-color:#bfe1e8; background:#fbfdfe">
+                    <span style="display:flex; flex-direction:column; gap:3px; min-width:0">
+                      <strong style="font-size:14px; font-weight:600">Paracetamol 500 mg</strong>
+                      <small style="font-size:12px; color:#7a8b97">Caja x 100 tab · SKU PAR-500-100 · Lote A-2291 vence 03/2027</small>
+                    </span>
+                    <span style="display:flex; align-items:center; gap:14px">
+                      <span style="font-size:11.5px; color:#127a4f; background:#eaf7f0; border-radius:999px; padding:4px 10px">Stock 248</span>
+                      <strong style="font-size:15px; font-weight:600; font-variant-numeric:tabular-nums">S/ 0.50</strong>
+                      <i class="fas fa-plus" style="color:#0e8fa3; font-size:12px"></i>
+                    </span>
+                  </button>
+
+                  <button type="button" style="display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:16px; width:100%; text-align:left; border:1px solid #eef2f5; border-radius:10px; background:#ffffff; padding:13px 15px; cursor:pointer" style-hover="border-color:#bfe1e8; background:#fbfdfe">
+                    <span style="display:flex; flex-direction:column; gap:3px; min-width:0">
+                      <strong style="font-size:14px; font-weight:600">Amoxicilina 500 mg</strong>
+                      <small style="font-size:12px; color:#7a8b97">Caja x 20 cap · SKU AMX-500-20 · Lote B-1177 vence 11/2026</small>
+                    </span>
+                    <span style="display:flex; align-items:center; gap:14px">
+                      <span style="font-size:11.5px; color:#8a5a05; background:#fdf4e4; border-radius:999px; padding:4px 10px">Stock 12</span>
+                      <strong style="font-size:15px; font-weight:600; font-variant-numeric:tabular-nums">S/ 1.80</strong>
+                      <i class="fas fa-plus" style="color:#0e8fa3; font-size:12px"></i>
+                    </span>
+                  </button>
+
+                  <button type="button" style="display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:16px; width:100%; text-align:left; border:1px solid #eef2f5; border-radius:10px; background:#ffffff; padding:13px 15px; cursor:pointer" style-hover="border-color:#bfe1e8; background:#fbfdfe">
+                    <span style="display:flex; flex-direction:column; gap:3px; min-width:0">
+                      <strong style="font-size:14px; font-weight:600">Ibuprofeno 400 mg</strong>
+                      <small style="font-size:12px; color:#7a8b97">Blister x 10 tab · SKU IBU-400-10 · Lote C-0455 vence 07/2027</small>
+                    </span>
+                    <span style="display:flex; align-items:center; gap:14px">
+                      <span style="font-size:11.5px; color:#127a4f; background:#eaf7f0; border-radius:999px; padding:4px 10px">Stock 96</span>
+                      <strong style="font-size:15px; font-weight:600; font-variant-numeric:tabular-nums">S/ 3.20</strong>
+                      <i class="fas fa-plus" style="color:#0e8fa3; font-size:12px"></i>
+                    </span>
+                  </button>
+
+                  <button type="button" style="display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:16px; width:100%; text-align:left; border:1px solid #eef2f5; border-radius:10px; background:#fcfcfd; padding:13px 15px; cursor:not-allowed">
+                    <span style="display:flex; flex-direction:column; gap:3px; min-width:0">
+                      <strong style="font-size:14px; font-weight:600; color:#7a8b97">Clorfenamina 4 mg</strong>
+                      <small style="font-size:12px; color:#a4b2bd">Blister x 20 tab · SKU CLF-004-20 · sin lote vigente</small>
+                    </span>
+                    <span style="display:flex; align-items:center; gap:14px">
+                      <span style="font-size:11.5px; color:#a03434; background:#fdeeee; border-radius:999px; padding:4px 10px">Sin stock</span>
+                      <strong style="font-size:15px; font-weight:600; color:#a4b2bd; font-variant-numeric:tabular-nums">S/ 0.30</strong>
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              <sc-if value="{{ showHints }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex; align-items:center; gap:18px; flex-wrap:wrap; padding:0 4px; font-size:12px; color:#8494a1">
+                  <span style="display:flex; align-items:center; gap:7px"><span style="border:1px solid #dbe3e8; border-radius:5px; padding:2px 6px; background:#ffffff; font-size:11px; color:#4d6472">F2</span> Buscar producto</span>
+                  <span style="display:flex; align-items:center; gap:7px"><span style="border:1px solid #dbe3e8; border-radius:5px; padding:2px 6px; background:#ffffff; font-size:11px; color:#4d6472">F4</span> Cambiar cliente</span>
+                  <span style="display:flex; align-items:center; gap:7px"><span style="border:1px solid #dbe3e8; border-radius:5px; padding:2px 6px; background:#ffffff; font-size:11px; color:#4d6472">F9</span> Confirmar venta</span>
+                </div>
+              </sc-if>
+            </section><aside style="display:flex; flex-direction:column; background:#ffffff; border:1px solid #e6ebef; border-radius:12px; overflow:hidden; box-shadow:0 4px 16px rgba(16,35,46,.05)">
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 18px; border-bottom:1px solid #eef2f5">
+                <h2 style="margin:0; font-size:15px; font-weight:600">Venta actual</h2>
+                <span style="font-size:12px; color:#8494a1">3 productos</span>
+              </div>
+
+              <div style="display:flex; flex-direction:column">
+                <article style="display:flex; flex-direction:column; gap:9px; padding:14px 18px; border-bottom:1px solid #f2f5f7">
+                  <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px">
+                    <div style="display:flex; flex-direction:column; gap:2px; min-width:0">
+                      <strong style="font-size:13.5px; font-weight:600">Paracetamol 500 mg</strong>
+                      <small style="font-size:11.5px; color:#8494a1">Caja x 100 tab · Lote A-2291</small>
+                    </div>
+                    <strong style="font-size:14px; font-variant-numeric:tabular-nums">S/ 6.00</strong>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:8px">
+                    <div style="display:flex; align-items:center; border:1px solid #e3e9ed; border-radius:8px; overflow:hidden">
+                      <button type="button" aria-label="Reducir" style="border:0; background:#fbfdfd; color:#4d6472; width:30px; height:30px; cursor:pointer" style-hover="background:#f1f5f7">−</button>
+                      <input value="12" style="width:44px; height:30px; border:0; border-left:1px solid #e3e9ed; border-right:1px solid #e3e9ed; text-align:center; font-size:13.5px; outline:none; font-variant-numeric:tabular-nums">
+                      <button type="button" aria-label="Aumentar" style="border:0; background:#fbfdfd; color:#4d6472; width:30px; height:30px; cursor:pointer" style-hover="background:#f1f5f7">+</button>
+                    </div>
+                    <span style="font-size:12px; color:#8494a1">× S/ 0.50</span>
+                    <button type="button" style="margin-left:auto; border:1px solid #eef2f5; background:#ffffff; color:#a4b2bd; width:30px; height:30px; border-radius:8px; cursor:pointer" style-hover="border-color:#f5cdcd; color:#c0392b; background:#fdf7f7"><i class="fas fa-trash-can" style="font-size:12px"></i></button>
+                  </div>
+                </article>
+
+                <article style="display:flex; flex-direction:column; gap:9px; padding:14px 18px; border-bottom:1px solid #f2f5f7">
+                  <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px">
+                    <div style="display:flex; flex-direction:column; gap:2px; min-width:0">
+                      <strong style="font-size:13.5px; font-weight:600">Ibuprofeno 400 mg</strong>
+                      <small style="font-size:11.5px; color:#8494a1">Blister x 10 tab · Lote C-0455</small>
+                    </div>
+                    <strong style="font-size:14px; font-variant-numeric:tabular-nums">S/ 6.40</strong>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:8px">
+                    <div style="display:flex; align-items:center; border:1px solid #e3e9ed; border-radius:8px; overflow:hidden">
+                      <button type="button" aria-label="Reducir" style="border:0; background:#fbfdfd; color:#4d6472; width:30px; height:30px; cursor:pointer" style-hover="background:#f1f5f7">−</button>
+                      <input value="2" style="width:44px; height:30px; border:0; border-left:1px solid #e3e9ed; border-right:1px solid #e3e9ed; text-align:center; font-size:13.5px; outline:none; font-variant-numeric:tabular-nums">
+                      <button type="button" aria-label="Aumentar" style="border:0; background:#fbfdfd; color:#4d6472; width:30px; height:30px; cursor:pointer" style-hover="background:#f1f5f7">+</button>
+                    </div>
+                    <span style="font-size:12px; color:#8494a1">× S/ 3.20</span>
+                    <button type="button" style="margin-left:auto; border:1px solid #eef2f5; background:#ffffff; color:#a4b2bd; width:30px; height:30px; border-radius:8px; cursor:pointer" style-hover="border-color:#f5cdcd; color:#c0392b; background:#fdf7f7"><i class="fas fa-trash-can" style="font-size:12px"></i></button>
+                  </div>
+                </article>
+
+                <article style="display:flex; flex-direction:column; gap:9px; padding:14px 18px; border-bottom:1px solid #f2f5f7">
+                  <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px">
+                    <div style="display:flex; flex-direction:column; gap:2px; min-width:0">
+                      <strong style="font-size:13.5px; font-weight:600">Amoxicilina 500 mg</strong>
+                      <small style="font-size:11.5px; color:#8494a1">Caja x 20 cap · Lote B-1177</small>
+                    </div>
+                    <strong style="font-size:14px; font-variant-numeric:tabular-nums">S/ 3.60</strong>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:8px">
+                    <div style="display:flex; align-items:center; border:1px solid #e3e9ed; border-radius:8px; overflow:hidden">
+                      <button type="button" aria-label="Reducir" style="border:0; background:#fbfdfd; color:#4d6472; width:30px; height:30px; cursor:pointer" style-hover="background:#f1f5f7">−</button>
+                      <input value="2" style="width:44px; height:30px; border:0; border-left:1px solid #e3e9ed; border-right:1px solid #e3e9ed; text-align:center; font-size:13.5px; outline:none; font-variant-numeric:tabular-nums">
+                      <button type="button" aria-label="Aumentar" style="border:0; background:#fbfdfd; color:#4d6472; width:30px; height:30px; cursor:pointer" style-hover="background:#f1f5f7">+</button>
+                    </div>
+                    <span style="font-size:12px; color:#8494a1">× S/ 1.80</span>
+                    <button type="button" style="margin-left:auto; border:1px solid #eef2f5; background:#ffffff; color:#a4b2bd; width:30px; height:30px; border-radius:8px; cursor:pointer" style-hover="border-color:#f5cdcd; color:#c0392b; background:#fdf7f7"><i class="fas fa-trash-can" style="font-size:12px"></i></button>
+                  </div>
+                </article>
+              </div>
+
+              <div style="display:flex; flex-direction:column; gap:13px; padding:16px 18px; border-bottom:1px solid #eef2f5; background:#fcfdfd">
+                <label style="display:flex; flex-direction:column; gap:6px">
+                  <span style="font-size:11.5px; color:#6b7a87; font-weight:500">Cliente</span>
+                  <select style="border:1px solid #dbe3e8; border-radius:8px; padding:9px 11px; font-size:13.5px; color:#16232e; background:#ffffff; outline:none">
+                    <option>Publico general</option>
+                    <option>Maria Quispe · 45871223</option>
+                  </select>
+                </label>
+
+                <div style="display:flex; flex-direction:column; gap:7px">
+                  <span style="font-size:11.5px; color:#6b7a87; font-weight:500">Medio de pago</span>
+                  <div style="display:flex; gap:6px; flex-wrap:wrap">
+                    <button type="button" onClick="{{ pickCash }}" style="border:1px solid #0e8fa3; background:#0e8fa3; color:#ffffff; border-radius:8px; padding:8px 13px; font-size:12.5px; cursor:pointer">Efectivo</button>
+                    <button type="button" style="border:1px solid #e3e9ed; background:#ffffff; color:#4d6472; border-radius:8px; padding:8px 13px; font-size:12.5px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285">Yape</button>
+                    <button type="button" style="border:1px solid #e3e9ed; background:#ffffff; color:#4d6472; border-radius:8px; padding:8px 13px; font-size:12.5px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285">Plin</button>
+                    <button type="button" style="border:1px solid #e3e9ed; background:#ffffff; color:#4d6472; border-radius:8px; padding:8px 13px; font-size:12.5px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285">Tarjeta</button>
+                    <button type="button" style="border:1px solid #e3e9ed; background:#ffffff; color:#4d6472; border-radius:8px; padding:8px 13px; font-size:12.5px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285">Transferencia</button>
+                  </div>
+                </div>
+
+                <label style="display:flex; flex-direction:column; gap:6px">
+                  <span style="font-size:11.5px; color:#6b7a87; font-weight:500">Efectivo recibido</span>
+                  <input value="20.00" style="border:1px solid #dbe3e8; border-radius:8px; padding:9px 11px; font-size:14px; color:#16232e; outline:none; font-variant-numeric:tabular-nums" style-focus="border-color:#0e8fa3; box-shadow:0 0 0 3px rgba(14,143,163,.13)">
+                </label>
+              </div>
+
+              <div style="display:flex; flex-direction:column; gap:8px; padding:16px 18px">
+                <div style="display:flex; align-items:center; justify-content:space-between; font-size:12.5px; color:#6b7a87">
+                  <span>Subtotal</span><span style="font-variant-numeric:tabular-nums">S/ 16.00</span>
+                </div>
+                <div style="display:flex; align-items:center; justify-content:space-between; font-size:12.5px; color:#6b7a87">
+                  <span>Descuento</span><span style="font-variant-numeric:tabular-nums">S/ 0.00</span>
+                </div>
+                <div style="display:flex; align-items:flex-end; justify-content:space-between; padding-top:8px; border-top:1px solid #eef2f5">
+                  <span style="font-size:13px; color:#4d6472">Total</span>
+                  <strong style="font-size:26px; font-weight:600; letter-spacing:-.02em; font-variant-numeric:tabular-nums">S/ 16.00</strong>
+                </div>
+                <div style="display:flex; align-items:center; justify-content:space-between; font-size:12.5px; color:#127a4f; background:#f4faf7; border-radius:8px; padding:8px 11px">
+                  <span>Vuelto</span><strong style="font-variant-numeric:tabular-nums">S/ 4.00</strong>
+                </div>
+                <button type="button" style="display:flex; align-items:center; justify-content:center; gap:9px; margin-top:6px; border:0; border-radius:10px; background:#0e8fa3; color:#ffffff; font-size:15px; font-weight:500; padding:14px 16px; cursor:pointer; box-shadow:0 2px 10px rgba(14,143,163,.3)" style-hover="background:#0b7285">
+                  <i class="fas fa-check"></i> Confirmar venta
+                </button>
+              </div>
+            </aside>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isSales }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Ventas" style="display:flex; flex-direction:column; gap:18px; padding:22px 24px">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px">
+              <div style="display:flex; flex-direction:column; gap:4px">
+                <h1 style="margin:0; font-size:22px; font-weight:600; letter-spacing:-.015em">Ventas</h1>
+                <span style="font-size:13px; color:#6b7a87">Listado de comprobantes emitidos</span>
+              </div>
+              <div style="display:flex; gap:8px">
+                <button type="button" style="display:flex; align-items:center; gap:8px; border:1px solid #dbe3e8; background:#ffffff; color:#4d6472; border-radius:9px; padding:9px 14px; font-size:13px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285"><i class="fas fa-file-export" style="font-size:12px"></i> Exportar</button>
+                <button type="button" style="display:flex; align-items:center; gap:8px; border:0; background:#0e8fa3; color:#ffffff; border-radius:9px; padding:9px 15px; font-size:13px; cursor:pointer; box-shadow:0 2px 8px rgba(14,143,163,.25)" style-hover="background:#0b7285"><i class="fas fa-plus" style="font-size:12px"></i> Nueva venta</button>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:14px">
+              <div style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; padding:15px 17px; display:flex; flex-direction:column; gap:7px">
+                <span style="font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:#8494a1">Ventas hoy</span>
+                <strong style="font-size:23px; font-weight:600; letter-spacing:-.02em; font-variant-numeric:tabular-nums">S/ 3,482.50</strong>
+                <span style="font-size:12px; color:#6b7a87">64 comprobantes</span>
+              </div>
+              <div style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; padding:15px 17px; display:flex; flex-direction:column; gap:7px">
+                <span style="font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:#8494a1">Contado</span>
+                <strong style="font-size:23px; font-weight:600; letter-spacing:-.02em; font-variant-numeric:tabular-nums">S/ 3,101.00</strong>
+                <span style="font-size:12px; color:#6b7a87">58 comprobantes</span>
+              </div>
+              <div style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; padding:15px 17px; display:flex; flex-direction:column; gap:7px">
+                <span style="font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:#8494a1">Credito</span>
+                <strong style="font-size:23px; font-weight:600; letter-spacing:-.02em; font-variant-numeric:tabular-nums">S/ 381.50</strong>
+                <span style="font-size:12px; color:#6b7a87">6 comprobantes</span>
+              </div>
+              <div style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; padding:15px 17px; display:flex; flex-direction:column; gap:7px">
+                <span style="font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:#8494a1">Saldo por cobrar</span>
+                <strong style="font-size:23px; font-weight:600; letter-spacing:-.02em; color:#8a5a05; font-variant-numeric:tabular-nums">S/ 214.00</strong>
+                <span style="font-size:12px; color:#6b7a87">3 clientes</span>
+              </div>
+            </div>
+
+            <section style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; overflow:hidden; box-shadow:0 1px 2px rgba(16,35,46,.04)">
+              <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:14px 16px; border-bottom:1px solid #eef2f5">
+                <label style="display:flex; align-items:center; gap:9px; border:1px solid #dbe3e8; border-radius:9px; padding:8px 12px; background:#fbfdfd; min-width:320px; flex:1">
+                  <i class="fas fa-magnifying-glass" style="color:#a4b2bd; font-size:12.5px"></i>
+                  <input type="search" placeholder="Buscar por numero, cliente, sucursal o cajero" style="flex:1; border:0; background:transparent; outline:none; font-size:13.5px">
+                </label>
+                <select style="border:1px solid #dbe3e8; border-radius:9px; padding:8px 11px; font-size:13px; color:#4d6472; background:#ffffff">
+                  <option>Todas las sucursales</option>
+                </select>
+                <select style="border:1px solid #dbe3e8; border-radius:9px; padding:8px 11px; font-size:13px; color:#4d6472; background:#ffffff">
+                  <option>Todos los estados</option>
+                </select>
+                <select style="border:1px solid #dbe3e8; border-radius:9px; padding:8px 11px; font-size:13px; color:#4d6472; background:#ffffff">
+                  <option>Toda condicion</option>
+                </select>
+                <input type="date" style="border:1px solid #dbe3e8; border-radius:9px; padding:8px 11px; font-size:13px; color:#4d6472; background:#ffffff">
+                <input type="date" style="border:1px solid #dbe3e8; border-radius:9px; padding:8px 11px; font-size:13px; color:#4d6472; background:#ffffff">
+              </div>
+
+              <table style="width:100%; border-collapse:collapse; font-size:13px">
+                <thead>
+                  <tr style="background:#fbfcfd">
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Numero</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Fecha</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Cliente</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Cajero</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Condicion</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Estado</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Total</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Saldo</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{ sales }}" as="row" hint-placeholder-count="6">
+                    <tr style="border-bottom:1px solid #f4f7f8" style-hover="background:#fbfdfe">
+                      <td style="padding:13px 16px; font-weight:600; font-variant-numeric:tabular-nums">{{ row.number }}</td>
+                      <td style="padding:13px 16px; color:#4d6472; font-variant-numeric:tabular-nums">{{ row.date }}</td>
+                      <td style="padding:13px 16px; color:#16232e">{{ row.customer }}</td>
+                      <td style="padding:13px 16px; color:#4d6472">{{ row.cashier }}</td>
+                      <td style="padding:13px 16px">{{ row.conditionChip }}</td>
+                      <td style="padding:13px 16px">{{ row.statusChip }}</td>
+                      <td style="padding:13px 16px; text-align:right; font-variant-numeric:tabular-nums">{{ row.total }}</td>
+                      <td style="padding:13px 16px; text-align:right; font-variant-numeric:tabular-nums">{{ row.balanceCell }}</td>
+                      <td style="padding:13px 16px">
+                        <div style="display:flex; gap:6px; justify-content:flex-end">
+                          <button type="button" aria-label="Ver detalle" style="border:1px solid #eef2f5; background:#ffffff; color:#6b7a87; width:30px; height:30px; border-radius:7px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285"><i class="fas fa-eye" style="font-size:11.5px"></i></button>
+                          <button type="button" aria-label="Imprimir" style="border:1px solid #eef2f5; background:#ffffff; color:#6b7a87; width:30px; height:30px; border-radius:7px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285"><i class="fas fa-print" style="font-size:11.5px"></i></button>
+                          <button type="button" aria-label="Anular" style="border:1px solid #eef2f5; background:#ffffff; color:#6b7a87; width:30px; height:30px; border-radius:7px; cursor:pointer" style-hover="border-color:#f5cdcd; color:#c0392b"><i class="fas fa-ban" style="font-size:11.5px"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:13px 16px; border-top:1px solid #eef2f5; font-size:12.5px; color:#6b7a87">
+                <span>Mostrando 6 de 64 ventas</span>
+
+                <div style="display:flex; align-items:center; gap:6px">
+                  <button type="button" style="border:1px solid #dbe3e8; background:#ffffff; color:#4d6472; border-radius:7px; padding:6px 12px; font-size:12.5px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285">Anterior</button>
+                  <span style="padding:0 6px">Pagina 1 de 11</span>
+                  <button type="button" style="border:1px solid #dbe3e8; background:#ffffff; color:#4d6472; border-radius:7px; padding:6px 12px; font-size:12.5px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285">Siguiente</button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isProducts }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Productos" style="display:flex; flex-direction:column; gap:18px; padding:22px 24px">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px">
+              <div style="display:flex; flex-direction:column; gap:4px">
+                <h1 style="margin:0; font-size:22px; font-weight:600; letter-spacing:-.015em">Productos</h1>
+                <span style="font-size:13px; color:#6b7a87">Catalogo maestro, presentaciones y precios</span>
+              </div>
+              <div style="display:flex; gap:8px">
+                <button type="button" style="display:flex; align-items:center; gap:8px; border:1px solid #dbe3e8; background:#ffffff; color:#4d6472; border-radius:9px; padding:9px 14px; font-size:13px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285"><i class="fas fa-file-import" style="font-size:12px"></i> Importar</button>
+                <button type="button" style="display:flex; align-items:center; gap:8px; border:0; background:#0e8fa3; color:#ffffff; border-radius:9px; padding:9px 15px; font-size:13px; cursor:pointer; box-shadow:0 2px 8px rgba(14,143,163,.25)" style-hover="background:#0b7285"><i class="fas fa-plus" style="font-size:12px"></i> Nuevo producto</button>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:14px">
+              <div style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; padding:15px 17px; display:flex; flex-direction:column; gap:7px">
+                <span style="font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:#8494a1">Productos activos</span>
+                <strong style="font-size:23px; font-weight:600; letter-spacing:-.02em; font-variant-numeric:tabular-nums">1,842</strong>
+                <span style="font-size:12px; color:#6b7a87">en 3 sucursales</span>
+              </div>
+              <div style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; padding:15px 17px; display:flex; flex-direction:column; gap:7px">
+                <span style="font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:#8494a1">Presentaciones</span>
+                <strong style="font-size:23px; font-weight:600; letter-spacing:-.02em; font-variant-numeric:tabular-nums">2,317</strong>
+                <span style="font-size:12px; color:#6b7a87">con codigo de barras</span>
+              </div>
+              <div style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; padding:15px 17px; display:flex; flex-direction:column; gap:7px">
+                <span style="font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:#8494a1">Sin precio de venta</span>
+                <strong style="font-size:23px; font-weight:600; letter-spacing:-.02em; color:#8a5a05; font-variant-numeric:tabular-nums">14</strong>
+                <span style="font-size:12px; color:#6b7a87">requieren revision</span>
+              </div>
+              <div style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; padding:15px 17px; display:flex; flex-direction:column; gap:7px">
+                <span style="font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:#8494a1">Margen promedio</span>
+                <strong style="font-size:23px; font-weight:600; letter-spacing:-.02em; font-variant-numeric:tabular-nums">34.2%</strong>
+                <span style="font-size:12px; color:#6b7a87">sobre costo</span>
+              </div>
+            </div>
+
+            <section style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; overflow:hidden; box-shadow:0 1px 2px rgba(16,35,46,.04)">
+              <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:14px 16px; border-bottom:1px solid #eef2f5">
+                <label style="display:flex; align-items:center; gap:9px; border:1px solid #dbe3e8; border-radius:9px; padding:8px 12px; background:#fbfdfd; min-width:320px; flex:1">
+                  <i class="fas fa-magnifying-glass" style="color:#a4b2bd; font-size:12.5px"></i>
+                  <input type="search" placeholder="Buscar por nombre, codigo interno o codigo de barras" style="flex:1; border:0; background:transparent; outline:none; font-size:13.5px" />
+                </label>
+                <select style="border:1px solid #dbe3e8; border-radius:9px; padding:8px 11px; font-size:13px; color:#4d6472; background:#ffffff"><option>Todos los laboratorios</option></select>
+                <select style="border:1px solid #dbe3e8; border-radius:9px; padding:8px 11px; font-size:13px; color:#4d6472; background:#ffffff"><option>Toda categoria</option></select>
+                <select style="border:1px solid #dbe3e8; border-radius:9px; padding:8px 11px; font-size:13px; color:#4d6472; background:#ffffff"><option>Activos</option></select>
+              </div>
+
+              <table style="width:100%; border-collapse:collapse; font-size:13px">
+                <thead>
+                  <tr style="background:#fbfcfd">
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Codigo</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Producto</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Codigo barras</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Laboratorio</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Presentacion</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Costo unit.</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">P. venta</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Margen</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Estado</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{ products }}" as="row" hint-placeholder-count="6">
+                    <tr style="border-bottom:1px solid #f4f7f8" style-hover="background:#fbfdfe">
+                      <td style="padding:13px 16px; color:#6b7a87; font-variant-numeric:tabular-nums">{{ row.code }}</td>
+                      <td style="padding:13px 16px; font-weight:600">{{ row.name }}</td>
+                      <td style="padding:13px 16px; color:#6b7a87; font-variant-numeric:tabular-nums">{{ row.barcode }}</td>
+                      <td style="padding:13px 16px; color:#4d6472">{{ row.lab }}</td>
+                      <td style="padding:13px 16px; color:#4d6472">{{ row.presentation }}</td>
+                      <td style="padding:13px 16px; text-align:right; color:#4d6472; font-variant-numeric:tabular-nums">{{ row.cost }}</td>
+                      <td style="padding:13px 16px; text-align:right; font-weight:600; font-variant-numeric:tabular-nums">{{ row.price }}</td>
+                      <td style="padding:13px 16px; text-align:right; font-variant-numeric:tabular-nums">{{ row.margin }}</td>
+                      <td style="padding:13px 16px">{{ row.statusChip }}</td>
+                      <td style="padding:13px 16px">
+                        <div style="display:flex; gap:6px; justify-content:flex-end">
+                          <button type="button" aria-label="Editar" style="border:1px solid #eef2f5; background:#ffffff; color:#6b7a87; width:30px; height:30px; border-radius:7px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285"><i class="fas fa-pen" style="font-size:11.5px"></i></button>
+                          <button type="button" aria-label="Presentaciones" style="border:1px solid #eef2f5; background:#ffffff; color:#6b7a87; width:30px; height:30px; border-radius:7px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285"><i class="fas fa-layer-group" style="font-size:11.5px"></i></button>
+                          <button type="button" aria-label="Desactivar" style="border:1px solid #eef2f5; background:#ffffff; color:#6b7a87; width:30px; height:30px; border-radius:7px; cursor:pointer" style-hover="border-color:#f5cdcd; color:#c0392b"><i class="fas fa-power-off" style="font-size:11.5px"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:13px 16px; border-top:1px solid #eef2f5; font-size:12.5px; color:#6b7a87">
+                <span>Mostrando 6 de 1,842 productos</span>
+                <div style="display:flex; align-items:center; gap:6px">
+                  <button type="button" style="border:1px solid #dbe3e8; background:#ffffff; color:#4d6472; border-radius:7px; padding:6px 12px; font-size:12.5px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285">Anterior</button>
+                  <span style="padding:0 6px">Pagina 1 de 308</span>
+                  <button type="button" style="border:1px solid #dbe3e8; background:#ffffff; color:#4d6472; border-radius:7px; padding:6px 12px; font-size:12.5px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285">Siguiente</button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isPurchases }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Compras" style="display:flex; flex-direction:column; gap:18px; padding:22px 24px">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px">
+              <div style="display:flex; flex-direction:column; gap:4px">
+                <h1 style="margin:0; font-size:22px; font-weight:600; letter-spacing:-.015em">Compras de mercaderia</h1>
+                <span style="font-size:13px; color:#6b7a87">La compra se guarda en borrador antes de confirmar la recepcion.</span>
+              </div>
+              <div style="display:flex; gap:8px">
+                <button type="button" style="display:flex; align-items:center; gap:8px; border:0; background:#0e8fa3; color:#ffffff; border-radius:9px; padding:9px 15px; font-size:13px; cursor:pointer; box-shadow:0 2px 8px rgba(14,143,163,.25)" style-hover="background:#0b7285"><i class="fas fa-plus" style="font-size:12px"></i> Nueva compra</button>
+              </div>
+            </div>
+
+            <section style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; overflow:hidden; box-shadow:0 1px 2px rgba(16,35,46,.04)">
+              <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:14px 16px; border-bottom:1px solid #eef2f5">
+                <label style="display:flex; align-items:center; gap:9px; border:1px solid #dbe3e8; border-radius:9px; padding:8px 12px; background:#fbfdfd; min-width:300px; flex:1">
+                  <i class="fas fa-magnifying-glass" style="color:#a4b2bd; font-size:12.5px"></i>
+                  <input type="search" placeholder="Buscar compra" style="flex:1; border:0; background:transparent; outline:none; font-size:13.5px" />
+                </label>
+              </div>
+
+              <table style="width:100%; border-collapse:collapse; font-size:13px">
+                <thead>
+                  <tr style="background:#fbfcfd">
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Fecha</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Documento</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Proveedor</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Almacen</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Condicion</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Total</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Estado</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{ purchases }}" as="row" hint-placeholder-count="6">
+                    <tr style="border-bottom:1px solid #f4f7f8" style-hover="background:#fbfdfe">
+                      <td style="padding:13px 16px; color:#4d6472; font-variant-numeric:tabular-nums">{{ row.date }}</td>
+                      <td style="padding:13px 16px; font-weight:600; font-variant-numeric:tabular-nums">{{ row.number }}</td>
+                      <td style="padding:13px 16px; color:#16232e">{{ row.supplier }}</td>
+                      <td style="padding:13px 16px; color:#4d6472">{{ row.warehouse }}</td>
+                      <td style="padding:13px 16px">{{ row.conditionChip }}</td>
+                      <td style="padding:13px 16px; text-align:right; font-variant-numeric:tabular-nums">{{ row.total }}</td>
+                      <td style="padding:13px 16px">{{ row.statusChip }}</td>
+                      <td style="padding:13px 16px; text-align:right">{{ row.action }}</td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:13px 16px; border-top:1px solid #eef2f5; font-size:12.5px; color:#6b7a87">
+                <span>Mostrando 6 de 37 compras</span>
+                <div style="display:flex; align-items:center; gap:6px">
+                  <button type="button" style="border:1px solid #dbe3e8; background:#ffffff; color:#4d6472; border-radius:7px; padding:6px 12px; font-size:12.5px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285">Anterior</button>
+                  <span style="padding:0 6px">Pagina 1 de 7</span>
+                  <button type="button" style="border:1px solid #dbe3e8; background:#ffffff; color:#4d6472; border-radius:7px; padding:6px 12px; font-size:12.5px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285">Siguiente</button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isStock }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Inventario" style="display:flex; flex-direction:column; gap:18px; padding:22px 24px">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px">
+              <div style="display:flex; flex-direction:column; gap:4px">
+                <h1 style="margin:0; font-size:22px; font-weight:600; letter-spacing:-.015em">Stock por almacen y lote</h1>
+                <span style="font-size:13px; color:#6b7a87">Existencias reales calculadas por movimientos de inventario. El stock no se edita directamente.</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px; border:1px solid #e3e9ed; background:#ffffff; color:#6b7a87; border-radius:999px; padding:7px 14px; font-size:12.5px">
+                <i class="fas fa-lock" style="font-size:11px; color:#a4b2bd"></i> Solo lectura
+              </div>
+            </div>
+
+            <section style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; overflow:hidden; box-shadow:0 1px 2px rgba(16,35,46,.04)">
+              <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:14px 16px; border-bottom:1px solid #eef2f5">
+                <label style="display:flex; align-items:center; gap:9px; border:1px solid #dbe3e8; border-radius:9px; padding:8px 12px; background:#fbfdfd; min-width:300px; flex:1">
+                  <i class="fas fa-magnifying-glass" style="color:#a4b2bd; font-size:12.5px"></i>
+                  <input type="search" placeholder="Buscar existencia" style="flex:1; border:0; background:transparent; outline:none; font-size:13.5px" />
+                </label>
+              </div>
+
+              <table style="width:100%; border-collapse:collapse; font-size:13px">
+                <thead>
+                  <tr style="background:#fbfcfd">
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Almacen</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Producto</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Presentacion</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Lote</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Vencimiento</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Stock</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Reservado</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Disponible</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{ stock }}" as="row" hint-placeholder-count="6">
+                    <tr style="border-bottom:1px solid #f4f7f8" style-hover="background:#fbfdfe">
+                      <td style="padding:13px 16px; color:#4d6472">{{ row.warehouse }}</td>
+                      <td style="padding:13px 16px; font-weight:600">{{ row.product }}</td>
+                      <td style="padding:13px 16px; color:#4d6472">{{ row.presentation }}</td>
+                      <td style="padding:13px 16px; color:#4d6472; font-variant-numeric:tabular-nums">{{ row.lot }}</td>
+                      <td style="padding:13px 16px">{{ row.expiryChip }}</td>
+                      <td style="padding:13px 16px; text-align:right; color:#4d6472; font-variant-numeric:tabular-nums">{{ row.quantity }}</td>
+                      <td style="padding:13px 16px; text-align:right; color:#6b7a87; font-variant-numeric:tabular-nums">{{ row.reserved }}</td>
+                      <td style="padding:13px 16px; text-align:right; font-variant-numeric:tabular-nums">{{ row.availableCell }}</td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:13px 16px; border-top:1px solid #eef2f5; font-size:12.5px; color:#6b7a87">
+                <span>Mostrando 6 de 2,317 registros de stock</span>
+                <div style="display:flex; align-items:center; gap:6px">
+                  <button type="button" style="border:1px solid #dbe3e8; background:#ffffff; color:#4d6472; border-radius:7px; padding:6px 12px; font-size:12.5px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285">Anterior</button>
+                  <span style="padding:0 6px">Pagina 1 de 386</span>
+                  <button type="button" style="border:1px solid #dbe3e8; background:#ffffff; color:#4d6472; border-radius:7px; padding:6px 12px; font-size:12.5px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285">Siguiente</button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isCash }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Caja" style="display:flex; flex-direction:column; gap:18px; padding:22px 24px">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px">
+              <div style="display:flex; flex-direction:column; gap:4px">
+                <h1 style="margin:0; font-size:22px; font-weight:600; letter-spacing:-.015em">Caja actual y arqueos</h1>
+                <span style="font-size:13px; color:#6b7a87">Sesiones de caja por terminal y usuario</span>
+              </div>
+              <button type="button" style="display:flex; align-items:center; gap:8px; border:0; background:#0e8fa3; color:#ffffff; border-radius:9px; padding:9px 15px; font-size:13px; cursor:pointer; box-shadow:0 2px 8px rgba(14,143,163,.25)" style-hover="background:#0b7285"><i class="fas fa-lock-open" style="font-size:12px"></i> Abrir caja</button>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:14px">
+              <div style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; padding:16px 18px; display:flex; flex-direction:column; gap:8px">
+                <span style="font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:#8494a1">Efectivo esperado</span>
+                <strong style="font-size:26px; font-weight:600; letter-spacing:-.02em; font-variant-numeric:tabular-nums">S/ 2,845.50</strong>
+                <span style="font-size:12px; color:#6b7a87">Caja 01 · abierta 08:02</span>
+              </div>
+              <div style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; padding:16px 18px; display:flex; flex-direction:column; gap:8px">
+                <span style="font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:#8494a1">Monto inicial</span>
+                <strong style="font-size:26px; font-weight:600; letter-spacing:-.02em; font-variant-numeric:tabular-nums">S/ 300.00</strong>
+                <span style="font-size:12px; color:#6b7a87">apertura del turno</span>
+              </div>
+              <div style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; padding:16px 18px; display:flex; flex-direction:column; gap:8px">
+                <span style="font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:#8494a1">Ultimo arqueo parcial</span>
+                <strong style="font-size:26px; font-weight:600; letter-spacing:-.02em; color:#127a4f; font-variant-numeric:tabular-nums">S/ 0.00</strong>
+                <span style="font-size:12px; color:#6b7a87">diferencia · 11:15</span>
+              </div>
+            </div>
+
+            <section style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; overflow:hidden; box-shadow:0 1px 2px rgba(16,35,46,.04)">
+              <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:14px 16px; border-bottom:1px solid #eef2f5">
+                <label style="display:flex; align-items:center; gap:9px; border:1px solid #dbe3e8; border-radius:9px; padding:8px 12px; background:#fbfdfd; min-width:300px; flex:1">
+                  <i class="fas fa-magnifying-glass" style="color:#a4b2bd; font-size:12.5px"></i>
+                  <input type="search" placeholder="Buscar sesion de caja" style="flex:1; border:0; background:transparent; outline:none; font-size:13.5px" />
+                </label>
+              </div>
+
+              <table style="width:100%; border-collapse:collapse; font-size:13px">
+                <thead>
+                  <tr style="background:#fbfcfd">
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Caja</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Apertura</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Usuario</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Inicial</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Efectivo esperado</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Estado</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{ cashSessions }}" as="row" hint-placeholder-count="5">
+                    <tr style="border-bottom:1px solid #f4f7f8" style-hover="background:#fbfdfe">
+                      <td style="padding:13px 16px; font-weight:600">{{ row.register }}</td>
+                      <td style="padding:13px 16px; color:#4d6472; font-variant-numeric:tabular-nums">{{ row.opened }}</td>
+                      <td style="padding:13px 16px; color:#4d6472">{{ row.user }}</td>
+                      <td style="padding:13px 16px; text-align:right; color:#4d6472; font-variant-numeric:tabular-nums">{{ row.initial }}</td>
+                      <td style="padding:13px 16px; text-align:right; font-weight:600; font-variant-numeric:tabular-nums">{{ row.expected }}</td>
+                      <td style="padding:13px 16px">{{ row.statusChip }}</td>
+                      <td style="padding:13px 16px; text-align:right">{{ row.actions }}</td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </section>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isExpenses }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Gastos" style="display:flex; flex-direction:column; gap:18px; padding:22px 24px">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px">
+              <div style="display:flex; flex-direction:column; gap:4px">
+                <h1 style="margin:0; font-size:22px; font-weight:600; letter-spacing:-.015em">Gastos</h1>
+                <span style="font-size:13px; color:#6b7a87">Gastos operativos registrados por sucursal</span>
+              </div>
+              <button type="button" style="display:flex; align-items:center; gap:8px; border:0; background:#0e8fa3; color:#ffffff; border-radius:9px; padding:9px 15px; font-size:13px; cursor:pointer; box-shadow:0 2px 8px rgba(14,143,163,.25)" style-hover="background:#0b7285"><i class="fas fa-plus" style="font-size:12px"></i> Registrar gasto</button>
+            </div>
+
+            <section style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; overflow:hidden; box-shadow:0 1px 2px rgba(16,35,46,.04)">
+              <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:14px 16px; border-bottom:1px solid #eef2f5">
+                <label style="display:flex; align-items:center; gap:9px; border:1px solid #dbe3e8; border-radius:9px; padding:8px 12px; background:#fbfdfd; min-width:300px; flex:1">
+                  <i class="fas fa-magnifying-glass" style="color:#a4b2bd; font-size:12.5px"></i>
+                  <input type="search" placeholder="Buscar gasto" style="flex:1; border:0; background:transparent; outline:none; font-size:13.5px" />
+                </label>
+              </div>
+
+              <table style="width:100%; border-collapse:collapse; font-size:13px">
+                <thead>
+                  <tr style="background:#fbfcfd">
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Fecha</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Sucursal</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Categoria</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Beneficiario</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Medio</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Monto</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Estado</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{ movements }}" as="row" hint-placeholder-count="6">
+                    <tr style="border-bottom:1px solid #f4f7f8" style-hover="background:#fbfdfe">
+                      <td style="padding:13px 16px; color:#4d6472; font-variant-numeric:tabular-nums">{{ row.date }}</td>
+                      <td style="padding:13px 16px; color:#4d6472">{{ row.branch }}</td>
+                      <td style="padding:13px 16px; color:#16232e">{{ row.category }}</td>
+                      <td style="padding:13px 16px; color:#4d6472">{{ row.party }}</td>
+                      <td style="padding:13px 16px">{{ row.methodChip }}</td>
+                      <td style="padding:13px 16px; text-align:right; font-weight:600; font-variant-numeric:tabular-nums">{{ row.amount }}</td>
+                      <td style="padding:13px 16px">{{ row.statusChip }}</td>
+                      <td style="padding:13px 16px; text-align:right">{{ row.action }}</td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </section>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isPayables }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Cuentas por pagar" style="display:flex; flex-direction:column; gap:18px; padding:22px 24px">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px">
+              <div style="display:flex; flex-direction:column; gap:4px">
+                <h1 style="margin:0; font-size:22px; font-weight:600; letter-spacing:-.015em">Cuentas por pagar</h1>
+                <span style="font-size:13px; color:#6b7a87">Saldos pendientes con proveedores</span>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:flex-end; gap:2px">
+                <span style="font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:#8494a1">Saldo total</span>
+                <strong style="font-size:22px; font-weight:600; letter-spacing:-.02em; font-variant-numeric:tabular-nums">S/ 12,405.60</strong>
+              </div>
+            </div>
+
+            <section style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; overflow:hidden; box-shadow:0 1px 2px rgba(16,35,46,.04)">
+              <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:14px 16px; border-bottom:1px solid #eef2f5">
+                <label style="display:flex; align-items:center; gap:9px; border:1px solid #dbe3e8; border-radius:9px; padding:8px 12px; background:#fbfdfd; min-width:300px; flex:1">
+                  <i class="fas fa-magnifying-glass" style="color:#a4b2bd; font-size:12.5px"></i>
+                  <input type="search" placeholder="Buscar por proveedor o documento" style="flex:1; border:0; background:transparent; outline:none; font-size:13.5px" />
+                </label>
+              </div>
+
+              <table style="width:100%; border-collapse:collapse; font-size:13px">
+                <thead>
+                  <tr style="background:#fbfcfd">
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Proveedor</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Documento</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Emision</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Vencimiento</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Monto original</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Saldo</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Estado</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{ payables }}" as="row" hint-placeholder-count="6">
+                    <tr style="border-bottom:1px solid #f4f7f8" style-hover="background:#fbfdfe">
+                      <td style="padding:13px 16px; font-weight:600">{{ row.party }}</td>
+                      <td style="padding:13px 16px; color:#4d6472; font-variant-numeric:tabular-nums">{{ row.document }}</td>
+                      <td style="padding:13px 16px; color:#4d6472; font-variant-numeric:tabular-nums">{{ row.issue }}</td>
+                      <td style="padding:13px 16px">{{ row.dueChip }}</td>
+                      <td style="padding:13px 16px; text-align:right; color:#4d6472; font-variant-numeric:tabular-nums">{{ row.original }}</td>
+                      <td style="padding:13px 16px; text-align:right; font-weight:600; font-variant-numeric:tabular-nums">{{ row.balance }}</td>
+                      <td style="padding:13px 16px">{{ row.statusChip }}</td>
+                      <td style="padding:13px 16px; text-align:right">{{ row.action }}</td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </section>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isCatalogs }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Catalogos" style="display:flex; flex-direction:column; gap:18px; padding:22px 24px">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px">
+              <div style="display:flex; flex-direction:column; gap:4px">
+                <h1 style="margin:0; font-size:22px; font-weight:600; letter-spacing:-.015em">Categorias y laboratorios</h1>
+                <span style="font-size:13px; color:#6b7a87">Maestros que alimentan la ficha de producto</span>
+              </div>
+              <button type="button" style="display:flex; align-items:center; gap:8px; border:0; background:#0e8fa3; color:#ffffff; border-radius:9px; padding:9px 15px; font-size:13px; cursor:pointer; box-shadow:0 2px 8px rgba(14,143,163,.25)" style-hover="background:#0b7285"><i class="fas fa-plus" style="font-size:12px"></i> Nueva categoria</button>
+            </div>
+
+            <div role="tablist" style="display:flex; gap:4px; padding:4px; background:#f1f5f7; border-radius:10px; align-self:flex-start">
+              <button type="button" role="tab" style="border:0; border-radius:8px; background:#ffffff; color:#0b7285; font-size:13px; font-weight:500; padding:8px 15px; cursor:pointer; box-shadow:0 1px 2px rgba(16,35,46,.08)">Categorias</button>
+              <button type="button" role="tab" style="border:0; border-radius:8px; background:transparent; color:#5b6c78; font-size:13px; padding:8px 15px; cursor:pointer" style-hover="color:#16232e">Laboratorios</button>
+              <button type="button" role="tab" style="border:0; border-radius:8px; background:transparent; color:#5b6c78; font-size:13px; padding:8px 15px; cursor:pointer" style-hover="color:#16232e">Principios activos</button>
+              <button type="button" role="tab" style="border:0; border-radius:8px; background:transparent; color:#5b6c78; font-size:13px; padding:8px 15px; cursor:pointer" style-hover="color:#16232e">Acciones terapeuticas</button>
+              <button type="button" role="tab" style="border:0; border-radius:8px; background:transparent; color:#5b6c78; font-size:13px; padding:8px 15px; cursor:pointer" style-hover="color:#16232e">Ubicaciones</button>
+            </div>
+
+            <section style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; overflow:hidden; box-shadow:0 1px 2px rgba(16,35,46,.04); max-width:760px">
+              <div style="display:flex; align-items:center; gap:10px; padding:14px 16px; border-bottom:1px solid #eef2f5">
+                <label style="display:flex; align-items:center; gap:9px; border:1px solid #dbe3e8; border-radius:9px; padding:8px 12px; background:#fbfdfd; flex:1">
+                  <i class="fas fa-magnifying-glass" style="color:#a4b2bd; font-size:12.5px"></i>
+                  <input type="search" placeholder="Buscar categoria" style="flex:1; border:0; background:transparent; outline:none; font-size:13.5px" />
+                </label>
+              </div>
+
+              <table style="width:100%; border-collapse:collapse; font-size:13px">
+                <thead>
+                  <tr style="background:#fbfcfd">
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Nombre</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Estado</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{ categories }}" as="row" hint-placeholder-count="6">
+                    <tr style="border-bottom:1px solid #f4f7f8" style-hover="background:#fbfdfe">
+                      <td style="padding:13px 16px; font-weight:600">{{ row.name }}</td>
+                      <td style="padding:13px 16px">{{ row.statusChip }}</td>
+                      <td style="padding:13px 16px">
+                        <div style="display:flex; gap:6px; justify-content:flex-end">
+                          <button type="button" aria-label="Editar" style="border:1px solid #eef2f5; background:#ffffff; color:#6b7a87; width:30px; height:30px; border-radius:7px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285"><i class="fas fa-pen" style="font-size:11.5px"></i></button>
+                          <button type="button" aria-label="Desactivar" style="border:1px solid #eef2f5; background:#ffffff; color:#6b7a87; width:30px; height:30px; border-radius:7px; cursor:pointer" style-hover="border-color:#f5cdcd; color:#c0392b"><i class="fas fa-power-off" style="font-size:11.5px"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </section>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isSuppliers }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Proveedores" style="display:flex; flex-direction:column; gap:18px; padding:22px 24px">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px">
+              <div style="display:flex; flex-direction:column; gap:4px">
+                <h1 style="margin:0; font-size:22px; font-weight:600; letter-spacing:-.015em">Proveedores</h1>
+                <span style="font-size:13px; color:#6b7a87">Distribuidoras y laboratorios que abastecen la botica</span>
+              </div>
+              <button type="button" style="display:flex; align-items:center; gap:8px; border:0; background:#0e8fa3; color:#ffffff; border-radius:9px; padding:9px 15px; font-size:13px; cursor:pointer; box-shadow:0 2px 8px rgba(14,143,163,.25)" style-hover="background:#0b7285"><i class="fas fa-plus" style="font-size:12px"></i> Nuevo proveedor</button>
+            </div>
+
+            <section style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; overflow:hidden; box-shadow:0 1px 2px rgba(16,35,46,.04)">
+              <div style="display:flex; align-items:center; gap:10px; padding:14px 16px; border-bottom:1px solid #eef2f5">
+                <label style="display:flex; align-items:center; gap:9px; border:1px solid #dbe3e8; border-radius:9px; padding:8px 12px; background:#fbfdfd; flex:1">
+                  <i class="fas fa-magnifying-glass" style="color:#a4b2bd; font-size:12.5px"></i>
+                  <input type="search" placeholder="Buscar proveedor" style="flex:1; border:0; background:transparent; outline:none; font-size:13.5px" />
+                </label>
+              </div>
+
+              <table style="width:100%; border-collapse:collapse; font-size:13px">
+                <thead>
+                  <tr style="background:#fbfcfd">
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Documento</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Razon social</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Nombre comercial</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Telefono</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Estado</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{ suppliers }}" as="row" hint-placeholder-count="6">
+                    <tr style="border-bottom:1px solid #f4f7f8" style-hover="background:#fbfdfe">
+                      <td style="padding:13px 16px; color:#4d6472; font-variant-numeric:tabular-nums">{{ row.document }}</td>
+                      <td style="padding:13px 16px; font-weight:600">{{ row.legal }}</td>
+                      <td style="padding:13px 16px; color:#4d6472">{{ row.trade }}</td>
+                      <td style="padding:13px 16px; color:#4d6472; font-variant-numeric:tabular-nums">{{ row.phone }}</td>
+                      <td style="padding:13px 16px">{{ row.statusChip }}</td>
+                      <td style="padding:13px 16px">
+                        <div style="display:flex; gap:6px; justify-content:flex-end">
+                          <button type="button" aria-label="Editar" style="border:1px solid #eef2f5; background:#ffffff; color:#6b7a87; width:30px; height:30px; border-radius:7px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285"><i class="fas fa-pen" style="font-size:11.5px"></i></button>
+                          <button type="button" aria-label="Desactivar" style="border:1px solid #eef2f5; background:#ffffff; color:#6b7a87; width:30px; height:30px; border-radius:7px; cursor:pointer" style-hover="border-color:#f5cdcd; color:#c0392b"><i class="fas fa-power-off" style="font-size:11.5px"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </section>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isBranches }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Sucursales" style="display:flex; flex-direction:column; gap:18px; padding:22px 24px">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px">
+              <div style="display:flex; flex-direction:column; gap:4px">
+                <h1 style="margin:0; font-size:22px; font-weight:600; letter-spacing:-.015em">Sucursales</h1>
+                <span style="font-size:13px; color:#6b7a87">Establecimientos de la empresa activa</span>
+              </div>
+              <button type="button" style="display:flex; align-items:center; gap:8px; border:0; background:#0e8fa3; color:#ffffff; border-radius:9px; padding:9px 15px; font-size:13px; cursor:pointer; box-shadow:0 2px 8px rgba(14,143,163,.25)" style-hover="background:#0b7285"><i class="fas fa-plus" style="font-size:12px"></i> Nueva sucursal</button>
+            </div>
+
+            <section style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; overflow:hidden; box-shadow:0 1px 2px rgba(16,35,46,.04)">
+              <div style="display:flex; align-items:center; gap:10px; padding:14px 16px; border-bottom:1px solid #eef2f5">
+                <label style="display:flex; align-items:center; gap:9px; border:1px solid #dbe3e8; border-radius:9px; padding:8px 12px; background:#fbfdfd; flex:1">
+                  <i class="fas fa-magnifying-glass" style="color:#a4b2bd; font-size:12.5px"></i>
+                  <input type="search" placeholder="Buscar sucursal" style="flex:1; border:0; background:transparent; outline:none; font-size:13.5px" />
+                </label>
+              </div>
+              <table style="width:100%; border-collapse:collapse; font-size:13px">
+                <thead>
+                  <tr style="background:#fbfcfd">
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Codigo</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Sucursal</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Direccion</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Telefono</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Estado</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{ branches }}" as="row" hint-placeholder-count="3">
+                    <tr style="border-bottom:1px solid #f4f7f8" style-hover="background:#fbfdfe">
+                      <td style="padding:13px 16px; color:#6b7a87; font-variant-numeric:tabular-nums">{{ row.code }}</td>
+                      <td style="padding:13px 16px; font-weight:600">{{ row.name }}</td>
+                      <td style="padding:13px 16px; color:#4d6472">{{ row.address }}</td>
+                      <td style="padding:13px 16px; color:#4d6472; font-variant-numeric:tabular-nums">{{ row.phone }}</td>
+                      <td style="padding:13px 16px">{{ row.statusChip }}</td>
+                      <td style="padding:13px 16px">
+                        <div style="display:flex; gap:6px; justify-content:flex-end">
+                          <button type="button" aria-label="Editar" style="border:1px solid #eef2f5; background:#ffffff; color:#6b7a87; width:30px; height:30px; border-radius:7px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285"><i class="fas fa-pen" style="font-size:11.5px"></i></button>
+                          <button type="button" aria-label="Desactivar" style="border:1px solid #eef2f5; background:#ffffff; color:#6b7a87; width:30px; height:30px; border-radius:7px; cursor:pointer" style-hover="border-color:#f5cdcd; color:#c0392b"><i class="fas fa-power-off" style="font-size:11.5px"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </section>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isWarehouses }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Almacenes" style="display:flex; flex-direction:column; gap:18px; padding:22px 24px">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px">
+              <div style="display:flex; flex-direction:column; gap:4px">
+                <h1 style="margin:0; font-size:22px; font-weight:600; letter-spacing:-.015em">Almacenes</h1>
+                <span style="font-size:13px; color:#6b7a87">Almacenes de stock asociados a cada sucursal.</span>
+              </div>
+              <button type="button" style="display:flex; align-items:center; gap:8px; border:0; background:#0e8fa3; color:#ffffff; border-radius:9px; padding:9px 15px; font-size:13px; cursor:pointer; box-shadow:0 2px 8px rgba(14,143,163,.25)" style-hover="background:#0b7285"><i class="fas fa-plus" style="font-size:12px"></i> Nuevo almacen</button>
+            </div>
+
+            <section style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; overflow:hidden; box-shadow:0 1px 2px rgba(16,35,46,.04); max-width:900px">
+              <div style="display:flex; align-items:center; gap:10px; padding:14px 16px; border-bottom:1px solid #eef2f5">
+                <label style="display:flex; align-items:center; gap:9px; border:1px solid #dbe3e8; border-radius:9px; padding:8px 12px; background:#fbfdfd; flex:1">
+                  <i class="fas fa-magnifying-glass" style="color:#a4b2bd; font-size:12.5px"></i>
+                  <input type="search" placeholder="Buscar almacen" style="flex:1; border:0; background:transparent; outline:none; font-size:13.5px" />
+                </label>
+              </div>
+              <table style="width:100%; border-collapse:collapse; font-size:13px">
+                <thead>
+                  <tr style="background:#fbfcfd">
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Codigo</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Almacen</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Sucursal</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Estado</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{ warehouses }}" as="row" hint-placeholder-count="3">
+                    <tr style="border-bottom:1px solid #f4f7f8" style-hover="background:#fbfdfe">
+                      <td style="padding:13px 16px; color:#6b7a87; font-variant-numeric:tabular-nums">{{ row.code }}</td>
+                      <td style="padding:13px 16px; font-weight:600">{{ row.name }}</td>
+                      <td style="padding:13px 16px; color:#4d6472">{{ row.branch }}</td>
+                      <td style="padding:13px 16px">{{ row.statusChip }}</td>
+                      <td style="padding:13px 16px">
+                        <div style="display:flex; gap:6px; justify-content:flex-end">
+                          <button type="button" aria-label="Editar" style="border:1px solid #eef2f5; background:#ffffff; color:#6b7a87; width:30px; height:30px; border-radius:7px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285"><i class="fas fa-pen" style="font-size:11.5px"></i></button>
+                          <button type="button" aria-label="Desactivar" style="border:1px solid #eef2f5; background:#ffffff; color:#6b7a87; width:30px; height:30px; border-radius:7px; cursor:pointer" style-hover="border-color:#f5cdcd; color:#c0392b"><i class="fas fa-power-off" style="font-size:11.5px"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </section>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isRegisters }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Cajas" style="display:flex; flex-direction:column; gap:18px; padding:22px 24px">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px">
+              <div style="display:flex; flex-direction:column; gap:4px">
+                <h1 style="margin:0; font-size:22px; font-weight:600; letter-spacing:-.015em">Cajas</h1>
+                <span style="font-size:13px; color:#6b7a87">Cajas fisicas configuradas para apertura y operacion POS.</span>
+              </div>
+              <button type="button" style="display:flex; align-items:center; gap:8px; border:0; background:#0e8fa3; color:#ffffff; border-radius:9px; padding:9px 15px; font-size:13px; cursor:pointer; box-shadow:0 2px 8px rgba(14,143,163,.25)" style-hover="background:#0b7285"><i class="fas fa-plus" style="font-size:12px"></i> Nueva caja</button>
+            </div>
+
+            <section style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; overflow:hidden; box-shadow:0 1px 2px rgba(16,35,46,.04); max-width:900px">
+              <div style="display:flex; align-items:center; gap:10px; padding:14px 16px; border-bottom:1px solid #eef2f5">
+                <label style="display:flex; align-items:center; gap:9px; border:1px solid #dbe3e8; border-radius:9px; padding:8px 12px; background:#fbfdfd; flex:1">
+                  <i class="fas fa-magnifying-glass" style="color:#a4b2bd; font-size:12.5px"></i>
+                  <input type="search" placeholder="Buscar caja" style="flex:1; border:0; background:transparent; outline:none; font-size:13.5px" />
+                </label>
+              </div>
+              <table style="width:100%; border-collapse:collapse; font-size:13px">
+                <thead>
+                  <tr style="background:#fbfcfd">
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Codigo</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Caja</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Sucursal</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Estado</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{ registers }}" as="row" hint-placeholder-count="3">
+                    <tr style="border-bottom:1px solid #f4f7f8" style-hover="background:#fbfdfe">
+                      <td style="padding:13px 16px; color:#6b7a87; font-variant-numeric:tabular-nums">{{ row.code }}</td>
+                      <td style="padding:13px 16px; font-weight:600">{{ row.name }}</td>
+                      <td style="padding:13px 16px; color:#4d6472">{{ row.branch }}</td>
+                      <td style="padding:13px 16px">{{ row.statusChip }}</td>
+                      <td style="padding:13px 16px">
+                        <div style="display:flex; gap:6px; justify-content:flex-end">
+                          <button type="button" aria-label="Editar" style="border:1px solid #eef2f5; background:#ffffff; color:#6b7a87; width:30px; height:30px; border-radius:7px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285"><i class="fas fa-pen" style="font-size:11.5px"></i></button>
+                          <button type="button" aria-label="Desactivar" style="border:1px solid #eef2f5; background:#ffffff; color:#6b7a87; width:30px; height:30px; border-radius:7px; cursor:pointer" style-hover="border-color:#f5cdcd; color:#c0392b"><i class="fas fa-power-off" style="font-size:11.5px"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </section>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isUsers }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Usuarios" style="display:flex; flex-direction:column; gap:18px; padding:22px 24px">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px">
+              <div style="display:flex; flex-direction:column; gap:4px">
+                <h1 style="margin:0; font-size:22px; font-weight:600; letter-spacing:-.015em">Usuarios</h1>
+                <span style="font-size:13px; color:#6b7a87">Usuarios, roles y asignaciones devueltos por la empresa activa.</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px; border:1px solid #e3e9ed; background:#ffffff; color:#6b7a87; border-radius:999px; padding:7px 14px; font-size:12.5px">
+                <i class="fas fa-lock" style="font-size:11px; color:#a4b2bd"></i> Solo lectura
+              </div>
+            </div>
+
+            <section style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; overflow:hidden; box-shadow:0 1px 2px rgba(16,35,46,.04)">
+              <div style="display:flex; align-items:center; gap:10px; padding:14px 16px; border-bottom:1px solid #eef2f5">
+                <label style="display:flex; align-items:center; gap:9px; border:1px solid #dbe3e8; border-radius:9px; padding:8px 12px; background:#fbfdfd; flex:1">
+                  <i class="fas fa-magnifying-glass" style="color:#a4b2bd; font-size:12.5px"></i>
+                  <input type="search" placeholder="Buscar usuario" style="flex:1; border:0; background:transparent; outline:none; font-size:13.5px" />
+                </label>
+              </div>
+              <table style="width:100%; border-collapse:collapse; font-size:13px">
+                <thead>
+                  <tr style="background:#fbfcfd">
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Correo</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Nombre</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Telefono</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Rol</th>
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{ users }}" as="row" hint-placeholder-count="5">
+                    <tr style="border-bottom:1px solid #f4f7f8" style-hover="background:#fbfdfe">
+                      <td style="padding:13px 16px; color:#4d6472">{{ row.email }}</td>
+                      <td style="padding:13px 16px; font-weight:600">{{ row.name }}</td>
+                      <td style="padding:13px 16px; color:#4d6472; font-variant-numeric:tabular-nums">{{ row.phone }}</td>
+                      <td style="padding:13px 16px">{{ row.roleChip }}</td>
+                      <td style="padding:13px 16px">{{ row.statusChip }}</td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </section>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isReports }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Reportes" style="display:flex; flex-direction:column; gap:18px; padding:22px 24px">
+            <div style="display:flex; flex-direction:column; gap:4px">
+              <h1 style="margin:0; font-size:22px; font-weight:600; letter-spacing:-.015em">Reportes de ventas</h1>
+              <span style="font-size:13px; color:#6b7a87">Consolidado por dia segun sucursal y periodo</span>
+            </div>
+
+            <section style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; padding:16px; display:flex; align-items:flex-end; gap:12px; flex-wrap:wrap; box-shadow:0 1px 2px rgba(16,35,46,.04)">
+              <label style="display:flex; flex-direction:column; gap:6px; min-width:220px">
+                <span style="font-size:11.5px; color:#6b7a87; font-weight:500">Sucursal</span>
+                <select style="border:1px solid #dbe3e8; border-radius:9px; padding:9px 11px; font-size:13.5px; color:#16232e; background:#ffffff"><option>Todas</option><option>Sucursal Centro</option><option>Sucursal Norte</option></select>
+              </label>
+              <label style="display:flex; flex-direction:column; gap:6px">
+                <span style="font-size:11.5px; color:#6b7a87; font-weight:500">Desde</span>
+                <input type="date" style="border:1px solid #dbe3e8; border-radius:9px; padding:9px 11px; font-size:13.5px; color:#16232e; background:#ffffff" />
+              </label>
+              <label style="display:flex; flex-direction:column; gap:6px">
+                <span style="font-size:11.5px; color:#6b7a87; font-weight:500">Hasta</span>
+                <input type="date" style="border:1px solid #dbe3e8; border-radius:9px; padding:9px 11px; font-size:13.5px; color:#16232e; background:#ffffff" />
+              </label>
+              <div style="display:flex; gap:8px; margin-left:auto">
+                <button type="button" style="display:flex; align-items:center; gap:8px; border:1px solid #dbe3e8; background:#ffffff; color:#4d6472; border-radius:9px; padding:9px 14px; font-size:13px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285">Limpiar filtros</button>
+                <button type="button" style="display:flex; align-items:center; gap:8px; border:1px solid #dbe3e8; background:#ffffff; color:#4d6472; border-radius:9px; padding:9px 14px; font-size:13px; cursor:pointer" style-hover="border-color:#bfe1e8; color:#0b7285"><i class="fas fa-file-csv" style="font-size:12px"></i> Exportar CSV</button>
+                <button type="button" style="display:flex; align-items:center; gap:8px; border:0; background:#0e8fa3; color:#ffffff; border-radius:9px; padding:9px 15px; font-size:13px; cursor:pointer; box-shadow:0 2px 8px rgba(14,143,163,.25)" style-hover="background:#0b7285"><i class="fas fa-chart-column" style="font-size:12px"></i> Generar</button>
+              </div>
+            </section>
+
+            <div style="display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:14px">
+              <div style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; padding:16px 18px; display:flex; flex-direction:column; gap:8px">
+                <span style="font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:#8494a1">Sucursal</span>
+                <strong style="font-size:19px; font-weight:600">Todas</strong>
+              </div>
+              <div style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; padding:16px 18px; display:flex; flex-direction:column; gap:8px">
+                <span style="font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:#8494a1">Ventas en el periodo</span>
+                <strong style="font-size:26px; font-weight:600; letter-spacing:-.02em; font-variant-numeric:tabular-nums">412</strong>
+              </div>
+              <div style="background:#f7fbfc; border:1px solid #cfe6eb; border-radius:12px; padding:16px 18px; display:flex; flex-direction:column; gap:8px">
+                <span style="font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:#0b7285">Total</span>
+                <strong style="font-size:26px; font-weight:600; letter-spacing:-.02em; color:#0b7285; font-variant-numeric:tabular-nums">S/ 24,318.40</strong>
+              </div>
+            </div>
+
+            <section style="background:#ffffff; border:1px solid #e6ebef; border-radius:12px; overflow:hidden; box-shadow:0 1px 2px rgba(16,35,46,.04); max-width:720px">
+              <table style="width:100%; border-collapse:collapse; font-size:13px">
+                <thead>
+                  <tr style="background:#fbfcfd">
+                    <th style="text-align:left; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Fecha</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Ventas</th>
+                    <th style="text-align:right; padding:11px 16px; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:#8494a1; font-weight:600; border-bottom:1px solid #eef2f5">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{ reportDays }}" as="row" hint-placeholder-count="6">
+                    <tr style="border-bottom:1px solid #f4f7f8" style-hover="background:#fbfdfe">
+                      <td style="padding:13px 16px; color:#4d6472; font-variant-numeric:tabular-nums">{{ row.date }}</td>
+                      <td style="padding:13px 16px; text-align:right; color:#4d6472; font-variant-numeric:tabular-nums">{{ row.count }}</td>
+                      <td style="padding:13px 16px; text-align:right; font-weight:600; font-variant-numeric:tabular-nums">{{ row.total }}</td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </section>
+          </div>
+        </sc-if>
+      </div>
+    </section>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;screen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;pos&quot;,&quot;sales&quot;,&quot;products&quot;,&quot;purchases&quot;,&quot;stock&quot;,&quot;cash&quot;,&quot;expenses&quot;,&quot;payables&quot;,&quot;catalogs&quot;,&quot;suppliers&quot;,&quot;login&quot;],&quot;default&quot;:&quot;pos&quot;,&quot;tsType&quot;:&quot;\&quot;pos\&quot; | \&quot;sales\&quot; | \&quot;products\&quot; | \&quot;purchases\&quot; | \&quot;stock\&quot; | \&quot;cash\&quot; | \&quot;expenses\&quot; | \&quot;payables\&quot; | \&quot;catalogs\&quot; | \&quot;suppliers\&quot; | \&quot;login\&quot;&quot;},&quot;showHints&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+const chip = (text, fg, bg, bd, icon) => React.createElement(
+  "span",
+  { style: { display: "inline-flex", alignItems: "center", gap: 6, fontSize: 11.5, color: fg, background: bg, border: `1px solid ${bd}`, borderRadius: 999, padding: "4px 10px", whiteSpace: "nowrap" } },
+  React.createElement("i", { className: `fas ${icon}`, style: { fontSize: 10 } }),
+  text,
+);
+
+const rows = [
+  { number: "B001-004512", date: "20/08/2026 10:42", customer: "Publico general", cashier: "Rosa Cordova", condition: "CASH", status: "COMPLETED", total: "S/ 16.00", balance: 0 },
+  { number: "B001-004511", date: "20/08/2026 10:28", customer: "Maria Quispe", cashier: "Rosa Cordova", condition: "CREDIT", status: "COMPLETED", total: "S/ 128.40", balance: 88.4 },
+  { number: "B001-004510", date: "20/08/2026 10:05", customer: "Publico general", cashier: "Luis Tapia", condition: "CASH", status: "COMPLETED", total: "S/ 42.90", balance: 0 },
+  { number: "B001-004509", date: "20/08/2026 09:51", customer: "Clinica San Pablo", cashier: "Luis Tapia", condition: "CREDIT", status: "COMPLETED", total: "S/ 310.00", balance: 125.6 },
+  { number: "B001-004508", date: "20/08/2026 09:33", customer: "Publico general", cashier: "Rosa Cordova", condition: "CASH", status: "CANCELLED", total: "S/ 8.50", balance: 0 },
+  { number: "B001-004507", date: "20/08/2026 09:12", customer: "Jorge Ramos", cashier: "Rosa Cordova", condition: "CASH", status: "COMPLETED", total: "S/ 74.20", balance: 0 },
+];
+
+const productRows = [
+  { code: "PAR-500", name: "Paracetamol 500 mg", barcode: "7751234000123", lab: "Portugal", presentation: "Caja x 100 tab", cost: "S/ 0.32", price: "S/ 0.50", margin: "56.3%", active: true },
+  { code: "AMX-500", name: "Amoxicilina 500 mg", barcode: "7751234000456", lab: "Genfar", presentation: "Caja x 20 cap", cost: "S/ 1.15", price: "S/ 1.80", margin: "56.5%", active: true },
+  { code: "IBU-400", name: "Ibuprofeno 400 mg", barcode: "7751234000789", lab: "Medifarma", presentation: "Blister x 10 tab", cost: "S/ 2.10", price: "S/ 3.20", margin: "52.4%", active: true },
+  { code: "CLF-004", name: "Clorfenamina 4 mg", barcode: "7751234000998", lab: "Hersil", presentation: "Blister x 20 tab", cost: "S/ 0.18", price: "S/ 0.30", margin: "66.7%", active: false },
+  { code: "OMP-020", name: "Omeprazol 20 mg", barcode: "7751234001117", lab: "Farmindustria", presentation: "Caja x 30 cap", cost: "S/ 3.40", price: "S/ 5.10", margin: "50.0%", active: true },
+  { code: "SAL-100", name: "Salbutamol inhalador", barcode: "7751234001244", lab: "AC Farma", presentation: "Frasco 200 dosis", cost: "S/ 12.80", price: "S/ 18.90", margin: "47.7%", active: true },
+];
+
+const purchaseRows = [
+  { number: "F001-008841", supplier: "Distribuidora Andina SAC", date: "19/08/2026", warehouse: "Almacen principal", condition: "CREDIT", status: "CONFIRMED", total: "S/ 8,412.00" },
+  { number: "F001-008836", supplier: "Drogueria Perufarma", date: "18/08/2026", warehouse: "Almacen principal", condition: "CASH", status: "CONFIRMED", total: "S/ 2,180.50" },
+  { number: "F002-000512", supplier: "Laboratorios Portugal", date: "18/08/2026", warehouse: "Almacen Norte", condition: "CREDIT", status: "DRAFT", total: "S/ 6,905.00" },
+  { number: "F001-008830", supplier: "Medifarma Distribucion", date: "16/08/2026", warehouse: "Almacen principal", condition: "CASH", status: "CONFIRMED", total: "S/ 1,240.00" },
+  { number: "F001-008827", supplier: "Genfar Peru", date: "15/08/2026", warehouse: "Almacen principal", condition: "CREDIT", status: "DRAFT", total: "S/ 4,530.00" },
+  { number: "F001-008820", supplier: "Distribuidora Andina SAC", date: "14/08/2026", warehouse: "Almacen Norte", condition: "CASH", status: "CONFIRMED", total: "S/ 990.00" },
+];
+
+const stockRows = [
+  { product: "Paracetamol 500 mg", presentation: "Caja x 100 tab", warehouse: "Principal", lot: "A-2291", expiry: "03/2027", days: 220, available: 248, reserved: "12", cost: "S/ 0.32" },
+  { product: "Amoxicilina 500 mg", presentation: "Caja x 20 cap", warehouse: "Principal", lot: "B-1177", expiry: "11/2026", days: 82, available: 12, reserved: "0", cost: "S/ 1.15" },
+  { product: "Ibuprofeno 400 mg", presentation: "Blister x 10 tab", warehouse: "Principal", lot: "C-0455", expiry: "07/2027", days: 336, available: 96, reserved: "4", cost: "S/ 2.10" },
+  { product: "Omeprazol 20 mg", presentation: "Caja x 30 cap", warehouse: "Sucursal Norte", lot: "D-3390", expiry: "09/2026", days: 27, available: 54, reserved: "0", cost: "S/ 3.40" },
+  { product: "Salbutamol inhalador", presentation: "Frasco 200 dosis", warehouse: "Principal", lot: "E-0071", expiry: "01/2027", days: 148, available: 9, reserved: "2", cost: "S/ 12.80" },
+  { product: "Clorfenamina 4 mg", presentation: "Blister x 20 tab", warehouse: "Principal", lot: "F-2044", expiry: "08/2026", days: 4, available: 31, reserved: "0", cost: "S/ 0.18" },
+];
+
+const cashRows = [
+  { register: "Caja 01", opened: "20/08/2026 08:02", user: "Rosa Cordova", initial: "S/ 300.00", expected: "S/ 2,845.50", status: "OPEN" },
+  { register: "Caja 02", opened: "20/08/2026 08:10", user: "Luis Tapia", initial: "S/ 200.00", expected: "S/ 1,412.00", status: "OPEN" },
+  { register: "Caja 01", opened: "19/08/2026 08:05", user: "Rosa Cordova", initial: "S/ 300.00", expected: "S/ 3,980.00", status: "CLOSED" },
+  { register: "Caja 02", opened: "19/08/2026 08:00", user: "Ana Flores", initial: "S/ 200.00", expected: "S/ 2,105.40", status: "CLOSED" },
+  { register: "Caja Norte", opened: "18/08/2026 09:00", user: "Ana Flores", initial: "S/ 250.00", expected: "S/ 1,760.00", status: "CLOSED" },
+];
+
+const movementRows = [
+  { date: "20/08/2026", branch: "Sucursal Centro", category: "Servicios", party: "Luz del Sur", method: "TRANSFER", amount: "S/ 412.00", status: "ACTIVE" },
+  { date: "19/08/2026", branch: "Sucursal Centro", category: "Movilidad", party: "Taxi reparto", method: "CASH", amount: "S/ 35.00", status: "ACTIVE" },
+  { date: "19/08/2026", branch: "Sucursal Norte", category: "Mantenimiento", party: "Servitec SAC", method: "CASH", amount: "S/ 180.00", status: "ACTIVE" },
+  { date: "18/08/2026", branch: "Sucursal Centro", category: "Alquiler", party: "Inmobiliaria Rivas", method: "TRANSFER", amount: "S/ 2,400.00", status: "ACTIVE" },
+  { date: "17/08/2026", branch: "Sucursal Centro", category: "Utiles", party: "Libreria Central", method: "CASH", amount: "S/ 62.50", status: "VOID" },
+  { date: "16/08/2026", branch: "Sucursal Norte", category: "Servicios", party: "Sedapal", method: "TRANSFER", amount: "S/ 98.00", status: "ACTIVE" },
+];
+
+const payableRows = [
+  { party: "Distribuidora Andina SAC", document: "F001-008841", issue: "19/08/2026", due: "18/09/2026", days: 29, original: "S/ 8,412.00", balance: "S/ 8,412.00", status: "PENDING" },
+  { party: "Laboratorios Portugal", document: "F002-000512", issue: "18/08/2026", due: "02/09/2026", days: 13, original: "S/ 6,905.00", balance: "S/ 3,905.00", status: "PARTIAL" },
+  { party: "Genfar Peru", document: "F001-008827", issue: "15/08/2026", due: "24/08/2026", days: 4, original: "S/ 4,530.00", balance: "S/ 1,530.00", status: "PARTIAL" },
+  { party: "Drogueria Perufarma", document: "F001-008796", issue: "02/08/2026", due: "17/08/2026", days: -3, original: "S/ 1,890.00", balance: "S/ 1,890.00", status: "OVERDUE" },
+  { party: "Medifarma Distribucion", document: "F001-008830", issue: "16/08/2026", due: "15/09/2026", days: 26, original: "S/ 1,240.00", balance: "S/ 0.00", status: "PAID" },
+  { party: "AC Farma", document: "F001-008780", issue: "28/07/2026", due: "27/08/2026", days: 7, original: "S/ 3,180.00", balance: "S/ 3,180.00", status: "PENDING" },
+];
+
+const categoryRows = [
+  { name: "Analgesicos", active: true },
+  { name: "Antibioticos", active: true },
+  { name: "Antigripales", active: true },
+  { name: "Dermatologicos", active: true },
+  { name: "Material medico", active: true },
+  { name: "Suplementos", active: false },
+];
+
+const supplierRows = [
+  { document: "20481234567", legal: "Distribuidora Andina SAC", trade: "Andina Farma", phone: "01 425 8890", active: true },
+  { document: "20512349871", legal: "Drogueria Perufarma SA", trade: "Perufarma", phone: "01 610 2200", active: true },
+  { document: "20100065432", legal: "Laboratorios Portugal SA", trade: "Portugal", phone: "054 234 100", active: true },
+  { document: "20301122334", legal: "Medifarma Distribucion SAC", trade: "Medifarma", phone: "01 618 3000", active: true },
+  { document: "20556677889", legal: "Genfar Peru SAC", trade: "Genfar", phone: "01 611 4500", active: true },
+  { document: "20443322110", legal: "AC Farma SA", trade: "AC Farma", phone: "01 336 8080", active: false },
+];
+
+class Component extends DCLogic {
+  state = { screen: null };
+
+  current() {
+    return this.state.screen ?? this.props.screen ?? "pos";
+  }
+
+  set(screen) {
+    this.setState({ screen });
+  }
+
+  renderVals() {
+    const screen = this.current();
+    const labels = { pos: "Punto de venta", sales: "Ventas", login: "Login", products: "Productos", purchases: "Compras", stock: "Stock e inventario", cash: "Caja y arqueo", expenses: "Gastos", payables: "Cuentas por pagar", catalogs: "Atributos de producto", suppliers: "Proveedores" };
+    const stockGroup = screen === "products" || screen === "purchases" || screen === "stock";
+    const cashGroup = screen === "cash" || screen === "expenses" || screen === "payables";
+    const catalogsGroup = screen === "catalogs" || screen === "suppliers";
+    const smallButton = (label, icon) => React.createElement(
+      "button",
+      { type: "button", style: { display: "inline-flex", alignItems: "center", gap: 7, border: 0, background: "#0e8fa3", color: "#ffffff", borderRadius: 8, padding: "7px 13px", fontSize: 12.5, cursor: "pointer" } },
+      React.createElement("i", { className: `fas ${icon}`, style: { fontSize: 11 } }),
+      label,
+    );
+    const ghostButton = (label, icon) => React.createElement(
+      "button",
+      { type: "button", style: { display: "inline-flex", alignItems: "center", gap: 7, border: "1px solid #dbe3e8", background: "#ffffff", color: "#4d6472", borderRadius: 8, padding: "7px 13px", fontSize: 12.5, cursor: "pointer" } },
+      React.createElement("i", { className: `fas ${icon}`, style: { fontSize: 11 } }),
+      label,
+    );
+    const dash = React.createElement("span", { style: { color: "#c2ced6" } }, "—");
+    const activeLink = { background: "#0e8fa3", color: "#ffffff" };
+    const idleLink = { background: "transparent", color: "#5b6c78" };
+    const link = (on) => (on ? activeLink : idleLink);
+    return {
+      screenLabel: labels[screen] ?? "Punto de venta",
+      groupLabel: stockGroup ? "Almacen" : cashGroup ? "Caja y finanzas" : catalogsGroup ? "Catalogos" : "Ventas",
+      isCash: screen === "cash",
+      isExpenses: screen === "expenses",
+      isPayables: screen === "payables",
+      isCatalogs: screen === "catalogs",
+      isSuppliers: screen === "suppliers",
+      isCashGroup: cashGroup,
+      isCatalogsGroup: catalogsGroup,
+      cajaBg: cashGroup ? "#f2f7f8" : "transparent",
+      cajaFg: cashGroup ? "#0b7285" : "#4d6472",
+      catBg: catalogsGroup ? "#f2f7f8" : "transparent",
+      catFg: catalogsGroup ? "#0b7285" : "#4d6472",
+      cajaLinkBg: link(screen === "cash").background,
+      cajaLinkFg: link(screen === "cash").color,
+      gastoBg: link(screen === "expenses").background,
+      gastoFg: link(screen === "expenses").color,
+      pagarBg: link(screen === "payables").background,
+      pagarFg: link(screen === "payables").color,
+      atrBg: link(screen === "catalogs").background,
+      atrFg: link(screen === "catalogs").color,
+      provBg: link(screen === "suppliers").background,
+      provFg: link(screen === "suppliers").color,
+      goCash: () => this.set("cash"),
+      goExpenses: () => this.set("expenses"),
+      goPayables: () => this.set("payables"),
+      goCatalogs: () => this.set("catalogs"),
+      goSuppliers: () => this.set("suppliers"),
+      cashSessions: cashRows.map((row) => ({
+        ...row,
+        statusChip: row.status === "OPEN"
+          ? chip("Abierta", "#127a4f", "#eaf7f0", "#cfeadd", "fa-lock-open")
+          : chip("Cerrada", "#6b7a87", "#f4f7f9", "#e6ebef", "fa-lock"),
+        actions: row.status === "OPEN"
+          ? React.createElement(
+              "div",
+              { style: { display: "flex", gap: 6, justifyContent: "flex-end" } },
+              ghostButton("Arquear", "fa-calculator"),
+              smallButton("Cerrar", "fa-lock"),
+            )
+          : dash,
+      })),
+      movements: movementRows.map((row) => ({
+        ...row,
+        methodChip: row.method === "CASH"
+          ? chip("Efectivo", "#4d6472", "#f4f7f9", "#e6ebef", "fa-money-bill-wave")
+          : chip("Transferencia", "#0b7285", "#eaf6f8", "#cfe6eb", "fa-right-left"),
+        statusChip: row.status === "ACTIVE"
+          ? chip("Activo", "#127a4f", "#eaf7f0", "#cfeadd", "fa-circle-check")
+          : chip("Anulado", "#a03434", "#fdeeee", "#f5cdcd", "fa-ban"),
+        action: row.status === "ACTIVE"
+          ? React.createElement(
+              "button",
+              { type: "button", "aria-label": "Anular", style: { border: "1px solid #eef2f5", background: "#ffffff", color: "#6b7a87", width: 30, height: 30, borderRadius: 7, cursor: "pointer" } },
+              React.createElement("i", { className: "fas fa-ban", style: { fontSize: 11.5 } }),
+            )
+          : dash,
+      })),
+      payables: payableRows.map((row) => ({
+        ...row,
+        dueChip: row.days < 0
+          ? chip(row.due, "#a03434", "#fdeeee", "#f5cdcd", "fa-triangle-exclamation")
+          : row.days <= 7
+            ? chip(row.due, "#8a5a05", "#fdf4e4", "#f5e2c0", "fa-clock")
+            : chip(row.due, "#4d6472", "#f4f7f9", "#e6ebef", "fa-calendar"),
+        statusChip: row.status === "OVERDUE"
+          ? chip("Vencida", "#a03434", "#fdeeee", "#f5cdcd", "fa-triangle-exclamation")
+          : row.status === "PARTIAL"
+            ? chip("Parcial", "#0b7285", "#eaf6f8", "#cfe6eb", "fa-hourglass-half")
+            : row.status === "PAID"
+              ? chip("Pagada", "#127a4f", "#eaf7f0", "#cfeadd", "fa-circle-check")
+              : chip("Pendiente", "#8a5a05", "#fdf4e4", "#f5e2c0", "fa-clock"),
+        action: row.status === "PAID" ? dash : smallButton("Registrar pago", "fa-money-check-dollar"),
+      })),
+      categories: categoryRows.map((row) => ({
+        ...row,
+        statusChip: row.active
+          ? chip("Activo", "#127a4f", "#eaf7f0", "#cfeadd", "fa-circle-check")
+          : chip("Inactivo", "#6b7a87", "#f4f7f9", "#e6ebef", "fa-circle-minus"),
+      })),
+      suppliers: supplierRows.map((row) => ({
+        ...row,
+        statusChip: row.active
+          ? chip("Activo", "#127a4f", "#eaf7f0", "#cfeadd", "fa-circle-check")
+          : chip("Inactivo", "#6b7a87", "#f4f7f9", "#e6ebef", "fa-circle-minus"),
+      })),
+      isPos: screen === "pos",
+      isSales: screen === "sales",
+      isLogin: screen === "login",
+      isProducts: screen === "products",
+      isPurchases: screen === "purchases",
+      isStock: screen === "stock",
+      isApp: screen !== "login",
+      isSalesGroup: !stockGroup && !cashGroup && !catalogsGroup,
+      isStockGroup: stockGroup,
+      ventasBg: stockGroup || cashGroup || catalogsGroup ? "transparent" : "#f2f7f8",
+      ventasFg: stockGroup || cashGroup || catalogsGroup ? "#4d6472" : "#0b7285",
+      posBg: link(screen === "pos").background,
+      posFg: link(screen === "pos").color,
+      ventaLinkBg: link(screen === "sales").background,
+      ventaLinkFg: link(screen === "sales").color,
+      almacenBg: stockGroup ? "#f2f7f8" : "transparent",
+      almacenFg: stockGroup ? "#0b7285" : "#4d6472",
+      prodBg: link(screen === "products").background,
+      prodFg: link(screen === "products").color,
+      compBg: link(screen === "purchases").background,
+      compFg: link(screen === "purchases").color,
+      stockBg: link(screen === "stock").background,
+      stockFg: link(screen === "stock").color,
+      showHints: this.props.showHints ?? true,
+      goPos: () => this.set("pos"),
+      goSales: () => this.set("sales"),
+      goLogin: () => this.set("login"),
+      goProducts: () => this.set("products"),
+      goPurchases: () => this.set("purchases"),
+      goStock: () => this.set("stock"),
+      pickCash: () => {},
+      products: productRows.map((row) => ({
+        ...row,
+        nameCell: React.createElement(
+          "div",
+          { style: { display: "flex", flexDirection: "column", gap: 2 } },
+          React.createElement("strong", { style: { fontWeight: 600 } }, row.name),
+          React.createElement("small", { style: { fontSize: 11.5, color: "#8494a1", fontVariantNumeric: "tabular-nums" } }, row.barcode),
+        ),
+        statusChip: row.active
+          ? chip("Activo", "#127a4f", "#eaf7f0", "#cfeadd", "fa-circle-check")
+          : chip("Inactivo", "#6b7a87", "#f4f7f9", "#e6ebef", "fa-circle-minus"),
+      })),
+      purchases: purchaseRows.map((row) => ({
+        ...row,
+        conditionChip: row.condition === "CREDIT"
+          ? chip("Credito", "#8a5a05", "#fdf4e4", "#f5e2c0", "fa-hand-holding-dollar")
+          : chip("Contado", "#4d6472", "#f4f7f9", "#e6ebef", "fa-money-bill-wave"),
+        statusChip: row.status === "DRAFT"
+          ? chip("Borrador", "#8a5a05", "#fdf4e4", "#f5e2c0", "fa-pen-to-square")
+          : chip("Confirmada", "#127a4f", "#eaf7f0", "#cfeadd", "fa-circle-check"),
+        action: row.status === "DRAFT"
+          ? React.createElement(
+              "button",
+              { type: "button", style: { display: "inline-flex", alignItems: "center", gap: 7, border: 0, background: "#0e8fa3", color: "#ffffff", borderRadius: 8, padding: "7px 13px", fontSize: 12.5, cursor: "pointer" } },
+              React.createElement("i", { className: "fas fa-check", style: { fontSize: 11 } }),
+              "Confirmar",
+            )
+          : React.createElement("span", { style: { color: "#c2ced6" } }, "—"),
+      })),
+      stock: stockRows.map((row) => ({
+        ...row,
+        warehouse: row.warehouse === "Principal" ? "Almacen principal" : "Almacen Norte",
+        quantity: String(row.available + Number(row.reserved)),
+        expiryChip: row.days <= 30
+          ? chip(row.expiry, "#a03434", "#fdeeee", "#f5cdcd", "fa-triangle-exclamation")
+          : row.days <= 90
+            ? chip(row.expiry, "#8a5a05", "#fdf4e4", "#f5e2c0", "fa-clock")
+            : chip(row.expiry, "#4d6472", "#f4f7f9", "#e6ebef", "fa-calendar"),
+        availableCell: row.available <= 12
+          ? React.createElement("strong", { style: { color: "#8a5a05" } }, String(row.available))
+          : React.createElement("span", null, String(row.available)),
+      })),
+      sales: rows.map((row) => ({
+        ...row,
+        conditionChip: row.condition === "CREDIT"
+          ? chip("Credito", "#8a5a05", "#fdf4e4", "#f5e2c0", "fa-hand-holding-dollar")
+          : chip("Contado", "#4d6472", "#f4f7f9", "#e6ebef", "fa-money-bill-wave"),
+        statusChip: row.status === "CANCELLED"
+          ? chip("Anulada", "#a03434", "#fdeeee", "#f5cdcd", "fa-ban")
+          : chip("Completada", "#127a4f", "#eaf7f0", "#cfeadd", "fa-circle-check"),
+        balanceCell: row.balance > 0
+          ? React.createElement("strong", { style: { color: "#8a5a05" } }, `S/ ${row.balance.toFixed(2)}`)
+          : React.createElement("span", { style: { color: "#a4b2bd" } }, "S/ 0.00"),
+      })),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

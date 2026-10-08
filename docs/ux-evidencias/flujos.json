@@ -1,0 +1,9 @@
+[
+  {
+    "error": "locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.pos-search input')\u001b[22m\n"
+  },
+  {
+    "name": "interrupcion-flujo",
+    "text": "BF\nSistema Botica\n\nInicio de sesion\n\nDesarrollo: owner@botica.demo / Demo12345!\nCorreo electronico\nClave\nOlvide mi contrasena\nIniciar sesion"
+  }
+]

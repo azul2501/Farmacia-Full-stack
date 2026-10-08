@@ -1,0 +1,47 @@
+import type { Product } from "@/features/products/types/product";
+
+export const productFixtures: Product[] = [
+  {
+    id: 1,
+    descripcion: "PARACETAMOL 500 MG TABLETA",
+    nlaboratorio: "GENERICO",
+    factor: 100,
+    rsanitario: "RS-001",
+    pcompra: 0.08,
+    stock: 120,
+    mstock: 20,
+    pventa: 0.3,
+    tipo: "B",
+    lote: true,
+    estado: true,
+  },
+  {
+    id: 2,
+    descripcion: "IBUPROFENO 400 MG TABLETA",
+    nlaboratorio: "GENERICO",
+    factor: 100,
+    rsanitario: "RS-002",
+    pcompra: 0.12,
+    stock: 8,
+    mstock: 15,
+    pventa: 0.5,
+    tipo: "B",
+    lote: true,
+    estado: true,
+  },
+  
+  {
+    id: 3,
+    descripcion: "IBUPROFENO 400 MG TABLETA",
+    nlaboratorio: "GENERICO",
+    factor: 100,
+    rsanitario: "RS-002",
+    pcompra: 0.12,
+    stock: 8,
+    mstock: 15,
+    pventa: 0.5,
+    tipo: "B",
+    lote: true,
+    estado: true,
+  },
+];

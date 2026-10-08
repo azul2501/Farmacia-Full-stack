@@ -1,0 +1,342 @@
+{
+  "results": [
+    {
+      "name": "inicio",
+      "path": "/",
+      "text": "Botica Farma\nDashboard\nVentas\nPunto de venta\nVentas\nSolicitudes programadas\nClientes\nCuentas por cobrar\nAlmacen\nCaja y finanzas\nCatalogos\nAdministracion\nBotica Farma Demo\nDueno\nSUCURSAL\nSucursal Central\nSucursal Norte\n3\n2\nPD\nPropietario Demo\nDueno\nDashboard\nVentas del dia\nS/ 3.0\nVer ventas \nCajas abiertas\n1\nRevisar cajas \nStock minimo\n0\nRevisar stock \nPor vencer / vencidos\n0 / 0\nVer lotes \nTransferencias pendientes\n1\nVer transferencias \nDiferencias de caja\nS/ 0.0\nVer reporte \nVentas por sucursal\n\n2026-09-06\n\nSucursal Central\n2 ventas\nS/ 3.0\nMedios de pago\n\nDistribucion del dia\n\nCASH\nS/ 1.0\nBotica Farma - API conectada\nCopyright 2026. Todos los derechos reservados.",
+      "overflow": {
+        "viewport": 1366,
+        "width": 1366
+      },
+      "buttons": [
+        "",
+        "Ventas",
+        "Almacen",
+        "Caja y finanzas",
+        "Catalogos",
+        "Administracion",
+        "",
+        " 3",
+        " 2",
+        "PDPropietario DemoDueno",
+        ""
+      ]
+    },
+    {
+      "name": "pos",
+      "path": "/pos",
+      "text": "Botica Farma\nDashboard\nVentas\nPunto de venta\nVentas\nSolicitudes programadas\nClientes\nCuentas por cobrar\nAlmacen\nCaja y finanzas\nCatalogos\nAdministracion\nBotica Farma Demo\nDueno\nSUCURSAL\nSucursal Central\nSucursal Norte\n3\n2\nPD\nPropietario Demo\nDueno\nPunto de venta\nSucursal Central · Almacen Central\nCaja Central 01\nEnter\nEscanea o busca un producto\n\nEscribe al menos 2 caracteres o escanea un codigo y presiona Enter.\n\nF2\nBuscar producto\nF4\nCambiar cliente\nF9\nConfirmar venta\nVenta actual\n0 productos\nCarrito vacio\n\nAgrega productos desde el buscador.\n\nCliente\nPublico general\nCliente Demo\nObservacion (opcional)\nCondicion\nContado\nCredito\nMedio de pago\nEfectivo\nYape\nPlin\nTarjeta\nTransferencia\nSubtotal\nS/ 0.0\nDescuento\nS/ 0.0\nTotal\nS/ 0.0\nVuelto\nS/ 0.0\nConfirmar venta\nBotica Farma - API conectada\nCopyright 2026. Todos los derechos reservados.",
+      "overflow": {
+        "viewport": 1366,
+        "width": 1366
+      },
+      "buttons": [
+        "",
+        "Ventas",
+        "Almacen",
+        "Caja y finanzas",
+        "Catalogos",
+        "Administracion",
+        "",
+        " 3",
+        " 2",
+        "PDPropietario DemoDueno",
+        "Efectivo",
+        "Yape",
+        "Plin",
+        "Tarjeta",
+        "Transferencia",
+        " Confirmar venta",
+        ""
+      ]
+    },
+    {
+      "name": "productos",
+      "path": "/producto",
+      "text": "Botica Farma\nDashboard\nVentas\nAlmacen\nProductos\nCompras\nStock e inventario\nKardex\nTransferencias\nCaja y finanzas\nCatalogos\nAdministracion\nBotica Farma Demo\nDueno\nSUCURSAL\nSucursal Central\nSucursal Norte\n3\n2\nPD\nPropietario Demo\nDueno\nProductos\nCatalogo maestro, presentaciones y precios\n Importar\n Exportar\n Plantilla\n Plantilla lotes/stock\n Nuevo producto\nPRODUCTOS ACTIVOS\n2\nen 2 sucursales\nPRESENTACIONES\n2\ncon codigo de barras\nSIN PRECIO DE VENTA\n0\nrequieren revision\nMARGEN PROMEDIO\n0.0%\nsobre costo\nBuscar\nTodos los laboratorios\nLaboratorios Demo\nToda categoria\nAnalgesicos\nAntibioticos\nActivos e inactivos\nActivos\nInactivos\nProductos\nCodigo\n\tProducto\n\tCODIGO BARRAS\tLaboratorio\n\tPRESENTACION\tCOSTO UNIT.\tP. VENTA\tMARGEN\tESTADO\tACCIONES\nMED-0002\tAmoxicilina 500 mg\t7750000000028\tLaboratorios Demo\tCapsula\tS/ 1.2\tS/ 1.2\t0.0%\tActivo\t\n\nMED-0001\tParacetamol 500 mg\t7750000000011\tLaboratorios Demo\tTableta\tS/ 0.5\tS/ 0.5\t0.0%\tActivo\t\nMostrando 1-2 de 2\nFilas\n10\n25\n50\nPagina 1 de 1\nBotica Farma - API conectada\nCopyright 2026. Todos los derechos reservados.",
+      "overflow": {
+        "viewport": 1366,
+        "width": 1366
+      },
+      "buttons": [
+        "",
+        "Ventas",
+        "Almacen",
+        "Caja y finanzas",
+        "Catalogos",
+        "Administracion",
+        "",
+        " 3",
+        " 2",
+        "PDPropietario DemoDueno",
+        " Importar",
+        " Exportar",
+        " Plantilla",
+        " Plantilla lotes/stock",
+        " Nuevo producto",
+        "Codigo",
+        "Producto",
+        "Laboratorio",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "compras",
+      "path": "/compra",
+      "text": "Botica Farma\nDashboard\nVentas\nAlmacen\nProductos\nCompras\nStock e inventario\nKardex\nTransferencias\nCaja y finanzas\nCatalogos\nAdministracion\nBotica Farma Demo\nDueno\nSUCURSAL\nSucursal Central\nSucursal Norte\n3\n2\nPD\nPropietario Demo\nDueno\nCompras de mercaderia\nLa compra se guarda en borrador antes de confirmar la recepcion.\n Nueva compra\nBuscar\nCompras\nFecha\n\tDOCUMENTO\tPROVEEDOR\tALMACEN\tCONDICION\tTOTAL\tESTADO\tACCIONES\n2026-09-06\tF001-000001\tDistribuidora Demo\tAlmacen Central\tContado\tS/ 61.0\tConfirmada\t\n\n2026-09-06\tF001-000002\tDistribuidora Demo\tAlmacen Central\tCredito\tS/ 30.0\tConfirmada\t\nMostrando 1-2 de 2\nFilas\n10\n25\n50\nPagina 1 de 1\nBotica Farma - API conectada\nCopyright 2026. Todos los derechos reservados.",
+      "overflow": {
+        "viewport": 1366,
+        "width": 1366
+      },
+      "buttons": [
+        "",
+        "Ventas",
+        "Almacen",
+        "Caja y finanzas",
+        "Catalogos",
+        "Administracion",
+        "",
+        " 3",
+        " 2",
+        "PDPropietario DemoDueno",
+        " Nueva compra",
+        "Fecha",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "stock",
+      "path": "/inventario",
+      "text": "Botica Farma\nDashboard\nVentas\nAlmacen\nProductos\nCompras\nStock e inventario\nKardex\nTransferencias\nCaja y finanzas\nCatalogos\nAdministracion\nBotica Farma Demo\nDueno\nSUCURSAL\nSucursal Central\nSucursal Norte\n3\n2\nPD\nPropietario Demo\nDueno\nStock por almacen y lote\nExistencias reales calculadas por movimientos de inventario. El stock no se edita directamente.\nSolo lectura\nBuscar\nTodos los almacenes\nAlmacen Norte\nAlmacen Central\nTodo vencimiento\nVigente\nPor vencer\nCritico / vencido\nStock por almacen y lote\nAlmacen\n\tProducto\n\tPRESENTACION\tLOTE\tVencimiento\n\tStock\n\tReservado\n\tDisponible\n\nAlmacen Central\tAmoxicilina 500 mg\tCapsula\tAMO-DEMO-01\t\n05/2027\t35\t0\t35\nAlmacen Central\tParacetamol 500 mg\tTableta\tPAR-DEMO-01\t\n09/2027\t44\t0\t44\nAlmacen Central\tParacetamol 500 mg\tTableta\tPAR-DEMO-02\t\n10/2027\t20\t0\t20\nMostrando 1-3 de 3\nFilas\n10\n25\n50\nPagina 1 de 1\nBotica Farma - API conectada\nCopyright 2026. Todos los derechos reservados.",
+      "overflow": {
+        "viewport": 1366,
+        "width": 1366
+      },
+      "buttons": [
+        "",
+        "Ventas",
+        "Almacen",
+        "Caja y finanzas",
+        "Catalogos",
+        "Administracion",
+        "",
+        " 3",
+        " 2",
+        "PDPropietario DemoDueno",
+        "Almacen",
+        "Producto",
+        "Vencimiento",
+        "Stock",
+        "Reservado",
+        "Disponible",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "kardex",
+      "path": "/consulta/kardex",
+      "text": "Botica Farma\nDashboard\nVentas\nAlmacen\nProductos\nCompras\nStock e inventario\nKardex\nTransferencias\nCaja y finanzas\nCatalogos\nAdministracion\nBotica Farma Demo\nDueno\nSUCURSAL\nSucursal Central\nSucursal Norte\n3\n2\nPD\nPropietario Demo\nDueno\nKardex\nHistorial inmutable de entradas y salidas de inventario.\nSolo lectura\nBuscar\nTodos los almacenes\nAlmacen Norte\nAlmacen Central\nTodos los movimientos\nIngreso por compra\nSalida por venta\nSalida por transferencia\nIngreso por transferencia\nAjuste positivo\nAjuste negativo\nIngreso por devolucion\nKardex\nFecha\n\tMovimiento\n\tProducto\n\tPRESENTACION\tLOTE\tAlmacen\n\tCantidad\n\tSaldo\n\tDOCUMENTO\tUSUARIO\n6/9/2026, 6:54:25 p. m.\t\nSalida por transferencia\tAmoxicilina 500 mg\tCapsula\tAMO-DEMO-01\tAlmacen Central\t-5\t35\tTR-DEMO-001\tPropietario Demo\n6/9/2026, 6:54:25 p. m.\t\nSalida por venta\tParacetamol 500 mg\tTableta\tPAR-DEMO-01\tAlmacen Central\t-4\t44\tNV-CENT-00000002\tPropietario Demo\n6/9/2026, 6:54:25 p. m.\t\nSalida por venta\tParacetamol 500 mg\tTableta\tPAR-DEMO-01\tAlmacen Central\t-2\t48\tNV-CENT-00000001\tCajero Demo\n6/9/2026, 6:54:25 p. m.\t\nIngreso por compra\tParacetamol 500 mg\tTableta\tPAR-DEMO-02\tAlmacen Central\t+20\t20\tF001-000002\tPropietario Demo\n6/9/2026, 6:54:25 p. m.\t\nIngreso por compra\tAmoxicilina 500 mg\tCapsula\tAMO-DEMO-01\tAlmacen Central\t+40\t40\tF001-000001\tPropietario Demo\n6/9/2026, 6:54:24 p. m.\t\nIngreso por compra\tParacetamol 500 mg\tTableta\tPAR-DEMO-01\tAlmacen Central\t+50\t50\tF001-000001\tPropietario Demo\nMostrando 1-6 de 6\nFilas\n10\n25\n50\nPagina 1 de 1\nBotica Farma - API conectada\nCopyright 2026. Todos los derechos reservados.",
+      "overflow": {
+        "viewport": 1366,
+        "width": 1366
+      },
+      "buttons": [
+        "",
+        "Ventas",
+        "Almacen",
+        "Caja y finanzas",
+        "Catalogos",
+        "Administracion",
+        "",
+        " 3",
+        " 2",
+        "PDPropietario DemoDueno",
+        "Fecha",
+        "Movimiento",
+        "Producto",
+        "Almacen",
+        "Cantidad",
+        "Saldo",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "caja",
+      "path": "/caja",
+      "text": "Botica Farma\nDashboard\nVentas\nAlmacen\nCaja y finanzas\nCaja y arqueo\nGastos\nIngresos adicionales\nCuentas por pagar\nCatalogos\nAdministracion\nBotica Farma Demo\nDueno\nSUCURSAL\nSucursal Central\nSucursal Norte\n3\n2\nPD\nPropietario Demo\nDueno\nCaja actual y arqueos\nSesiones de caja por terminal y usuario\n Abrir caja\nEFECTIVO ESPERADO\nS/ 101.0\nCaja Central 01\nMONTO INICIAL\nS/ 100.0\napertura del turno\nULTIMA DIFERENCIA DE CAJA\nS/ 0.0\nsin registros\nBuscar\nSesiones de caja\nCaja\n\tApertura\n\tUSUARIO\tINICIAL\tEFECTIVO ESPERADO\tEstado\n\tACCIONES\nCaja Central 01\t6/9/2026, 6:54:25 p. m.\tCajero Demo\tS/ 100.0\tS/ 101.0\tAbierta\t\n Arquear\n Cerrar\nMostrando 1-1 de 1\nFilas\n10\n25\n50\nPagina 1 de 1\nBotica Farma - API conectada\nCopyright 2026. Todos los derechos reservados.",
+      "overflow": {
+        "viewport": 1366,
+        "width": 1366
+      },
+      "buttons": [
+        "",
+        "Ventas",
+        "Almacen",
+        "Caja y finanzas",
+        "Catalogos",
+        "Administracion",
+        "",
+        " 3",
+        " 2",
+        "PDPropietario DemoDueno",
+        " Abrir caja",
+        "Caja",
+        "Apertura",
+        "Estado",
+        " Arquear",
+        " Cerrar",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "ventas",
+      "path": "/venta",
+      "text": "Botica Farma\nDashboard\nVentas\nPunto de venta\nVentas\nSolicitudes programadas\nClientes\nCuentas por cobrar\nAlmacen\nCaja y finanzas\nCatalogos\nAdministracion\nBotica Farma Demo\nDueno\nSUCURSAL\nSucursal Central\nSucursal Norte\n3\n2\nPD\nPropietario Demo\nDueno\nVentas\nListado de comprobantes emitidos\nVENTAS HOY\nS/ 3.0\n2 comprobantes\nCONTADO\nS/ 1.0\n1 comprobantes\nCREDITO\nS/ 2.0\n1 comprobantes\nSALDO POR COBRAR\nS/ 2.0\n1 clientes\nBuscar\nSUCURSAL\nTodas\nSucursal Central\nSucursal Norte\nESTADO\nTodos\nCompletada\nAnulada\nCONDICION\nTodas\nContado\nCredito\nDESDE\nHASTA\nVentas\nNumero\n\tFecha\n\tSucursal\n\tCliente\n\tCajero\n\tCondicion\n\tEstado\n\tTotal\n\tSaldo\n\tACCIONES\nNV-CENT-00000002\t6/9/2026, 6:54:25 p. m.\tSucursal Central\tCliente Demo\tPropietario Demo\t\nCredito\t\nCompletada\tS/ 2.0\tS/ 2.0\t\n\nNV-CENT-00000001\t6/9/2026, 6:54:25 p. m.\tSucursal Central\tCliente Demo\tCajero Demo\t\nContado\t\nCompletada\tS/ 1.0\tS/ 0.0\t\nMostrando 1-2 de 2\nFilas\n10\n25\n50\nPagina 1 de 1\nBotica Farma - API conectada\nCopyright 2026. Todos los derechos reservados.",
+      "overflow": {
+        "viewport": 1366,
+        "width": 1366
+      },
+      "buttons": [
+        "",
+        "Ventas",
+        "Almacen",
+        "Caja y finanzas",
+        "Catalogos",
+        "Administracion",
+        "",
+        " 3",
+        " 2",
+        "PDPropietario DemoDueno",
+        "Numero",
+        "Fecha",
+        "Sucursal",
+        "Cliente",
+        "Cajero",
+        "Condicion",
+        "Estado",
+        "Total",
+        "Saldo",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "transferencias",
+      "path": "/traslado",
+      "text": "Botica Farma\nDashboard\nVentas\nAlmacen\nProductos\nCompras\nStock e inventario\nKardex\nTransferencias\nCaja y finanzas\nCatalogos\nAdministracion\nBotica Farma Demo\nDueno\nSUCURSAL\nSucursal Central\nSucursal Norte\n3\n2\nPD\nPropietario Demo\nDueno\nTransferencias\nTraslados de inventario entre almacenes con despacho y recepcion controlados.\n Nueva transferencia\nBuscar\nTransferencias\nNumero\n\tORIGEN\tDESTINO\tPRODUCTOS\tESTADO\tCreada\n\tACCIONES\nTR-DEMO-001\tAlmacen Central\tAlmacen Norte\t1\tEn transito\t6/9/2026\t\n Recibir\nMostrando 1-1 de 1\nFilas\n10\n25\n50\nPagina 1 de 1\nBotica Farma - API conectada\nCopyright 2026. Todos los derechos reservados.",
+      "overflow": {
+        "viewport": 1366,
+        "width": 1366
+      },
+      "buttons": [
+        "",
+        "Ventas",
+        "Almacen",
+        "Caja y finanzas",
+        "Catalogos",
+        "Administracion",
+        "",
+        " 3",
+        " 2",
+        "PDPropietario DemoDueno",
+        " Nueva transferencia",
+        "Numero",
+        "Creada",
+        "",
+        " Recibir",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "cobrar",
+      "path": "/cobrar",
+      "text": "Botica Farma\nDashboard\nVentas\nPunto de venta\nVentas\nSolicitudes programadas\nClientes\nCuentas por cobrar\nAlmacen\nCaja y finanzas\nCatalogos\nAdministracion\nBotica Farma Demo\nDueno\nSUCURSAL\nSucursal Central\nSucursal Norte\n3\n2\nPD\nPropietario Demo\nDueno\nCuentas por cobrar\nPrincipal\nCaja y finanzas\nClientes\nBuscar\nCliente\n\tDOCUMENTO\tEmision\n\tVencimiento\n\tMONTO ORIGINAL\tSaldo\n\tESTADO\tACCIONES\nCliente Demo\tNV-CENT-00000002\t2026-09-06\t2026-09-21\tS/ 2.0\tS/ 2.0\tPENDING\t Cobrar\nMostrando 1-1 de 1\nFilas\n10\n25\n50\nPagina 1 de 1\nBotica Farma - API conectada\nCopyright 2026. Todos los derechos reservados.",
+      "overflow": {
+        "viewport": 1366,
+        "width": 1366
+      },
+      "buttons": [
+        "",
+        "Ventas",
+        "Almacen",
+        "Caja y finanzas",
+        "Catalogos",
+        "Administracion",
+        "",
+        " 3",
+        " 2",
+        "PDPropietario DemoDueno",
+        "Cliente",
+        "Emision",
+        "Vencimiento",
+        "Saldo",
+        " Cobrar",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "reportes",
+      "path": "/reporte",
+      "text": "Botica Farma\nDashboard\nVentas\nAlmacen\nCaja y finanzas\nCatalogos\nAdministracion\nSucursales\nAlmacenes\nCajas\nTerminales POS\nUsuarios\nRoles y permisos\nPROXIMAMENTE\nReportes\nConfiguracion\nPROXIMAMENTE\nBotica Farma Demo\nDueno\nSUCURSAL\nSucursal Central\nSucursal Norte\n3\n2\nPD\nPropietario Demo\nDueno\nReportes de ventas\nPrincipal\nReportes\nVentas\nSUCURSAL\nTodas\nSucursal Central\nSucursal Norte\nDESDE\nHASTA\n Filtrar\n Exportar CSV\nSUCURSAL\nTodas las sucursales\nVENTAS EN EL PERIODO\n2\nTOTAL\nS/ 3.0\nFECHA\tVENTAS\tTOTAL\n2026-09-06\t2\tS/ 3.0\nBotica Farma - API conectada\nCopyright 2026. Todos los derechos reservados.",
+      "overflow": {
+        "viewport": 1366,
+        "width": 1366
+      },
+      "buttons": [
+        "",
+        "Ventas",
+        "Almacen",
+        "Caja y finanzas",
+        "Catalogos",
+        "Administracion",
+        "",
+        " 3",
+        " 2",
+        "PDPropietario DemoDueno",
+        " Filtrar",
+        " Exportar CSV",
+        ""
+      ]
+    },
+    {
+      "name": "nueva-compra",
+      "text": "Nueva compra\n\nLa compra se guarda en borrador antes de confirmar la recepcion.\n\nProveedor y documento\nPROVEEDOR\nSeleccionar\nDistribuidora Demo\nFECHA\nTIPO DOCUMENTO\nFactura\nBoleta\nOtro\nNUMERO\nOBSERVACION (OPCIONAL)\nDestino y condicion de pago\nSUCURSAL\nSucursal Central\nSucursal Norte\nALMACEN DESTINO\nSeleccionar\nAlmacen Central\nCONDICION\nContado\nCredito\nMEDIO DE PAGO\nEfectivo\nTransferencia\nYape\nPlin\nTarjeta\nDetalle de mercaderia\nProducto / presentacion\nSeleccionar\nParacetamol 500 mg - Tableta\nAmoxicilina 500 mg - Capsula\nEmpaques\nPrecio empaque\nFactor\nVencimiento\nDescuento\nIGV\n Agregar producto\nTotal calculado\nS/ 0.0\nCancelar\nGuardar borrador"
+    },
+    {
+      "name": "escape-compra",
+      "dialogs": 0
+    },
+    {
+      "name": "pos-busqueda",
+      "text": "Botica Farma\nDashboard\nVentas\nPunto de venta\nVentas\nSolicitudes programadas\nClientes\nCuentas por cobrar\nAlmacen\nCaja y finanzas\nCatalogos\nAdministracion\nBotica Farma Demo\nDueno\nSUCURSAL\nSucursal Central\nSucursal Norte\n3\n2\nPD\nPropietario Demo\nDueno\nPunto de venta\nSucursal Central · Almacen Central\nCaja Central 01\nEnter\nRESULTADOS\n1 de 1\nParacetamol 500 mg\nTableta · SKU PAR-500-TAB · Lote PAR-DEMO-01 vence 09/2027\nStock 64\nS/ 0.5\nAnterior\nPagina 1\nSiguiente\nF2\nBuscar producto\nF4\nCambiar cliente\nF9\nConfirmar venta\nVenta actual\n0 productos\nCarrito vacio\n\nAgrega productos desde el buscador.\n\nCliente\nPublico general\nCliente Demo\nObservacion (opcional)\nCondicion\nContado\nCredito\nMedio de pago\nEfectivo\nYape\nPlin\nTarjeta\nTransferencia\nSubtotal\nS/ 0.0\nDescuento\nS/ 0.0\nTotal\nS/ 0.0\nVuelto\nS/ 0.0\nConfirmar venta\nBotica Farma - API conectada\nCopyright 2026. Todos los derechos reservados."
+    }
+  ],
+  "errors": []
+}
