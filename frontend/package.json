@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=20 <23"
+    "node": ">=22.6 <23"
   },
   "scripts": {
     "predev": "node scripts/clean-next-cache.mjs",

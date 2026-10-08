@@ -14,7 +14,7 @@ Sistema de gestion para boticas/farmacias (multiempresa): POS, ventas, compras, 
 ## Requisitos
 
 - Python 3.12 o 3.13
-- Node 20 LTS (`frontend/.nvmrc`) o Node 22
+- Node 22 LTS (`frontend/.nvmrc`)
 - Docker (opcional, para el stack completo con PostgreSQL)
 
 ## Opcion A: local sin Docker (desarrollo diario)

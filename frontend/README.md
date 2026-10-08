@@ -6,7 +6,7 @@ La administracion global de empresas/farmacias clientes no vive en Next.js. Djan
 
 ## Requisitos
 
-- Node 20 LTS (version fijada en `.nvmrc`) o Node 22 LTS. Node 24 queda fuera del rango soportado.
+- Node 22 LTS (version fijada en `.nvmrc`; `npm test` necesita >= 22.6). Node 20 ya no tiene soporte y Node 24 queda fuera del rango probado.
 - Backend disponible en la URL definida por `NEXT_PUBLIC_API_BASE_URL`.
 
 ## Comandos
