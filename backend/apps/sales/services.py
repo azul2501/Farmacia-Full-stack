@@ -74,7 +74,8 @@ class SaleService:
         # Lotes vigentes en orden FEFO y, al final, el stock sin lote. Asi un producto que cambio
         # su configuracion de lotes sigue vendiendo lo que ya tiene en almacen.
         candidates = (
-            Stock.objects.select_for_update()
+            # of=("self",): PostgreSQL no bloquea el lado opcional (lote NULL) de un LEFT JOIN.
+            Stock.objects.select_for_update(of=("self",))
             .select_related("lot")
             .filter(
                 company=company,
