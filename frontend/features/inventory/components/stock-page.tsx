@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PageHeader } from "@/components/ui/page-header";
 import { useSession } from "@/features/auth/context/session-context";
 import { apiRequest, apiRequestAll } from "@/features/shared/api/client";
@@ -9,6 +9,9 @@ import { apiErrorMessage } from "@/features/shared/api/error-message";
 import { apiEndpoints } from "@/features/shared/api/endpoints";
 import type { ApiPage } from "@/features/shared/api/types";
 import { DataTable, type DataTableColumn } from "@/features/shared/ui/data-table/data-table";
+import { Modal } from "@/features/shared/ui/modal/modal";
+import { useToast } from "@/features/shared/ui/toast/toast-provider";
+import { formatQuantity } from "@/features/shared/utils/formatters";
 
 type StockRow = {
   id: string;
@@ -32,8 +35,13 @@ function message(error: unknown) {
 }
 
 function integer(value: string) {
-  return Math.round(Number(value || 0)).toLocaleString("es-PE");
+  return formatQuantity(Number(value || 0));
 }
+
+type Adjustment = { adjustment_type: "IN" | "OUT"; quantity: string; reason: string; observation: string };
+
+const adjustmentReasons = ["Conteo fisico", "Merma o rotura", "Vencido retirado", "Stock inicial", "Devolucion", "Otro"];
+const emptyAdjustment: Adjustment = { adjustment_type: "OUT", quantity: "", reason: adjustmentReasons[0], observation: "" };
 
 function expiryTier(dateValue: string | null): ExpiryTier {
   if (!dateValue) return "muted";
@@ -65,9 +73,47 @@ function expiryChip(dateValue: string | null) {
 }
 
 export function StockPage() {
-  const { warehouses } = useSession();
+  const { warehouses, hasPermission } = useSession();
+  const { showToast } = useToast();
+  const queryClient = useQueryClient();
+  const canAdjust = hasPermission("records.update");
   const [warehouseFilter, setWarehouseFilter] = useState("");
   const [expiryFilter, setExpiryFilter] = useState("");
+  const [adjusting, setAdjusting] = useState<StockRow | null>(null);
+  const [adjustment, setAdjustment] = useState<Adjustment>(emptyAdjustment);
+  const [adjustError, setAdjustError] = useState("");
+
+  const adjustMutation = useMutation({
+    mutationFn: (row: StockRow) =>
+      apiRequest(`${apiEndpoints.stock}adjustments/`, {
+        method: "POST",
+        body: { warehouse: row.warehouse, variant: row.variant, lot: row.lot, ...adjustment },
+      }),
+    onSuccess: () => {
+      showToast({ title: "Ajuste registrado", description: "El movimiento ya aparece en el kardex.", tone: "success" });
+      setAdjusting(null);
+      void queryClient.invalidateQueries({ queryKey: ["stock"] });
+      void queryClient.invalidateQueries({ queryKey: ["inventory-movements"] });
+      void queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+    },
+    onError: (error) => setAdjustError(apiErrorMessage(error, "No se pudo registrar el ajuste.")),
+  });
+
+  function openAdjust(row: StockRow) {
+    setAdjustment(emptyAdjustment);
+    setAdjustError("");
+    setAdjusting(row);
+  }
+
+  function submitAdjust(event: React.FormEvent) {
+    event.preventDefault();
+    if (!adjusting) return;
+    if (adjustment.adjustment_type === "OUT" && Number(adjustment.quantity) > Number(adjusting.available_quantity)) {
+      setAdjustError(`Solo hay ${integer(adjusting.available_quantity)} disponibles en este lote.`);
+      return;
+    }
+    adjustMutation.mutate(adjusting);
+  }
 
   const stockQuery = useQuery({
     queryKey: ["stock", "list"],
@@ -95,14 +141,16 @@ export function StockPage() {
     { id: "quantity", header: "Stock", value: (row) => Number(row.quantity), render: (row) => integer(row.quantity), align: "right", sortable: true },
     { id: "reserved", header: "Reservado", value: (row) => Number(row.reserved_quantity), render: (row) => integer(row.reserved_quantity), align: "right", sortable: true },
     { id: "available", header: "Disponible", value: (row) => Number(row.available_quantity), render: (row) => <strong>{integer(row.available_quantity)}</strong>, align: "right", sortable: true },
+    ...(canAdjust
+      ? [{ id: "actions", header: "Acciones", render: (row: StockRow) => <button type="button" className="ghost-button compact-button" onClick={() => openAdjust(row)}><i className="fas fa-sliders-h" aria-hidden="true" /> Ajustar</button> }]
+      : []),
   ];
 
   return (
     <>
       <PageHeader
         title="Stock por almacen y lote"
-        description="Existencias reales calculadas por movimientos de inventario. El stock no se edita directamente."
-        actions={<span className="readonly-badge"><i className="fas fa-lock" aria-hidden="true" /> Solo lectura</span>}
+        description="Existencias reales calculadas por movimientos de inventario. Para corregir una cantidad registra un ajuste; queda en el kardex."
       />
       <section className="workspace-panel">
         <DataTable
@@ -132,6 +180,24 @@ export function StockPage() {
           caption="Stock por almacen y lote"
         />
       </section>
+      <Modal
+        open={adjusting !== null}
+        title="Ajustar stock"
+        description={adjusting ? `${adjusting.product_name} ${adjusting.presentation} · ${adjusting.warehouse_name}${adjusting.batch_number ? ` · Lote ${adjusting.batch_number}` : ""}` : undefined}
+        size="sm"
+        busy={adjustMutation.isPending}
+        onClose={() => setAdjusting(null)}
+        footer={<><button type="button" className="ghost-button" onClick={() => setAdjusting(null)}>Cancelar</button><button type="submit" form="stock-adjust-form" className="app-button primary" disabled={adjustMutation.isPending}>{adjustMutation.isPending ? "Guardando..." : "Registrar ajuste"}</button></>}
+      >
+        <form id="stock-adjust-form" className="form-grid" onSubmit={submitAdjust}>
+          <p className="form-span-full field-hint">Stock actual: <strong>{adjusting ? integer(adjusting.quantity) : "-"}</strong> · Disponible: <strong>{adjusting ? integer(adjusting.available_quantity) : "-"}</strong></p>
+          <label><span>Tipo</span><select value={adjustment.adjustment_type} onChange={(event) => setAdjustment({ ...adjustment, adjustment_type: event.target.value as Adjustment["adjustment_type"] })}><option value="OUT">Salida (resta)</option><option value="IN">Entrada (suma)</option></select></label>
+          <label><span>Cantidad</span><input type="number" min="0.001" step="any" required value={adjustment.quantity} onChange={(event) => setAdjustment({ ...adjustment, quantity: event.target.value })} /></label>
+          <label className="form-span-full"><span>Motivo</span><select value={adjustment.reason} onChange={(event) => setAdjustment({ ...adjustment, reason: event.target.value })}>{adjustmentReasons.map((reason) => <option key={reason} value={reason}>{reason}</option>)}</select></label>
+          <label className="form-span-full"><span>Observacion (opcional)</span><textarea maxLength={500} value={adjustment.observation} onChange={(event) => setAdjustment({ ...adjustment, observation: event.target.value })} /></label>
+          {adjustError ? <p className="form-span-full field-error" role="alert">{adjustError}</p> : null}
+        </form>
+      </Modal>
     </>
   );
 }

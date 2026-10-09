@@ -182,7 +182,7 @@ export function CustomerRequestsPage() {
 
   return <>
     <PageHeader title="Solicitudes programadas" section="Ventas" current="Agenda de clientes" actions={<button type="button" className="app-button primary" onClick={() => setFormOpen(true)}><i className="fas fa-plus" /> Nueva solicitud</button>} />
-    <div className="request-summary"><span><strong>{requests.data?.items.filter((item) => new Date(item.scheduled_at).toDateString() === new Date().toDateString()).length ?? 0}</strong> Para hoy</span><span><strong>{requests.data?.items.filter((item) => item.status === "PENDING").length ?? 0}</strong> Pendientes</span><span><strong>{requests.data?.items.filter((item) => new Date(item.scheduled_at) < new Date() && !["FULFILLED", "CANCELLED"].includes(item.status)).length ?? 0}</strong> Atrasadas</span></div>
+    <div className="request-summary"><span><strong>{requests.data?.items.filter((item) => new Date(item.scheduled_at).toDateString() === new Date().toDateString()).length ?? 0}</strong> Para hoy</span><span><strong>{requests.data?.items.filter((item) => !["FULFILLED", "CANCELLED", "EXPIRED"].includes(item.status)).length ?? 0}</strong> Pendientes</span><span><strong>{requests.data?.items.filter((item) => new Date(item.scheduled_at) < new Date() && !["FULFILLED", "CANCELLED"].includes(item.status)).length ?? 0}</strong> Atrasadas</span></div>
     <section className="content-panel">
       <DataTable
         rows={filteredRequests}

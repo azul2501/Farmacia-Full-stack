@@ -194,7 +194,6 @@ export function ProductManagementPage() {
         <button type="button" className="ghost-button" onClick={() => setImportOpen(true)}><i className="fa fa-file-import" /> Importar</button>
         <button type="button" className="ghost-button" onClick={() => void download(apiEndpoints.productExport, "productos.csv")}><i className="fa fa-file-export" /> Exportar</button>
         <button type="button" className="ghost-button" onClick={() => void download(apiEndpoints.productTemplate, "plantilla-productos.csv")}><i className="fa fa-download" /> Plantilla</button>
-        <button type="button" className="ghost-button" onClick={() => void download(apiEndpoints.productStockTemplate, "plantilla-lotes-stock-inicial.csv")} title="Plantilla separada para stock inicial y lotes"><i className="fa fa-boxes-stacked" /> Plantilla lotes/stock</button>
         {hasPermission("records.create") ? <button type="button" className="app-button primary" onClick={() => setCreateOpen(true)}><i className="fa fa-plus" /> Nuevo producto</button> : null}
       </>}
     />

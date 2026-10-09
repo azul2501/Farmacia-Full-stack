@@ -9,7 +9,7 @@ import { apiErrorMessage } from "@/features/shared/api/error-message";
 import { apiEndpoints } from "@/features/shared/api/endpoints";
 import type { ApiPage } from "@/features/shared/api/types";
 import { DataTable, type DataTableColumn } from "@/features/shared/ui/data-table/data-table";
-import { daysAgoIso } from "@/features/shared/utils/formatters";
+import { daysAgoIso, formatQuantity } from "@/features/shared/utils/formatters";
 
 type MovementRow = {
   id: string;
@@ -59,8 +59,8 @@ function movementChip(type: string) {
 }
 
 function integerSigned(value: string) {
-  const number = Math.round(Number(value || 0));
-  const text = Math.abs(number).toLocaleString("es-PE");
+  const number = Number(value || 0);
+  const text = formatQuantity(Math.abs(number));
   return number > 0 ? `+${text}` : number < 0 ? `-${text}` : text;
 }
 
@@ -119,7 +119,7 @@ export function KardexPage() {
       sortable: true,
       render: (row) => <strong className={Number(row.quantity) < 0 ? "sale-balance-due" : undefined}>{integerSigned(row.quantity)}</strong>,
     },
-    { id: "balance", header: "Saldo", value: (row) => Number(row.balance_after), render: (row) => Math.round(Number(row.balance_after)).toLocaleString("es-PE"), align: "right", sortable: true },
+    { id: "balance", header: "Saldo", value: (row) => Number(row.balance_after), render: (row) => formatQuantity(Number(row.balance_after)), align: "right", sortable: true },
     { id: "document", header: "Documento", value: (row) => row.document_number || "-" },
     { id: "user", header: "Usuario", value: (row) => row.performed_by_name },
   ];

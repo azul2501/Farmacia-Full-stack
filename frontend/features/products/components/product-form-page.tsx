@@ -93,7 +93,7 @@ const initialForm: FormState = {
   requires_expiry: true,
   requires_prescription: false,
   is_controlled: false,
-  earns_points: true,
+  earns_points: false,
   active_ingredient: "",
   therapeutic_action: "",
   sanitary_registration: "",
@@ -466,7 +466,6 @@ export function ProductFormPage({ mode, productId }: ProductFormPageProps) {
           <legend>Datos del producto</legend>
           <p className="generated-code">Código interno: {mode === "edit" && productQuery.data?.internal_code ? productQuery.data.internal_code : "generado automáticamente por el sistema"}</p>
           <div className="form-grid compact-product-grid">
-            <label><span>Código de barras</span><input value={form.barcode} onChange={(event) => field("barcode", event.target.value)} /></label>
             <label><span>Nombre comercial</span><input required value={form.commercial_name} onChange={(event) => field("commercial_name", event.target.value)} />{errors.commercial_name ? <small className="field-error">{errors.commercial_name}</small> : null}</label>
             {selectWithQuick("category", "Categoría", <><option value="">Seleccionar</option>{categoriesQuery.data?.items.map(option)}</>, "category", true)}
             {selectWithQuick("laboratory", "Laboratorio", <><option value="">Sin laboratorio</option>{labsQuery.data?.items.map(option)}</>, "laboratory")}
@@ -513,7 +512,6 @@ export function ProductFormPage({ mode, productId }: ProductFormPageProps) {
             {switchField("requires_expiry", "Controla vencimiento", "Si se activa, el producto también manejará lotes.")}
             {switchField("requires_prescription", "Venta con receta")}
             {switchField("is_controlled", "Medicamento controlado")}
-            {switchField("earns_points", "Acumula puntos")}
           </div>
           {hasWarehouses ? (
             <div className="form-grid compact-product-grid">

@@ -1,5 +1,6 @@
-import { ModuleScreenPage } from "@/features/modules/components/module-screen-page";
+import Link from "next/link";
 import type { InitialModuleAction } from "@/features/modules/components/module-screen-page";
+import { PageHeader } from "@/components/ui/page-header";
 import type { AppModule } from "@/types/domain";
 import { ApiResourcePage } from "@/features/shared/resources/api-resource-page";
 import { CatalogsPage } from "@/features/catalogs/components/catalogs-page";
@@ -29,7 +30,7 @@ type ModuleShellProps = {
   initialAction?: InitialModuleAction;
 };
 
-export function ModuleShell({ module, initialAction }: ModuleShellProps) {
+export function ModuleShell({ module }: ModuleShellProps) {
   const rootPath = `/${module.href.split("/").filter(Boolean)[0] ?? ""}`;
   if (rootPath === "/atributo") return <CatalogsPage />;
   if (rootPath === "/proveedor") return <ApiResourcePage config={supplierResource} />;
@@ -52,5 +53,16 @@ export function ModuleShell({ module, initialAction }: ModuleShellProps) {
   if (rootPath === "/ingreso") return <FinancialMovementsPage kind="income" />;
   if (rootPath === "/solicitud") return <CustomerRequestsPage />;
   if (rootPath === "/reporte") return <ReportsPage />;
-  return <ModuleScreenPage module={module} initialAction={initialAction} />;
+  // Modulos fuera del alcance del MVP: no se muestran pantallas simuladas con datos falsos.
+  return (
+    <>
+      <PageHeader title={module.label} current={module.label} />
+      <div className="content-state empty-content-state" role="status">
+        <i className="fas fa-hourglass-half" aria-hidden="true" />
+        <strong>Modulo no disponible en esta version</strong>
+        <p>Esta seccion se habilitara en una proxima entrega. Las operaciones del dia a dia estan en el menu lateral.</p>
+        <Link className="app-button primary" href="/">Ir al inicio</Link>
+      </div>
+    </>
+  );
 }
