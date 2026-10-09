@@ -33,7 +33,7 @@ const movementLabels: Record<string, string> = {
   TRANSFER_IN: "Ingreso por transferencia",
   ADJUSTMENT_IN: "Ajuste positivo",
   ADJUSTMENT_OUT: "Ajuste negativo",
-  RETURN_IN: "Ingreso por devolucion",
+  RETURN_IN: "Ingreso por devolución",
 };
 
 const movementIcons: Record<string, string> = {
@@ -108,9 +108,9 @@ export function KardexPage() {
     { id: "date", header: "Fecha", value: (row) => row.created_at, render: (row) => dateTime(row.created_at), sortable: true },
     { id: "type", header: "Movimiento", value: (row) => movementLabels[row.movement_type] ?? row.movement_type, render: (row) => movementChip(row.movement_type), sortable: true },
     { id: "product", header: "Producto", value: (row) => row.product_name, sortable: true, render: (row) => <strong>{row.product_name}</strong> },
-    { id: "presentation", header: "Presentacion", value: (row) => row.presentation },
+    { id: "presentation", header: "Presentación", value: (row) => row.presentation },
     { id: "lot", header: "Lote", value: (row) => row.batch_number ?? "-" },
-    { id: "warehouse", header: "Almacen", value: (row) => row.warehouse_name, sortable: true },
+    { id: "warehouse", header: "Almacén", value: (row) => row.warehouse_name, sortable: true },
     {
       id: "quantity",
       header: "Cantidad",

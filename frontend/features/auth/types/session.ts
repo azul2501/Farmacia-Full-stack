@@ -32,7 +32,7 @@ export type SessionState = {
 
 export const roleLabels: Record<AppRole, string> = {
   SUPERADMIN: "Superadministrador",
-  OWNER: "Dueno",
+  OWNER: "Dueño",
   BRANCH_ADMIN: "Administrador de sucursal",
   WAREHOUSE_OPERATOR: "Almacenero",
   CASHIER: "Cajero",

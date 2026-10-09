@@ -46,7 +46,7 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
       {children}
       <Modal
         open={Boolean(options)}
-        title={options?.title ?? "Confirmar accion"}
+        title={options?.title ?? "Confirmar acción"}
         size="sm"
         onClose={() => close(false)}
         footer={

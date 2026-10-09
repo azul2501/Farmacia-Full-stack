@@ -3,7 +3,7 @@ from decimal import ROUND_HALF_UP, Decimal
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from django.db.models import F
+from django.db.models import F, Q, Sum
 from django.utils import timezone
 
 from apps.audit.services import record_audit
@@ -71,9 +71,8 @@ class SaleService:
             if stock.available_quantity < quantity:
                 raise ValidationError("Stock insuficiente en el lote seleccionado.")
             return [(lot, quantity)]
-        if not variant.product.requires_lot:
-            return [(None, quantity)]
-
+        # Lotes vigentes en orden FEFO y, al final, el stock sin lote. Asi un producto que cambio
+        # su configuracion de lotes sigue vendiendo lo que ya tiene en almacen.
         candidates = (
             Stock.objects.select_for_update()
             .select_related("lot")
@@ -81,15 +80,15 @@ class SaleService:
                 company=company,
                 warehouse=warehouse,
                 variant=variant,
-                lot__is_blocked=False,
                 quantity__gt=0,
             )
-            .order_by(F("lot__expiry_date").asc(nulls_last=True), "lot__created_at")
+            .filter(Q(lot__isnull=True) | Q(lot__is_blocked=False))
+            .order_by(F("lot__expiry_date").asc(nulls_last=True), F("lot__created_at").asc(nulls_last=True))
         )
         allocations = []
         remaining = quantity
         for stock in candidates:
-            if stock.lot.expiry_date and stock.lot.expiry_date < today:
+            if stock.lot and stock.lot.expiry_date and stock.lot.expiry_date < today:
                 continue
             take = min(stock.available_quantity, remaining)
             if take <= 0:
@@ -102,7 +101,7 @@ class SaleService:
 
     @classmethod
     def _split_line(cls, *, allocations, official_price, discount, taxed):
-        """Reparte el descuento de una linea entre sus lotes; el ultimo absorbe el redondeo."""
+        """Reparte el descuento de una línea entre sus lotes; el último absorbe el redondeo."""
         total_quantity = sum((qty for _, qty in allocations), Decimal("0"))
         parts = []
         remaining_discount = discount
@@ -147,11 +146,11 @@ class SaleService:
         if not lines:
             raise ValidationError("La venta debe incluir al menos un producto.")
         if any(entity.company_id != company.id for entity in (branch, warehouse, terminal)):
-            raise ValidationError("Sucursal, almacen y terminal deben pertenecer a la empresa.")
+            raise ValidationError("Sucursal, almacén y terminal deben pertenecer a la empresa.")
         if customer and customer.company_id != company.id:
             raise ValidationError("El cliente no pertenece a la empresa.")
         if warehouse.branch_id != branch.id or terminal.branch_id != branch.id:
-            raise ValidationError("Almacen y terminal deben pertenecer a la sucursal seleccionada.")
+            raise ValidationError("Almacén y terminal deben pertenecer a la sucursal seleccionada.")
         ensure_branch_access(user=user, company=company, branch_id=branch.id)
 
         cash_session = (
@@ -178,10 +177,10 @@ class SaleService:
             ):
                 raise ValidationError("El precio enviado no coincide con el precio oficial vigente.")
             if line.quantity <= 0 or official_price < 0 or line.discount < 0:
-                raise ValidationError("Cantidad, precio o descuento invalido.")
+                raise ValidationError("Cantidad, precio o descuento inválido.")
             line_subtotal = (line.quantity * official_price).quantize(cls.MONEY, rounding=ROUND_HALF_UP)
             if line.discount > line_subtotal:
-                raise ValidationError("El descuento no puede superar el subtotal de la linea.")
+                raise ValidationError("El descuento no puede superar el subtotal de la línea.")
             if line.discount > 0:
                 from apps.accounts.models import Membership
                 from apps.accounts.permissions import permissions_for_role
@@ -192,10 +191,10 @@ class SaleService:
                 ):
                     raise ValidationError("El usuario no tiene permiso para aplicar descuentos.")
                 if not line.discount_reason.strip():
-                    raise ValidationError("Un descuento requiere un motivo de autorizacion.")
+                    raise ValidationError("Un descuento requiere un motivo de autorización.")
             line_total = (line_subtotal - line.discount).quantize(cls.MONEY, rounding=ROUND_HALF_UP)
             if line_total < 0:
-                raise ValidationError("El total de una linea no puede ser negativo.")
+                raise ValidationError("El total de una línea no puede ser negativo.")
             allocations = cls._allocate_lots(
                 company=company,
                 warehouse=warehouse,
@@ -249,11 +248,11 @@ class SaleService:
             if not user.is_superuser and (
                 membership is None or "sales.credit" not in permissions_for_role(membership.role)
             ):
-                raise ValidationError("El usuario no tiene permiso para registrar ventas a credito.")
+                raise ValidationError("El usuario no tiene permiso para registrar ventas a crédito.")
             if customer is None:
-                raise ValidationError("Una venta a credito requiere un cliente identificado.")
+                raise ValidationError("Una venta a crédito requiere un cliente identificado.")
             if payment_due_date is None:
-                raise ValidationError("La fecha de vencimiento es obligatoria para ventas a credito.")
+                raise ValidationError("La fecha de vencimiento es obligatoria para ventas a crédito.")
         change_total = Decimal("0")
         for payment in payments:
             if payment.amount <= 0:
@@ -371,10 +370,13 @@ class SaleService:
         if sale.status == SaleStatus.CANCELLED:
             raise ValidationError("La venta ya esta anulada.")
         if not reason.strip():
-            raise ValidationError("La anulacion requiere un motivo.")
+            raise ValidationError("La anulación requiere un motivo.")
 
         receivable = getattr(sale, "receivable", None)
-        if receivable is not None and receivable.collected_amount > 0:
+        # El pago inicial de una venta a credito se devuelve abajo con los pagos de la venta;
+        # solo bloquean la anulacion los cobros registrados despues.
+        initial_paid = sale.payments.aggregate(total=Sum("amount"))["total"] or Decimal("0")
+        if receivable is not None and receivable.collected_amount > initial_paid:
             raise ValidationError("No se puede anular una venta con cobros ya registrados en su cuenta por cobrar.")
 
         for item in sale.items.select_related("variant", "lot"):
@@ -390,7 +392,7 @@ class SaleService:
                     reference_id=sale.id,
                     document_number=sale.number,
                     performed_by=user,
-                    reason=f"Anulacion de venta {sale.number}",
+                    reason=f"Anulación de venta {sale.number}",
                 )
             )
 
@@ -398,7 +400,7 @@ class SaleService:
         if cash_payments:
             if sale.cash_session.status != CashSessionStatus.OPEN:
                 raise ValidationError(
-                    "La caja de esta venta ya esta cerrada; no se puede reversar el efectivo automaticamente."
+                    "La caja de esta venta ya esta cerrada; no se puede reversar el efectivo automáticamente."
                 )
             for payment in cash_payments:
                 CashService.record_movement(
@@ -407,7 +409,7 @@ class SaleService:
                     user=user,
                     movement_type=CashMovementType.REFUND,
                     amount=payment.amount,
-                    reason=f"Anulacion de venta {sale.number}: {reason.strip()}",
+                    reason=f"Anulación de venta {sale.number}: {reason.strip()}",
                     reference=("sales.sale.cancel", sale.id),
                 )
 

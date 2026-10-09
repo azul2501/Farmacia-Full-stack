@@ -266,7 +266,7 @@ paths:
   /api/v1/auth/login/:
     post:
       operationId: api_v1_auth_login_create
-      description: Inicia sesion y guarda el refresh token en una cookie HttpOnly.
+      description: Inicia sesión y guarda el refresh token en una cookie HttpOnly.
       tags:
       - api
       requestBody:
@@ -3850,6 +3850,31 @@ paths:
               schema:
                 $ref: '#/components/schemas/Product'
           description: ''
+  /api/v1/products/stock-import/:
+    post:
+      operationId: api_v1_products_stock_import_create
+      description: Carga stock inicial por lote desde CSV. Sin `commit=true` solo
+        valida y devuelve la vista previa.
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Product'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Product'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: ''
   /api/v1/products/stock-template/:
     get:
       operationId: api_v1_products_stock_template_retrieve
@@ -5465,6 +5490,36 @@ paths:
         required: true
       tags:
       - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/users/{id}/reset-password/:
+    post:
+      operationId: api_v1_users_reset_password_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: Un Cadena UUID que identifique este membership.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetUserPassword'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResetUserPassword'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResetUserPassword'
+        required: true
       security:
       - jwtAuth: []
       responses:
@@ -9362,6 +9417,15 @@ components:
       - performed_by_name
       - reference
       - updated_at
+    ResetUserPassword:
+      type: object
+      properties:
+        new_password:
+          type: string
+          writeOnly: true
+          minLength: 8
+      required:
+      - new_password
     RoleEnum:
       enum:
       - SUPERADMIN

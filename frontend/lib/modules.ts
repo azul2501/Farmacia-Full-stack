@@ -15,8 +15,8 @@ export const modules: AppModule[] = [
   },
   {
     href: "/venta",
-    label: "Comprobante Electronico",
-    description: "Ventas con facturacion electronica.",
+    label: "Comprobante Electrónico",
+    description: "Ventas con facturación electrónica.",
     status: "legacy",
   },
   {
@@ -33,8 +33,8 @@ export const modules: AppModule[] = [
   },
   {
     href: "/despacho",
-    label: "Guia de Remision",
-    description: "Despacho y guias de remision.",
+    label: "Guia de Remisión",
+    description: "Despacho y guias de remisión.",
     status: "legacy",
   },
   {
@@ -46,13 +46,13 @@ export const modules: AppModule[] = [
   {
     href: "/producto",
     label: "Productos",
-    description: "Catalogo, laboratorios, precios, lotes y stock.",
+    description: "Catálogo, laboratorios, precios, lotes y stock.",
     status: "next-ready",
   },
   {
     href: "/atributo",
     label: "Atributos",
-    description: "Categorias, laboratorios, principios activos y ubicaciones.",
+    description: "Categorías, laboratorios, principios activos y ubicaciones.",
     status: "legacy",
   },
   {
@@ -70,7 +70,7 @@ export const modules: AppModule[] = [
   {
     href: "/inventario",
     label: "Inventario",
-    description: "Actualizacion de inventario, kardex, lotes y vencimientos.",
+    description: "Actualización de inventario, kardex, lotes y vencimientos.",
     status: "legacy",
   },
   {
@@ -88,7 +88,7 @@ export const modules: AppModule[] = [
   {
     href: "/proveedor",
     label: "Proveedores",
-    description: "Administracion de proveedores.",
+    description: "Administración de proveedores.",
     status: "legacy",
   },
   {
@@ -135,8 +135,8 @@ export const modules: AppModule[] = [
   },
   {
     href: "/facturacion",
-    label: "Facturacion",
-    description: "SUNAT, XML, CDR, anulaciones, resumenes y validacion.",
+    label: "Facturación",
+    description: "SUNAT, XML, CDR, anulaciones, resumenes y validación.",
     status: "legacy",
   },
   {
@@ -160,7 +160,7 @@ export const modules: AppModule[] = [
   {
     href: "/empresa",
     label: "Empresa",
-    description: "Datos de empresa y configuracion general.",
+    description: "Datos de empresa y configuración general.",
     status: "legacy",
   },
   {
@@ -184,7 +184,7 @@ export const modules: AppModule[] = [
   {
     href: "/punto",
     label: "Puntos",
-    description: "Configuracion de puntos.",
+    description: "Configuración de puntos.",
     status: "legacy",
   },
   {

@@ -150,3 +150,11 @@ class ChangeOwnPasswordSerializer(serializers.Serializer):
     def validate_new_password(self, value):
         password_validation.validate_password(value, self.context["request"].user)
         return value
+
+
+class ResetUserPasswordSerializer(serializers.Serializer):
+    new_password = serializers.CharField(write_only=True, min_length=8)
+
+    def validate_new_password(self, value):
+        password_validation.validate_password(value, self.context["user"])
+        return value

@@ -102,7 +102,7 @@ async function refreshAccessToken() {
 export async function apiRequest<T>(path: string, options: ApiRequestOptions = {}): Promise<T> {
   if (runtimeConfig.dataSource === "mock") {
     throw new ApiError(
-      "Esta pantalla necesita datos reales. Estas en modo de demostracion visual (NEXT_PUBLIC_DATA_SOURCE=mock); cambia a modo API o conectate al backend para usarla.",
+      "Esta pantalla necesita datos reales. Estas en modo de demostración visual (NEXT_PUBLIC_DATA_SOURCE=mock); cambia a modo API o conectate al backend para usarla.",
       0,
       "mock_mode_blocked",
     );
@@ -159,7 +159,7 @@ export async function apiRequest<T>(path: string, options: ApiRequestOptions = {
 export async function apiDownload(path: string, options: ApiRequestOptions = {}): Promise<Blob> {
   if (runtimeConfig.dataSource === "mock") {
     throw new ApiError(
-      "Esta descarga necesita datos reales. Estas en modo de demostracion visual (NEXT_PUBLIC_DATA_SOURCE=mock); cambia a modo API o conectate al backend para usarla.",
+      "Esta descarga necesita datos reales. Estas en modo de demostración visual (NEXT_PUBLIC_DATA_SOURCE=mock); cambia a modo API o conectate al backend para usarla.",
       0,
       "mock_mode_blocked",
     );

@@ -15,7 +15,7 @@ class LotSerializer(serializers.ModelSerializer):
 
     def validate_variant(self, variant):
         if variant.company_id != self.context["request"].company.id:
-            raise serializers.ValidationError("La presentacion no pertenece a la empresa activa.")
+            raise serializers.ValidationError("La presentación no pertenece a la empresa activa.")
         return variant
 
 

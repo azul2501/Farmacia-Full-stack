@@ -50,6 +50,11 @@ export function ApiResourcePage({ config, embedded = false }: ApiResourcePagePro
   const { showToast } = useToast();
   const [editing, setEditing] = useState<ResourceRecord | null | undefined>(undefined);
   const [values, setValues] = useState<Record<string, unknown>>(() => defaultValues(config.fields));
+  const [resetting, setResetting] = useState<ResourceRecord | null>(null);
+  const [newPassword, setNewPassword] = useState("");
+  const resetMutation = useMutation({
+    mutationFn: (row: ResourceRecord) => apiRequest(`${config.endpoint}${row.id}/reset-password/`, { method: "POST", body: { new_password: newPassword } }),
+  });
   const resourceKey = ["resource", company?.id, config.endpoint] as const;
   const resourceQuery = useQuery({
     queryKey: resourceKey,
@@ -105,6 +110,11 @@ export function ApiResourcePage({ config, embedded = false }: ApiResourcePagePro
                 <i className="fa fa-edit" aria-hidden="true" />
               </button>
             ) : null}
+            {config.passwordReset && hasPermission("records.update") ? (
+              <button type="button" className="row-action-edit" title="Restablecer clave" aria-label={`Restablecer clave de ${config.singular}`} onClick={() => { setNewPassword(""); resetMutation.reset(); setResetting(row); }}>
+                <i className="fa fa-key" aria-hidden="true" />
+              </button>
+            ) : null}
             {hasPermission("records.delete") ? (
               <button type="button" className="row-action-delete" title={config.deactivateOnly ? "Desactivar" : "Eliminar"} aria-label={`${config.deactivateOnly ? "Desactivar" : "Eliminar"} ${config.singular}`} onClick={() => void remove(row)}>
                 <i className="fa fa-trash" aria-hidden="true" />
@@ -154,7 +164,7 @@ export function ApiResourcePage({ config, embedded = false }: ApiResourcePagePro
   async function remove(row: ResourceRecord) {
     const accepted = await confirm({
       title: `${config.deactivateOnly ? "Desactivar" : "Eliminar"} ${config.singular}`,
-      description: config.deactivateOnly ? "Dejara de estar disponible, pero su historial se conserva. Puedes reactivarlo editandolo." : "Esta accion no se puede deshacer.",
+      description: config.deactivateOnly ? "Dejará de estar disponible, pero su historial se conserva. Puedes reactivarlo editandolo." : "Esta acción no se puede deshacer.",
       confirmLabel: config.deactivateOnly ? "Desactivar" : "Eliminar",
       tone: "danger",
     });
@@ -241,6 +251,22 @@ export function ApiResourcePage({ config, embedded = false }: ApiResourcePagePro
           ))}
         </form>
       </Modal>
+      {config.passwordReset ? (
+        <Modal
+          open={resetting !== null}
+          title="Restablecer clave"
+          description={resetting ? `Nueva clave para ${String(resetting.full_name ?? resetting.email ?? "")}. Compartela de forma privada; el usuario podra cambiarla despues.` : undefined}
+          size="sm"
+          busy={resetMutation.isPending}
+          onClose={() => setResetting(null)}
+          footer={<><button type="button" className="ghost-button" onClick={() => setResetting(null)}>Cancelar</button><button type="submit" form="reset-password-form" className="app-button primary" disabled={resetMutation.isPending}>{resetMutation.isPending ? "Guardando..." : "Guardar clave"}</button></>}
+        >
+          <form id="reset-password-form" className="form-grid" onSubmit={(event) => { event.preventDefault(); if (!resetting) return; resetMutation.mutate(resetting, { onSuccess: () => { showToast({ tone: "success", title: "Clave restablecida" }); setResetting(null); } }); }}>
+            <label className="form-span-full"><span>Nueva clave</span><input type="password" required minLength={8} autoComplete="new-password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} /><small className="field-hint">Mínimo 8 caracteres; evita claves comunes o solo números.</small></label>
+            {resetMutation.error ? <p className="form-span-full field-error" role="alert">{apiErrorMessage(resetMutation.error, "No se pudo restablecer la clave.")}</p> : null}
+          </form>
+        </Modal>
+      ) : null}
     </>
   );
 }

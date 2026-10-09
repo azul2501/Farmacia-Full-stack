@@ -49,8 +49,8 @@ class Command(BaseCommand):
         )
         central = self._branch(company, "CENTRAL", "Sucursal Central", "Av. Demo 123, Lima")
         norte = self._branch(company, "NORTE", "Sucursal Norte", "Av. Norte 456, Lima")
-        central_warehouse = self._warehouse(company, central, "ALM-C01", "Almacen Central")
-        norte_warehouse = self._warehouse(company, norte, "ALM-N01", "Almacen Norte")
+        central_warehouse = self._warehouse(company, central, "ALM-C01", "Almacén Central")
+        norte_warehouse = self._warehouse(company, norte, "ALM-N01", "Almacén Norte")
         terminal, _ = POSTerminal.objects.update_or_create(
             company=company,
             code="POS-01",
@@ -81,7 +81,7 @@ class Command(BaseCommand):
             document_number="20555555551",
             defaults={
                 "document_type": "RUC",
-                "legal_name": "Distribuidora Farmaceutica Demo SAC",
+                "legal_name": "Distribuidora Farmacéutica Demo SAC",
                 "trade_name": "Distribuidora Demo",
                 "address": "Lima",
                 "phone": "999111222",
@@ -153,7 +153,7 @@ class Command(BaseCommand):
                 status=PurchaseStatus.DRAFT,
                 subtotal=Decimal("61.00"),
                 total=Decimal("61.00"),
-                notes="Compra inicial de demostracion",
+                notes="Compra inicial de demostración",
                 created_by=owner,
             )
             PurchaseItem.objects.create(
@@ -192,7 +192,7 @@ class Command(BaseCommand):
                 payment_due_date=timezone.localdate() + timedelta(days=30),
                 subtotal=Decimal("30.00"),
                 total=Decimal("30.00"),
-                notes="Compra a credito de demostracion",
+                notes="Compra a crédito de demostración",
                 created_by=owner,
             )
             PurchaseItem.objects.create(
@@ -282,7 +282,7 @@ class Command(BaseCommand):
                 "scheduled_at": timezone.now() + timedelta(days=1),
                 "service_type": ServiceType.STORE_PICKUP,
                 "status": CustomerRequestStatus.CONFIRMED,
-                "notes": "Solicitud programada de demostracion",
+                "notes": "Solicitud programada de demostración",
                 "created_by": cashier,
             },
         )
@@ -305,7 +305,7 @@ class Command(BaseCommand):
                 origin_warehouse=central_warehouse,
                 destination_branch=norte,
                 destination_warehouse=norte_warehouse,
-                notes="Transferencia de demostracion en transito",
+                notes="Transferencia de demostración en tránsito",
                 created_by=owner,
             )
             TransferItem.objects.create(
@@ -319,7 +319,7 @@ class Command(BaseCommand):
             TransferService.start_transit(transfer_id=transfer.id, company=company, user=owner)
 
         self.stdout.write(self.style.SUCCESS(f"Empresa demo: {company.id}"))
-        self.stdout.write("Dueno: owner@botica.demo / Demo12345!")
+        self.stdout.write("Dueño: owner@botica.demo / Demo12345!")
         self.stdout.write("Cajero: cashier@botica.demo / Demo12345!")
 
     @staticmethod

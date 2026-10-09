@@ -137,11 +137,11 @@ PAYMENT_MIX = [
 
 
 class Command(BaseCommand):
-    help = "Extiende seed_demo con mas productos, stock y un historial de ventas de varios dias."
+    help = "Extiende seed_demo con más productos, stock y un historial de ventas de varios días."
 
     def add_arguments(self, parser):
-        parser.add_argument("--days", type=int, default=7, help="Dias hacia atras a poblar con ventas.")
-        parser.add_argument("--per-day", type=int, default=10, help="Ventas aproximadas por dia.")
+        parser.add_argument("--days", type=int, default=7, help="Días hacia atras a poblar con ventas.")
+        parser.add_argument("--per-day", type=int, default=10, help="Ventas aproximadas por día.")
 
     @transaction.atomic
     def handle(self, *args, **options):
@@ -240,7 +240,7 @@ class Command(BaseCommand):
                     status=PurchaseStatus.DRAFT,
                     subtotal=subtotal,
                     total=subtotal,
-                    notes="Reposicion de catalogo ampliado (seed bulk)",
+                    notes="Reposición de catálogo ampliado (seed bulk)",
                     created_by=owner,
                 )
                 today = timezone.localdate()
@@ -337,7 +337,7 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS(f"{created_count} ventas de historial creadas en {days} dias."))
         self.stdout.write(
-            self.style.SUCCESS(f"Catalogo total: {ProductVariant.objects.filter(company=company).count()} variantes.")
+            self.style.SUCCESS(f"Catálogo total: {ProductVariant.objects.filter(company=company).count()} variantes.")
         )
 
     @staticmethod

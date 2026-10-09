@@ -20,6 +20,7 @@ export const apiEndpoints = {
   productByBarcode: "/products/by-barcode/",
   productTemplate: "/products/template/",
   productStockTemplate: "/products/stock-template/",
+  productStockImport: "/products/stock-import/",
   productExport: "/products/export/",
   productImportPreview: "/products/import-preview/",
   productImportCommit: "/products/import-commit/",

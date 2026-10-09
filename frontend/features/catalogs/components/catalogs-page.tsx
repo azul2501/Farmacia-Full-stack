@@ -17,9 +17,9 @@ export function CatalogsPage() {
   const [tab, setTab] = useState<keyof typeof tabs>("categories");
   return (
     <>
-      <PageHeader title="Categorias y laboratorios" description="Maestros que alimentan la ficha de producto" />
-      <div className="screen-tabs" role="tablist" aria-label="Catalogos">
-        <button type="button" role="tab" aria-selected={tab === "categories"} className={tab === "categories" ? "is-active" : ""} onClick={() => setTab("categories")}>Categorias</button>
+      <PageHeader title="Categorías y laboratorios" description="Maestros que alimentan la ficha de producto" />
+      <div className="screen-tabs" role="tablist" aria-label="Catálogos">
+        <button type="button" role="tab" aria-selected={tab === "categories"} className={tab === "categories" ? "is-active" : ""} onClick={() => setTab("categories")}>Categorías</button>
         <button type="button" role="tab" aria-selected={tab === "laboratories"} className={tab === "laboratories" ? "is-active" : ""} onClick={() => setTab("laboratories")}>Laboratorios</button>
         <button type="button" role="tab" aria-selected={tab === "ingredients"} className={tab === "ingredients" ? "is-active" : ""} onClick={() => setTab("ingredients")}>Principios activos</button>
         <button type="button" role="tab" aria-selected={tab === "therapeutic"} className={tab === "therapeutic" ? "is-active" : ""} onClick={() => setTab("therapeutic")}>Acciones terapeuticas</button>

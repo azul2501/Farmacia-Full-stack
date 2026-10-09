@@ -59,8 +59,8 @@ export function ModuleShell({ module }: ModuleShellProps) {
       <PageHeader title={module.label} current={module.label} />
       <div className="content-state empty-content-state" role="status">
         <i className="fas fa-hourglass-half" aria-hidden="true" />
-        <strong>Modulo no disponible en esta version</strong>
-        <p>Esta seccion se habilitara en una proxima entrega. Las operaciones del dia a dia estan en el menu lateral.</p>
+        <strong>Módulo no disponible en esta versión</strong>
+        <p>Esta sección se habilitará en una próxima entrega. Las operaciones del día a día están en el menú lateral.</p>
         <Link className="app-button primary" href="/">Ir al inicio</Link>
       </div>
     </>

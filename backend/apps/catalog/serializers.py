@@ -88,7 +88,7 @@ class ProductBarcodeSerializer(serializers.ModelSerializer):
 
     def validate_variant(self, variant):
         if variant.company_id != self.context["request"].company.id:
-            raise serializers.ValidationError("La presentacion no pertenece a la empresa activa.")
+            raise serializers.ValidationError("La presentación no pertenece a la empresa activa.")
         return variant
 
 
@@ -222,7 +222,7 @@ class ProductSerializer(serializers.ModelSerializer):
             query = query.exclude(variant__product=product)
         if query.exists():
             raise serializers.ValidationError(
-                {"initial_variant": {"barcode": "Ya existe un producto registrado con ese codigo de barras."}}
+                {"initial_variant": {"barcode": "Ya existe un producto registrado con ese código de barras."}}
             )
 
     def _sale_variants_from_initial(self, initial_data):
@@ -277,7 +277,7 @@ class ProductSerializer(serializers.ModelSerializer):
         initial_variant = attrs.get("initial_variant")
         sale_variants = attrs.get("sale_variants")
         if self.instance is None and not initial_variant:
-            raise serializers.ValidationError({"initial_variant": "La presentacion base es obligatoria."})
+            raise serializers.ValidationError({"initial_variant": "La presentación base es obligatoria."})
         if initial_variant:
             self._validate_barcode_available(
                 company=company,
@@ -296,7 +296,7 @@ class ProductSerializer(serializers.ModelSerializer):
             from apps.tenancy.models import Warehouse
 
             if not Warehouse.objects.filter(id=initial_variant["warehouse"], company=company).exists():
-                raise serializers.ValidationError({"initial_variant": {"warehouse": "Almacen no autorizado."}})
+                raise serializers.ValidationError({"initial_variant": {"warehouse": "Almacén no autorizado."}})
             warehouse = Warehouse.objects.get(id=initial_variant["warehouse"], company=company)
             ensure_branch_access(
                 user=self.context["request"].user,
@@ -469,7 +469,7 @@ class ProductWarehouseLocationSerializer(serializers.ModelSerializer):
         warehouse = attrs.get("warehouse", getattr(self.instance, "warehouse", None))
         variant = attrs.get("variant", getattr(self.instance, "variant", None))
         if warehouse and warehouse.company_id != company.id:
-            raise serializers.ValidationError({"warehouse": "El almacen no pertenece a la empresa activa."})
+            raise serializers.ValidationError({"warehouse": "El almacén no pertenece a la empresa activa."})
         if warehouse:
             ensure_branch_access(
                 user=self.context["request"].user,
@@ -477,5 +477,5 @@ class ProductWarehouseLocationSerializer(serializers.ModelSerializer):
                 branch_id=warehouse.branch_id,
             )
         if variant and variant.company_id != company.id:
-            raise serializers.ValidationError({"variant": "La presentacion no pertenece a la empresa activa."})
+            raise serializers.ValidationError({"variant": "La presentación no pertenece a la empresa activa."})
         return attrs

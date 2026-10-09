@@ -23,7 +23,7 @@ export function ErrorState({ message, onRetry }: { message: string; onRetry?: ()
   return (
     <div className="content-state error-content-state" role="alert">
       <i className="fas fa-exclamation-circle" aria-hidden="true" />
-      <strong>No se pudo cargar la informacion</strong>
+      <strong>No se pudo cargar la información</strong>
       <p>{message}</p>
       {onRetry ? (
         <button type="button" className="app-button primary" onClick={onRetry}>
@@ -36,7 +36,7 @@ export function ErrorState({ message, onRetry }: { message: string; onRetry?: ()
 
 export function LoadingState({ rows = 5 }: { rows?: number }) {
   return (
-    <div className="skeleton-list" role="status" aria-label="Cargando informacion">
+    <div className="skeleton-list" role="status" aria-label="Cargando información">
       {Array.from({ length: rows }, (_, index) => (
         <span className="skeleton-row" key={index} />
       ))}

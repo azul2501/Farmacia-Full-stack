@@ -38,15 +38,15 @@ class InventoryService:
         if command.quantity <= 0:
             raise ValidationError("La cantidad debe ser mayor que cero.")
         if command.warehouse.company_id != command.company.id:
-            raise ValidationError("El almacen no pertenece a la empresa.")
+            raise ValidationError("El almacén no pertenece a la empresa.")
         if command.variant.company_id != command.company.id:
-            raise ValidationError("La presentacion no pertenece a la empresa.")
+            raise ValidationError("La presentación no pertenece a la empresa.")
         if command.lot and command.lot.company_id != command.company.id:
             raise ValidationError("El lote no pertenece a la empresa.")
         if command.lot and command.lot.variant_id != command.variant.id:
-            raise ValidationError("El lote no pertenece a la presentacion indicada.")
+            raise ValidationError("El lote no pertenece a la presentación indicada.")
         if command.counterpart_warehouse and command.counterpart_warehouse.company_id != command.company.id:
-            raise ValidationError("El almacen relacionado no pertenece a la empresa.")
+            raise ValidationError("El almacén relacionado no pertenece a la empresa.")
 
         stock = (
             Stock.objects.select_for_update()
@@ -70,7 +70,7 @@ class InventoryService:
         signed_quantity = command.quantity if command.movement_type in INBOUND_TYPES else -command.quantity
         new_quantity = stock.quantity + signed_quantity
         if new_quantity < 0:
-            raise ValidationError("Stock insuficiente para completar la operacion.")
+            raise ValidationError("Stock insuficiente para completar la operación.")
         stock.quantity = new_quantity
         stock.save(update_fields=["quantity", "updated_at"])
 

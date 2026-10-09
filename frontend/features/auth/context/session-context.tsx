@@ -46,7 +46,7 @@ const emptySession: SessionState = {
 };
 
 function sessionErrorMessage(error: unknown) {
-  return error instanceof Error ? error.message : "No fue posible validar tu sesion.";
+  return error instanceof Error ? error.message : "No fue posible validar tu sesión.";
 }
 
 function isBlockingSessionError(message: string) {

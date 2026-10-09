@@ -25,7 +25,7 @@ export class InMemoryCollection<T extends Identifiable> {
     return {
       data: { ...item },
       persisted: false,
-      message: "Registro creado temporalmente en modo demostracion.",
+      message: "Registro creado temporalmente en modo demostración.",
     };
   }
 
@@ -37,7 +37,7 @@ export class InMemoryCollection<T extends Identifiable> {
     return {
       data: { ...updated },
       persisted: false,
-      message: "Registro actualizado temporalmente en modo demostracion.",
+      message: "Registro actualizado temporalmente en modo demostración.",
     };
   }
 
@@ -46,7 +46,7 @@ export class InMemoryCollection<T extends Identifiable> {
     return {
       data: { id },
       persisted: false,
-      message: "Registro retirado de la coleccion temporal.",
+      message: "Registro retirado de la colección temporal.",
     };
   }
 }

@@ -204,13 +204,13 @@ export function ModuleScreenPage({ module, initialAction }: ModuleScreenPageProp
     }
 
     const aliases: Record<string, string[]> = {
-      Producto: ["Descripcion", "Producto"],
-      Nombre: ["Nombres", "Razon Social", "Descripcion"],
+      Producto: ["Descripción", "Producto"],
+      Nombre: ["Nombres", "Razón Social", "Descripción"],
       Cliente: ["Cliente", "Nombres"],
       Proveedor: ["Proveedor", "Nombres"],
       Total: ["Total", "Importe", "Monto"],
       Precio: ["Precio", "P. Venta", "P. Compra"],
-      Stock: ["Stock", "Stock Minimo", "Stock Fisico"],
+      Stock: ["Stock", "Stock Mínimo", "Stock Físico"],
       Estado: ["Estado", "Estado SUNAT", "Estado Sunat"],
       Documento: ["Documento", "Tipo Documento", "Comprobante"],
       Fecha: ["Fecha", "Fecha Inicio", "Fecha Apertura"],
@@ -235,7 +235,7 @@ export function ModuleScreenPage({ module, initialAction }: ModuleScreenPageProp
       setActivePanel(null);
       showToast({
         tone: "info",
-        title: "Registro agregado en modo demostracion",
+        title: "Registro agregado en modo demostración",
         description: "El cambio vive temporalmente en memoria y se perdera al recargar.",
       });
       return;
@@ -250,7 +250,7 @@ export function ModuleScreenPage({ module, initialAction }: ModuleScreenPageProp
       showToast({
         tone: "info",
         title: "Registro actualizado temporalmente",
-        description: "La persistencia se habilitara al conectar el repositorio API.",
+        description: "La persistencia se habilitará al conectar el repositorio API.",
       });
       return;
     }
@@ -261,7 +261,7 @@ export function ModuleScreenPage({ module, initialAction }: ModuleScreenPageProp
       showToast({
         tone: "warning",
         title: "Registro retirado de la vista demo",
-        description: "No se ejecuto una eliminacion permanente.",
+        description: "No se ejecuto una eliminación permanente.",
       });
       return;
     }
@@ -292,7 +292,7 @@ export function ModuleScreenPage({ module, initialAction }: ModuleScreenPageProp
     <div className="module-action-content">
       {activePanel.mode === "delete" ? (
         <div className="notice warning">
-          Esta accion solo retirara el registro de la vista actual. No existe eliminacion permanente en modo demostracion.
+          Esta acción solo retirara el registro de la vista actual. No existe eliminación permanente en modo demostración.
         </div>
       ) : activePanel.mode === "view" ? (
         <dl className="detail-grid">
@@ -326,9 +326,9 @@ export function ModuleScreenPage({ module, initialAction }: ModuleScreenPageProp
           {editableFields.map((field) => (
             <label key={field}>
               <span>{field}</span>
-              {field.toLowerCase().includes("observacion") ||
-              field.toLowerCase().includes("direccion") ||
-              field.toLowerCase().includes("informacion") ? (
+              {field.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().includes("observacion") ||
+              field.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().includes("direccion") ||
+              field.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().includes("informacion") ? (
                 <textarea
                   value={formValues[field] ?? ""}
                   onChange={(event) => updateFormValue(field, event.target.value)}
@@ -471,7 +471,7 @@ export function ModuleScreenPage({ module, initialAction }: ModuleScreenPageProp
       <Modal
         open={Boolean(activePanel)}
         title={activePanel?.title ?? screen.title}
-        description={`${screen.section} / ${screen.current} - Datos de demostracion`}
+        description={`${screen.section} / ${screen.current} - Datos de demostración`}
         size="lg"
         footer={actionPanelFooter}
         onClose={() => setActivePanel(null)}

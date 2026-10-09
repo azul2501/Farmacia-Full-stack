@@ -94,9 +94,9 @@ class TransferSerializer(serializers.ModelSerializer):
         if any(entity is None or entity.company_id != company.id for entity in entities):
             raise serializers.ValidationError("Todas las ubicaciones deben pertenecer a la empresa.")
         if origin_warehouse.branch_id != origin_branch.id:
-            raise serializers.ValidationError("El almacen origen no pertenece a su sucursal.")
+            raise serializers.ValidationError("El almacén origen no pertenece a su sucursal.")
         if destination_warehouse.branch_id != destination_branch.id:
-            raise serializers.ValidationError("El almacen destino no pertenece a su sucursal.")
+            raise serializers.ValidationError("El almacén destino no pertenece a su sucursal.")
         if origin_warehouse.id == destination_warehouse.id:
             raise serializers.ValidationError("Los almacenes de origen y destino deben ser diferentes.")
         for branch in (origin_branch, destination_branch):
@@ -122,7 +122,7 @@ class TransferSerializer(serializers.ModelSerializer):
             if variant.company_id != company.id or (lot and lot.company_id != company.id):
                 raise serializers.ValidationError("Producto o lote fuera de la empresa activa.")
             if lot and lot.variant_id != variant.id:
-                raise serializers.ValidationError("El lote no pertenece a la presentacion.")
+                raise serializers.ValidationError("El lote no pertenece a la presentación.")
             TransferItem.objects.create(company=company, transfer=transfer, **item)
         return transfer
 
@@ -143,7 +143,7 @@ class TransferSerializer(serializers.ModelSerializer):
                 if variant.company_id != company.id or (lot and lot.company_id != company.id):
                     raise serializers.ValidationError("Producto o lote fuera de la empresa activa.")
                 if lot and lot.variant_id != variant.id:
-                    raise serializers.ValidationError("El lote no pertenece a la presentacion.")
+                    raise serializers.ValidationError("El lote no pertenece a la presentación.")
                 validated_items.append(item)
             instance.items.all().delete()
             TransferItem.objects.bulk_create(

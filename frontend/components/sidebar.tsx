@@ -35,7 +35,7 @@ const sidebarGroups: SidebarGroup[] = [
     ],
   },
   {
-    label: "Almacen",
+    label: "Almacén",
     icon: "fas fa-boxes",
     items: [
       { href: "/producto", label: "Productos", icon: "fas fa-capsules", permission: "products.view" },
@@ -56,7 +56,7 @@ const sidebarGroups: SidebarGroup[] = [
     ],
   },
   {
-    label: "Catalogos",
+    label: "Catálogos",
     icon: "fas fa-tags",
     items: [
       { href: "/atributo", label: "Atributos de producto", icon: "fas fa-tags", permission: "catalogs.view" },
@@ -64,7 +64,7 @@ const sidebarGroups: SidebarGroup[] = [
     ],
   },
   {
-    label: "Administracion",
+    label: "Administración",
     icon: "fas fa-building",
     items: [
       { href: "/establecimiento", label: "Sucursales", icon: "fas fa-store", permission: "branches.view" },
@@ -74,7 +74,7 @@ const sidebarGroups: SidebarGroup[] = [
       { href: "/usuario", label: "Usuarios", icon: "fas fa-users", permission: "users.view" },
       { href: "/roles", label: "Roles y permisos", icon: "fas fa-user-shield", permission: "roles.view", status: "upcoming" },
       { href: "/reporte", label: "Reportes", icon: "fas fa-chart-bar", permission: "reports.view" },
-      { href: "/empresa", label: "Configuracion", icon: "fas fa-cog", permission: "settings.view", status: "upcoming" },
+      { href: "/empresa", label: "Configuración", icon: "fas fa-cog", permission: "settings.view", status: "upcoming" },
     ],
   },
 ];
@@ -132,7 +132,7 @@ export function Sidebar() {
           <Image src="/legacy/logo/logo.png" alt="" width={34} height={34} className="brand-image" priority />
           <span className="brand-text">Botica Farma</span>
         </Link>
-        <button type="button" className="sidebar-collapse-button" aria-label="Colapsar menu" onClick={toggleSidebar}>
+        <button type="button" className="sidebar-collapse-button" aria-label="Colapsar menú" onClick={toggleSidebar}>
           <i className={`fas ${sidebarCollapsed ? "fa-chevron-right" : "fa-chevron-left"}`} aria-hidden="true" />
         </button>
       </div>

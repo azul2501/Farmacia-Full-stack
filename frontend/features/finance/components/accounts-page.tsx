@@ -20,7 +20,7 @@ type Account = {
 };
 type CashSession = { id: string; register_name: string; status: string };
 
-function message(error: unknown) { return apiErrorMessage(error, "No se pudo registrar la operacion."); }
+function message(error: unknown) { return apiErrorMessage(error, "No se pudo registrar la operación."); }
 function money(value: string) { return `S/ ${Number(value).toFixed(2)}`; }
 const accountStatusLabels: Record<string, { label: string; tone: string }> = {
   PENDING: { label: "Pendiente", tone: "warning" },
@@ -58,7 +58,7 @@ export function AccountsPage({ type }: { type: "payable" | "receivable" }) {
   const columns = useMemo<DataTableColumn<Account>[]>(() => [
     { id: "party", header: payable ? "Proveedor" : "Cliente", value: (row) => payable ? row.supplier_name : row.customer_name, sortable: true },
     { id: "document", header: "Documento", value: (row) => payable ? row.purchase_number : row.sale_number },
-    { id: "issue", header: "Emision", value: (row) => row.issue_date, render: (row) => shortDate(row.issue_date), sortable: true },
+    { id: "issue", header: "Emisión", value: (row) => row.issue_date, render: (row) => shortDate(row.issue_date), sortable: true },
     { id: "due", header: "Vencimiento", value: (row) => row.due_date, render: (row) => shortDate(row.due_date), sortable: true },
     { id: "original", header: "Monto original", value: (row) => money(row.original_amount) },
     { id: "balance", header: "Saldo", value: (row) => money(row.balance), sortable: true },
@@ -72,14 +72,14 @@ export function AccountsPage({ type }: { type: "payable" | "receivable" }) {
       await mutation.mutateAsync();
       showToast({ tone: "success", title: payable ? "Pago registrado" : "Cobro registrado", description: "El saldo y la caja fueron actualizados transaccionalmente." });
       setAccount(null);
-    } catch (error) { showToast({ tone: "error", title: "Operacion rechazada", description: message(error) }); }
+    } catch (error) { showToast({ tone: "error", title: "Operación rechazada", description: message(error) }); }
   }
 
   return <>
     <PageHeader title={payable ? "Cuentas por pagar" : "Cuentas por cobrar"} section={payable ? "Caja y finanzas" : "Ventas"} current={payable ? "Cuentas por pagar" : "Cuentas por cobrar"} />
     <section className="content-panel"><DataTable rows={accountsQuery.data?.items ?? []} columns={columns} rowKey={(row) => row.id} searchText={(row) => `${row.supplier_name ?? row.customer_name} ${row.purchase_number ?? row.sale_number} ${row.effective_status}`} loading={accountsQuery.isLoading} error={accountsQuery.error ? message(accountsQuery.error) : undefined} onRetry={() => void accountsQuery.refetch()} /></section>
     <Modal open={Boolean(account)} title={payable ? "Registrar pago" : "Registrar cobro"} description={`Saldo pendiente: ${account ? money(account.balance) : ""}`} busy={mutation.isPending} onClose={() => setAccount(null)} footer={<><button type="button" className="ghost-button" onClick={() => setAccount(null)}>Cancelar</button><button form="account-transaction-form" type="submit" className="app-button primary" disabled={mutation.isPending}>{mutation.isPending ? "Procesando..." : "Confirmar"}</button></>}>
-      <form id="account-transaction-form" className="form-grid" onSubmit={(event) => void submit(event)}><label><span>Fecha</span><input type="date" required value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></label><label><span>Monto</span><input type="number" min="0.1" max={account?.balance} step="0.01" required value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} onBlur={(e) => setForm((current) => ({ ...current, amount: String(Math.min(roundDecimal(Number(e.target.value)), Number(account?.balance ?? Infinity))) }))} /></label><label><span>Medio de pago</span><select value={form.method} onChange={(e) => setForm({ ...form, method: e.target.value })}><option value="CASH">Efectivo</option><option value="YAPE">Yape</option><option value="PLIN">Plin</option><option value="CARD">Tarjeta</option><option value="TRANSFER">Transferencia</option></select></label>{form.method === "CASH" ? <label><span>Caja abierta</span><select required value={form.cash_session} onChange={(e) => setForm({ ...form, cash_session: e.target.value })}><option value="">Seleccionar</option>{sessionsQuery.data?.items.map((session) => <option value={session.id} key={session.id}>{session.register_name}</option>)}</select></label> : null}<label><span>Referencia</span><input value={form.reference} onChange={(e) => setForm({ ...form, reference: e.target.value })} /></label><label><span>Numero de operacion</span><input value={form.operation_number} onChange={(e) => setForm({ ...form, operation_number: e.target.value })} /></label><label className="form-span-full"><span>Observacion</span><textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></label></form>
+      <form id="account-transaction-form" className="form-grid" onSubmit={(event) => void submit(event)}><label><span>Fecha</span><input type="date" required value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></label><label><span>Monto</span><input type="number" min="0.1" max={account?.balance} step="0.01" required value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} onBlur={(e) => setForm((current) => ({ ...current, amount: String(Math.min(roundDecimal(Number(e.target.value)), Number(account?.balance ?? Infinity))) }))} /></label><label><span>Medio de pago</span><select value={form.method} onChange={(e) => setForm({ ...form, method: e.target.value })}><option value="CASH">Efectivo</option><option value="YAPE">Yape</option><option value="PLIN">Plin</option><option value="CARD">Tarjeta</option><option value="TRANSFER">Transferencia</option></select></label>{form.method === "CASH" ? <label><span>Caja abierta</span><select required value={form.cash_session} onChange={(e) => setForm({ ...form, cash_session: e.target.value })}><option value="">Seleccionar</option>{sessionsQuery.data?.items.map((session) => <option value={session.id} key={session.id}>{session.register_name}</option>)}</select></label> : null}<label><span>Referencia</span><input value={form.reference} onChange={(e) => setForm({ ...form, reference: e.target.value })} /></label><label><span>Número de operación</span><input value={form.operation_number} onChange={(e) => setForm({ ...form, operation_number: e.target.value })} /></label><label className="form-span-full"><span>Observación</span><textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></label></form>
     </Modal>
   </>;
 }

@@ -116,7 +116,7 @@ export function DataTable<T>({
             onChange={(event) => setQuery(event.target.value)}
           />
           {query ? (
-            <button type="button" aria-label="Limpiar busqueda" onClick={() => setQuery("")}>
+            <button type="button" aria-label="Limpiar búsqueda" onClick={() => setQuery("")}>
               <i className="fas fa-times" aria-hidden="true" />
             </button>
           ) : null}
@@ -191,11 +191,11 @@ export function DataTable<T>({
             </select>
           </label>
           <div className="table-pagination" aria-label="Paginacion">
-            <button type="button" aria-label="Pagina anterior" disabled={safePage === 1} onClick={() => setPage(safePage - 1)}>
+            <button type="button" aria-label="Página anterior" disabled={safePage === 1} onClick={() => setPage(safePage - 1)}>
               <i className="fas fa-chevron-left" aria-hidden="true" />
             </button>
-            <span>Pagina {safePage} de {pageCount}</span>
-            <button type="button" aria-label="Pagina siguiente" disabled={safePage === pageCount} onClick={() => setPage(safePage + 1)}>
+            <span>Página {safePage} de {pageCount}</span>
+            <button type="button" aria-label="Página siguiente" disabled={safePage === pageCount} onClick={() => setPage(safePage + 1)}>
               <i className="fas fa-chevron-right" aria-hidden="true" />
             </button>
           </div>

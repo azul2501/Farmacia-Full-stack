@@ -179,3 +179,203 @@ def test_product_with_expiry_always_tracks_lots(domain):
     product.save()
     product.refresh_from_db()
     assert product.requires_lot is True
+
+
+def test_admin_resets_password_only_for_users_of_own_company(domain):
+    from apps.accounts.models import Membership, Role, User
+    from apps.tenancy.models import Company
+
+    client = APIClient()
+    client.force_authenticate(domain["user"])
+    headers = {"HTTP_X_COMPANY_ID": str(domain["company"].id)}
+    cashier = User.objects.create_user(email="cajero@example.com", password="old-password-1", full_name="Cajero")
+    membership = Membership.objects.create(user=cashier, company=domain["company"], role=Role.CASHIER)
+
+    weak = client.post(f"/api/v1/users/{membership.id}/reset-password/", {"new_password": "12345678"}, **headers)
+    assert weak.status_code == 400
+    ok = client.post(
+        f"/api/v1/users/{membership.id}/reset-password/", {"new_password": "Nueva-clave-segura-1"}, **headers
+    )
+    assert ok.status_code == 204
+    cashier.refresh_from_db()
+    assert cashier.check_password("Nueva-clave-segura-1")
+
+    other = Company.objects.create(legal_name="Otra SAC", trade_name="Otra", tax_id="20888888881")
+    Membership.objects.create(user=cashier, company=other, role=Role.CASHIER)
+    shared = client.post(
+        f"/api/v1/users/{membership.id}/reset-password/", {"new_password": "Otra-clave-segura-2"}, **headers
+    )
+    assert shared.status_code == 400
+    cashier.refresh_from_db()
+    assert cashier.check_password("Nueva-clave-segura-1")
+
+    own = Membership.objects.get(user=domain["user"], company=domain["company"])
+    assert (
+        client.post(
+            f"/api/v1/users/{own.id}/reset-password/", {"new_password": "Otra-clave-segura-3"}, **headers
+        ).status_code
+        == 400
+    )
+
+
+def test_initial_stock_import_previews_then_commits_atomically(domain):
+    from django.core.files.uploadedfile import SimpleUploadedFile
+
+    from apps.catalog.models import ProductBarcode
+    from apps.inventory.models import InventoryMovement
+
+    ProductBarcode.objects.create(
+        company=domain["company"], variant=domain["variant"], code="7750000000012", is_primary=True
+    )
+    client = APIClient()
+    client.force_authenticate(domain["user"])
+    headers = {"HTTP_X_COMPANY_ID": str(domain["company"].id)}
+    future = (timezone.localdate() + timedelta(days=400)).isoformat()
+
+    def upload(text, commit=False):
+        file = SimpleUploadedFile("stock.csv", text.encode("utf-8"), content_type="text/csv")
+        data = {"file": file, **({"commit": "true"} if commit else {})}
+        return client.post("/api/v1/products/stock-import/", data, format="multipart", **headers)
+
+    header = "CODIGO_BARRAS,ALMACEN,LOTE,VENCIMIENTO,CANTIDAD,COSTO_REAL\n"
+    bad = header + f"7750000000012,Almacen Central,,{future},10,1.5\n9999,Almacen Central,L1,{future},5,1\n"
+    preview = upload(bad)
+    assert preview.status_code == 200
+    assert preview.data["error_count"] == 2
+    assert upload(bad, commit=True).status_code == 400
+    assert not Stock.objects.filter(variant=domain["variant"]).exists()
+
+    good = header + f"7750000000012,ALM-C,l-100,{future},10,1.5\n"
+    result = upload(good, commit=True)
+    assert result.status_code == 201
+    assert result.data["imported"] == 1
+    stock = Stock.objects.get(variant=domain["variant"], warehouse=domain["origin_warehouse"])
+    assert stock.quantity == Decimal("10")
+    assert stock.lot.batch_number == "L-100"
+    movement = InventoryMovement.objects.get(variant=domain["variant"])
+    assert movement.unit_cost == Decimal("1.5")
+
+
+def test_credit_sale_with_down_payment_can_be_cancelled_until_a_later_collection(domain):
+    from datetime import date
+
+    from apps.catalog.models import Customer
+    from apps.core.choices import PaymentCondition
+    from apps.finance.models import ReceivableAccount
+    from apps.finance.services import FinanceService
+
+    receive_purchase(domain)
+    customer = Customer.objects.create(company=domain["company"], document_number="70000009", full_name="Cliente")
+    session = CashService.open_session(
+        company=domain["company"], register_id=domain["register"].id, user=domain["user"], opening_amount=Decimal("10")
+    )
+
+    def credit_sale(key):
+        sale, _ = SaleService.checkout(
+            company=domain["company"],
+            branch=domain["origin_branch"],
+            warehouse=domain["origin_warehouse"],
+            terminal=domain["terminal"],
+            cash_session_id=session.id,
+            user=domain["user"],
+            customer=customer,
+            idempotency_key=key,
+            payment_condition=PaymentCondition.CREDIT,
+            payment_due_date=date.today() + timedelta(days=15),
+            lines=[
+                SaleLineInput(
+                    variant_id=domain["variant"].id,
+                    quantity=Decimal("4"),
+                    unit_price=Decimal("1"),
+                    discount=Decimal("0"),
+                )
+            ],
+            payments=[PaymentInput(method=PaymentMethod.CASH, amount=Decimal("1"), received_amount=Decimal("1"))],
+        )
+        return sale
+
+    first = credit_sale("credit-cancel-1")
+    cancelled = SaleService.cancel(sale_id=first.id, company=domain["company"], user=domain["user"], reason="Error")
+    assert cancelled.status == "CANCELLED"
+
+    second = credit_sale("credit-cancel-2")
+    account = ReceivableAccount.objects.get(sale=second)
+    FinanceService.register_receivable_collection(
+        account_id=account.id,
+        company=domain["company"],
+        user=domain["user"],
+        amount=Decimal("1"),
+        date=date.today(),
+        method=PaymentMethod.CASH,
+        cash_session=session,
+        idempotency_key="credit-cancel-collection",
+    )
+    with pytest.raises(ValidationError):
+        SaleService.cancel(sale_id=second.id, company=domain["company"], user=domain["user"], reason="Error")
+
+
+def test_sale_uses_unlotted_stock_after_product_starts_tracking_lots(domain):
+    from apps.inventory.models import MovementType
+    from apps.inventory.services import InventoryService, MovementCommand
+
+    product = domain["variant"].product
+    product.requires_lot = False
+    product.requires_expiry = False
+    product.save()
+    InventoryService.apply_movement(
+        MovementCommand(
+            company=domain["company"],
+            warehouse=domain["origin_warehouse"],
+            variant=domain["variant"],
+            lot=None,
+            movement_type=MovementType.ADJUSTMENT_IN,
+            quantity=Decimal("5"),
+            reference_type="test",
+            reference_id=domain["variant"].id,
+            performed_by=domain["user"],
+        )
+    )
+    product.requires_expiry = True
+    product.save()
+    session = CashService.open_session(
+        company=domain["company"], register_id=domain["register"].id, user=domain["user"], opening_amount=Decimal("0")
+    )
+    sale, _ = SaleService.checkout(
+        company=domain["company"],
+        branch=domain["origin_branch"],
+        warehouse=domain["origin_warehouse"],
+        terminal=domain["terminal"],
+        cash_session_id=session.id,
+        user=domain["user"],
+        idempotency_key="unlotted-sale",
+        lines=[
+            SaleLineInput(
+                variant_id=domain["variant"].id, quantity=Decimal("2"), unit_price=Decimal("1"), discount=Decimal("0")
+            )
+        ],
+        payments=[PaymentInput(method=PaymentMethod.CASH, amount=Decimal("2"), received_amount=Decimal("2"))],
+    )
+    assert sale.items.get().lot is None
+    assert Stock.objects.get(variant=domain["variant"], lot=None).quantity == Decimal("3")
+
+
+def test_adjustment_out_beyond_stock_is_a_validation_error_not_500(domain):
+    receive_purchase(domain, quantity=Decimal("3"))
+    stock = Stock.objects.get(variant=domain["variant"])
+    client = APIClient()
+    client.force_authenticate(domain["user"])
+    response = client.post(
+        "/api/v1/stock/adjustments/",
+        {
+            "warehouse": str(stock.warehouse_id),
+            "variant": str(stock.variant_id),
+            "lot": str(stock.lot_id),
+            "quantity": "50",
+            "adjustment_type": "OUT",
+            "reason": "Conteo fisico",
+            "observation": "x" * 500,
+        },
+        format="json",
+        HTTP_X_COMPANY_ID=str(domain["company"].id),
+    )
+    assert response.status_code == 400

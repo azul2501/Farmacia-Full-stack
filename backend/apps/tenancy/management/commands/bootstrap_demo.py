@@ -7,7 +7,7 @@ from apps.tenancy.models import Branch, Company, POSTerminal, Warehouse
 
 
 class Command(BaseCommand):
-    help = "Crea un tenant minimo para desarrollo local."
+    help = "Crea un tenant mínimo para desarrollo local."
 
     @transaction.atomic
     def handle(self, *args, **options):
@@ -27,7 +27,7 @@ class Command(BaseCommand):
         Warehouse.objects.update_or_create(
             company=company,
             code="ALM-C01",
-            defaults={"branch": branch, "name": "Almacen principal", "is_active": True},
+            defaults={"branch": branch, "name": "Almacén principal", "is_active": True},
         )
         POSTerminal.objects.update_or_create(
             company=company,

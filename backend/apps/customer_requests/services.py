@@ -67,7 +67,7 @@ class CustomerRequestService:
         if not customer_request.items.exists():
             raise ValidationError("La solicitud no contiene productos.")
         if warehouse.company_id != company.id or warehouse.branch_id != customer_request.branch_id:
-            raise ValidationError("El almacen no pertenece a la sucursal de la solicitud.")
+            raise ValidationError("El almacén no pertenece a la sucursal de la solicitud.")
         if terminal.company_id != company.id or terminal.branch_id != customer_request.branch_id:
             raise ValidationError("El terminal no pertenece a la sucursal de la solicitud.")
         lines = [

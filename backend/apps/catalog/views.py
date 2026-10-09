@@ -1,11 +1,16 @@
 import csv
 import io
+import unicodedata
+import uuid
+from datetime import datetime
 from decimal import Decimal, InvalidOperation
 
+from django.db import transaction
 from django.http import HttpResponse
+from django.utils import timezone
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import NotFound, ValidationError
+from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
@@ -35,7 +40,12 @@ from apps.catalog.serializers import (
     SupplierSerializer,
     TherapeuticActionSerializer,
 )
-from apps.core.permissions import CompanyScopedViewSetMixin, HasCompanyAccess, HasCompanyRole
+from apps.core.permissions import (
+    CompanyScopedViewSetMixin,
+    HasCompanyAccess,
+    HasCompanyRole,
+    ensure_resource_access,
+)
 from apps.core.role_policies import INVENTORY_CRUD, SALES_CRUD
 
 PRODUCT_IMPORT_HEADERS = [
@@ -92,10 +102,34 @@ def decimal_text(value, *, required=False, min_value=None):
     try:
         parsed = Decimal(raw)
     except InvalidOperation as exc:
-        raise ValueError("Debe ser un numero valido.") from exc
+        raise ValueError("Debe ser un número válido.") from exc
     if min_value is not None and parsed < Decimal(str(min_value)):
         raise ValueError(f"Debe ser mayor o igual a {min_value}.")
     return str(parsed)
+
+
+def plain_text(value):
+    """Texto sin tildes ni mayusculas para comparar nombres escritos a mano en Excel."""
+    normalized = unicodedata.normalize("NFD", str(value or "").strip().lower())
+    return "".join(char for char in normalized if unicodedata.category(char) != "Mn")
+
+
+def import_decimal(value):
+    raw = str(value or "").strip().replace(",", ".")
+    try:
+        return Decimal(raw) if raw else None
+    except InvalidOperation:
+        return None
+
+
+def parse_import_date(value):
+    value = (value or "").strip()
+    for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y"):
+        try:
+            return datetime.strptime(value, fmt).date()
+        except ValueError:
+            continue
+    return None
 
 
 def csv_response(filename, rows):
@@ -199,6 +233,7 @@ class ProductViewSet(DeactivateInsteadOfDeleteMixin, CompanyScopedViewSetMixin, 
         "export": ALL_COMPANY_ROLES,
         "import_preview": INVENTORY_ROLES,
         "import_commit": INVENTORY_ROLES,
+        "stock_import": INVENTORY_ROLES,
     }
     search_fields = [
         "internal_code",
@@ -266,7 +301,7 @@ class ProductViewSet(DeactivateInsteadOfDeleteMixin, CompanyScopedViewSetMixin, 
         usual_supplier = self._resolve_supplier(normalized.get("PROVEEDOR_HABITUAL"), errors)
 
         if barcode and ProductBarcode.objects.filter(company=self.request.company, code=barcode).exists():
-            errors.append(f"El codigo de barras {barcode} ya existe.")
+            errors.append(f"El código de barras {barcode} ya existe.")
 
         unit = str(normalized.get("UNIDAD_BASE", "") or "").strip() or "UNIDAD"
         presentation = str(normalized.get("PRESENTACION_PRINCIPAL", "") or "").strip() or unit
@@ -377,14 +412,14 @@ class ProductViewSet(DeactivateInsteadOfDeleteMixin, CompanyScopedViewSetMixin, 
     def by_barcode(self, request):
         code = request.query_params.get("code", "").strip()
         if not code:
-            raise ValidationError({"code": "El codigo de barras es obligatorio."})
+            raise ValidationError({"code": "El código de barras es obligatorio."})
         barcode = (
             ProductBarcode.objects.select_related("variant__product")
             .filter(company=request.company, code=code, variant__product__is_active=True)
             .first()
         )
         if barcode is None:
-            raise NotFound("No existe un producto activo con ese codigo de barras.")
+            raise NotFound("No existe un producto activo con ese código de barras.")
         serializer = self.get_serializer(barcode.variant.product)
         return Response(serializer.data)
 
@@ -424,8 +459,137 @@ class ProductViewSet(DeactivateInsteadOfDeleteMixin, CompanyScopedViewSetMixin, 
 
     @action(detail=False, methods=["get"], url_path="stock-template")
     def stock_template(self, request):
-        sample = ["7750000000012", "Almacen Central", "LOT-001", "2027-12-31", "100", "1.0000"]
+        sample = ["7750000000012", "Almacén Central", "LOT-001", "2027-12-31", "100", "1.0000"]
         return csv_response("plantilla-lotes-stock-inicial.csv", [STOCK_IMPORT_HEADERS, sample])
+
+    @action(
+        detail=False,
+        methods=["post"],
+        url_path="stock-import",
+        parser_classes=[MultiPartParser, FormParser],
+    )
+    def stock_import(self, request):
+        """Carga stock inicial por lote desde CSV. Sin `commit=true` solo valida y devuelve la vista previa."""
+        from apps.inventory.models import Lot, MovementType
+        from apps.inventory.services import InventoryService, MovementCommand
+        from apps.tenancy.models import Warehouse
+
+        uploaded_file = request.FILES.get("file")
+        if uploaded_file is None:
+            raise ValidationError({"file": "Selecciona el archivo CSV de stock inicial."})
+        if not uploaded_file.name.lower().endswith(".csv"):
+            raise ValidationError({"file": "La carga de stock acepta CSV guardado desde Excel."})
+        commit = str(request.data.get("commit", "")).lower() in {"1", "true", "si"}
+        today = timezone.localdate()
+        warehouses = list(Warehouse.objects.filter(company=request.company, is_active=True).select_related("branch"))
+        rows = []
+        for index, raw in enumerate(read_csv_upload(uploaded_file), start=2):
+            row = {str(key or "").strip().upper(): str(value or "").strip() for key, value in raw.items()}
+            errors = []
+            barcode = (
+                ProductBarcode.objects.select_related("variant__product")
+                .filter(company=request.company, code=row.get("CODIGO_BARRAS", ""), variant__is_active=True)
+                .first()
+            )
+            variant = barcode.variant if barcode else None
+            if variant is None:
+                errors.append("Código de barras no registrado en productos activos.")
+            warehouse_name = row.get("ALMACEN", "")
+            warehouse = next(
+                (w for w in warehouses if plain_text(warehouse_name) in {plain_text(w.name), plain_text(w.code)}),
+                None,
+            )
+            if warehouse is None:
+                errors.append(f"Almacen '{warehouse_name}' no existe.")
+            else:
+                try:
+                    ensure_resource_access(user=request.user, company=request.company, resource=warehouse)
+                except PermissionDenied:
+                    errors.append(f"No tienes acceso al almacén '{warehouse.name}'.")
+            quantity = import_decimal(row.get("CANTIDAD"))
+            if quantity is None or quantity <= 0:
+                errors.append("CANTIDAD debe ser un número mayor a 0.")
+            unit_cost = import_decimal(row.get("COSTO_REAL"))
+            if row.get("COSTO_REAL") and (unit_cost is None or unit_cost < 0):
+                errors.append("COSTO_REAL debe ser un número mayor o igual a 0.")
+            batch_number = row.get("LOTE", "").upper()
+            expiry = parse_import_date(row.get("VENCIMIENTO", ""))
+            if row.get("VENCIMIENTO") and expiry is None:
+                errors.append("VENCIMIENTO debe tener formato AAAA-MM-DD o DD/MM/AAAA.")
+            if variant is not None:
+                product = variant.product
+                if product.requires_lot and not batch_number:
+                    errors.append("El producto maneja lotes: LOTE es obligatorio.")
+                if product.requires_expiry and expiry is None and not row.get("VENCIMIENTO"):
+                    errors.append("El producto controla vencimiento: VENCIMIENTO es obligatorio.")
+            if expiry is not None and expiry < today:
+                errors.append("El lote ya esta vencido; no se carga como stock disponible.")
+            rows.append(
+                {
+                    "row": index,
+                    "product": f"{variant.product.commercial_name} {variant.presentation}" if variant else "",
+                    "warehouse": warehouse.name if warehouse else warehouse_name,
+                    "lot": batch_number,
+                    "expiry_date": expiry.isoformat() if expiry else None,
+                    "quantity": str(quantity) if quantity is not None else "",
+                    "valid": not errors,
+                    "errors": errors,
+                    "_data": (variant, warehouse, batch_number, expiry, quantity, unit_cost),
+                }
+            )
+        error_count = sum(1 for row in rows if not row["valid"])
+        imported = 0
+        if commit:
+            if not rows:
+                raise ValidationError({"file": "El archivo no tiene filas."})
+            if error_count:
+                raise ValidationError({"file": "Corrige las filas con error antes de importar."})
+            batch_id = uuid.uuid4()
+            with transaction.atomic():
+                for row in rows:
+                    variant, warehouse, batch_number, expiry, quantity, unit_cost = row["_data"]
+                    lot = None
+                    if batch_number or expiry:
+                        lot, _ = Lot.objects.get_or_create(
+                            company=request.company,
+                            variant=variant,
+                            batch_number=batch_number or "SIN-LOTE",
+                            expiry_date=expiry,
+                        )
+                    InventoryService.apply_movement(
+                        MovementCommand(
+                            company=request.company,
+                            warehouse=warehouse,
+                            variant=variant,
+                            lot=lot,
+                            movement_type=MovementType.ADJUSTMENT_IN,
+                            quantity=quantity,
+                            reference_type="inventory.initial_stock",
+                            reference_id=batch_id,
+                            performed_by=request.user,
+                            unit_cost=unit_cost,
+                            reason="Stock inicial (importación CSV)",
+                        )
+                    )
+                    imported += 1
+                record_audit(
+                    company=request.company,
+                    actor=request.user,
+                    action="inventory.initial_stock_imported",
+                    resource=request.company,
+                    payload={"rows": imported, "file": uploaded_file.name},
+                )
+        for row in rows:
+            row.pop("_data")
+        return Response(
+            {
+                "rows": rows,
+                "valid_count": len(rows) - error_count,
+                "error_count": error_count,
+                "imported": imported,
+            },
+            status=status.HTTP_201_CREATED if commit else status.HTTP_200_OK,
+        )
 
     @action(detail=False, methods=["get"], url_path="export")
     def export(self, request):
@@ -487,7 +651,7 @@ class ProductViewSet(DeactivateInsteadOfDeleteMixin, CompanyScopedViewSetMixin, 
         if uploaded_file is None:
             raise ValidationError({"file": "Selecciona un archivo CSV compatible con Excel."})
         if not uploaded_file.name.lower().endswith(".csv"):
-            raise ValidationError({"file": "Por ahora la importacion acepta CSV guardado desde Excel."})
+            raise ValidationError({"file": "Por ahora la importación acepta CSV guardado desde Excel."})
         rows = []
         for index, row in enumerate(read_csv_upload(uploaded_file), start=2):
             payload, errors = self._row_payload(row)
@@ -516,7 +680,7 @@ class ProductViewSet(DeactivateInsteadOfDeleteMixin, CompanyScopedViewSetMixin, 
     def import_commit(self, request):
         rows = request.data.get("rows", [])
         if not isinstance(rows, list) or not rows:
-            raise ValidationError({"rows": "No hay filas validas para importar."})
+            raise ValidationError({"rows": "No hay filas válidas para importar."})
         created = []
         for payload in rows:
             serializer = self.get_serializer(data=payload)
@@ -539,12 +703,12 @@ class ProductVariantViewSet(DeactivateInsteadOfDeleteMixin, CompanyScopedViewSet
     def by_barcode(self, request):
         code = request.query_params.get("code", "").strip()
         if not code:
-            raise ValidationError({"code": "El codigo de barras es obligatorio."})
+            raise ValidationError({"code": "El código de barras es obligatorio."})
         variant = (
             self.get_queryset().filter(barcodes__code=code, is_active=True, product__is_active=True).distinct().first()
         )
         if variant is None:
-            raise NotFound("No existe un producto activo con ese codigo de barras.")
+            raise NotFound("No existe un producto activo con ese código de barras.")
         return Response(self.get_serializer(variant).data)
 
 

@@ -34,4 +34,6 @@ export type ResourceConfig = {
   searchPlaceholder?: string;
   readOnly?: boolean;
   deactivateOnly?: boolean;
+  /** Muestra la accion "Restablecer clave" (POST {endpoint}{id}/reset-password/). */
+  passwordReset?: boolean;
 };
