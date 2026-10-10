@@ -31,9 +31,7 @@ def get_request_company(request):
             .first()
         )
         if not membership:
-            raise PermissionDenied(
-                "No tienes una membresia activa en la empresa solicitada por X-Company-ID."
-            )
+            raise PermissionDenied("No tienes una membresia activa en la empresa solicitada por X-Company-ID.")
         return membership.company
 
     membership = (

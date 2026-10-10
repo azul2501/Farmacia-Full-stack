@@ -1,0 +1,120 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-boticas}
+      POSTGRES_USER: ${POSTGRES_USER:-boticas_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-boticas_local_password}
+    volumes:
+      - boticas_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-boticas_user} -d ${POSTGRES_DB:-boticas}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - boticas_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # Almacenamiento S3 local opcional: docker compose --profile s3 up (y USE_S3=true).
+  minio:
+    image: ${MINIO_IMAGE:-quay.io/minio/minio:latest}
+    profiles: ["s3"]
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID:-boticas_local}
+      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY:-boticas_local_secret}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - boticas_minio_data:/data
+
+  minio-init:
+    image: ${MINIO_MC_IMAGE:-quay.io/minio/mc:latest}
+    profiles: ["s3"]
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      until mc alias set local http://minio:9000 ${AWS_ACCESS_KEY_ID:-boticas_local} ${AWS_SECRET_ACCESS_KEY:-boticas_local_secret}; do sleep 2; done;
+      mc mb --ignore-existing local/${AWS_STORAGE_BUCKET_NAME:-boticas-local};
+      exit 0;"
+
+  api:
+    build: ./backend
+    command: sh -c "python manage.py migrate --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3 --access-logfile -"
+    environment: &backend_environment
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE:-config.settings.production}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-local-compose-only-change-before-production}
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-false}
+      # Compose local corre la imagen de produccion sobre http; en un servidor real usar true.
+      DJANGO_HTTPS: ${DJANGO_HTTPS:-false}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1,api}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://boticas_user:boticas_local_password@db:5432/boticas}
+      POSTGRES_SSLMODE: ${POSTGRES_SSLMODE:-disable}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL:-redis://redis:6379/1}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND:-redis://redis:6379/2}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000}
+      CORS_ALLOW_CREDENTIALS: ${CORS_ALLOW_CREDENTIALS:-true}
+      JWT_REFRESH_COOKIE_NAME: ${JWT_REFRESH_COOKIE_NAME:-boticas_refresh}
+      JWT_COOKIE_SECURE: ${JWT_COOKIE_SECURE:-false}
+      JWT_COOKIE_SAMESITE: ${JWT_COOKIE_SAMESITE:-Lax}
+      JWT_COOKIE_DOMAIN: ${JWT_COOKIE_DOMAIN:-}
+      CSRF_TRUSTED_ORIGINS: ${CSRF_TRUSTED_ORIGINS:-http://localhost:8000}
+      USE_S3: ${USE_S3:-false}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-boticas_local}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-boticas_local_secret}
+      AWS_STORAGE_BUCKET_NAME: ${AWS_STORAGE_BUCKET_NAME:-boticas-local}
+      AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL:-http://minio:9000}
+      AWS_S3_REGION_NAME: ${AWS_S3_REGION_NAME:-us-east-1}
+    ports:
+      - "8000:8000"
+    volumes:
+      - boticas_media:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker:
+    build: ./backend
+    command: celery -A config worker -l INFO
+    healthcheck:
+      disable: true
+    environment: *backend_environment
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_DATA_SOURCE: api
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000/api/v1}
+        NEXT_PUBLIC_SHOW_DEMO_CREDENTIALS: ${NEXT_PUBLIC_SHOW_DEMO_CREDENTIALS:-false}
+        NEXT_PUBLIC_REFRESH_COOKIE_NAME: ${JWT_REFRESH_COOKIE_NAME:-boticas_refresh}
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  boticas_postgres_data:
+  boticas_redis_data:
+  boticas_minio_data:
+  boticas_media:

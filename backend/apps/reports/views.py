@@ -65,7 +65,14 @@ class DashboardReportView(generics.GenericAPIView):
             .annotate(total=Coalesce(Sum("amount"), Decimal("0")))
             .order_by("method")
         )
-        low_stock = stock.filter(quantity__lte=F("variant__minimum_stock")).count()
+        # Stock minimo por presentacion y almacen (sumando todos sus lotes), no por lote individual.
+        low_stock = (
+            stock.filter(variant__is_active=True)
+            .values("warehouse_id", "variant_id", "variant__minimum_stock")
+            .annotate(total=Coalesce(Sum("quantity"), Decimal("0")))
+            .filter(total__lte=F("variant__minimum_stock"))
+            .count()
+        )
         expiring = stock.filter(
             quantity__gt=0,
             lot__expiry_date__range=(today, next_month),

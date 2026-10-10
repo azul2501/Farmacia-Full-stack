@@ -1,13 +1,13 @@
 import { ApiError } from "@/features/shared/api/client";
 
 const statusFallbackMessages: Record<number, string> = {
-  400: "Los datos enviados no son validos.",
-  401: "Tu sesion expiro. Vuelve a iniciar sesion.",
-  403: "No tienes permiso para realizar esta accion.",
+  400: "Los datos enviados no son válidos.",
+  401: "Tu sesión expiro. Vuelve a iniciar sesión.",
+  403: "No tienes permiso para realizar esta acción.",
   404: "No se encontro el recurso solicitado.",
-  409: "La operacion entra en conflicto con el estado actual del registro.",
+  409: "La operación entra en conflicto con el estado actual del registro.",
   422: "Los datos enviados no pudieron procesarse.",
-  500: "Ocurrio un error en el servidor. Intenta de nuevo en unos minutos.",
+  500: "Ocurrió un error en el servidor. Intenta de nuevo en unos minutos.",
 };
 
 function isGenericStatusMessage(message: string) {
@@ -20,7 +20,7 @@ function isGenericStatusMessage(message: string) {
  * negocio); solo cae a un texto generico por codigo HTTP cuando el backend
  * no aporto ningun detalle util.
  */
-export function apiErrorMessage(error: unknown, fallback = "No se pudo completar la operacion."): string {
+export function apiErrorMessage(error: unknown, fallback = "No se pudo completar la operación."): string {
   if (!(error instanceof ApiError)) return fallback;
   if (error.message && !isGenericStatusMessage(error.message)) return error.message;
   return statusFallbackMessages[error.status] ?? fallback;

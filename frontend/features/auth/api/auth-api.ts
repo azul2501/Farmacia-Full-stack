@@ -1,6 +1,6 @@
 import { apiEndpoints } from "@/features/shared/api/endpoints";
 import {
-  apiRequest,
+  apiRequest, apiRequestAll,
   clearApiSession,
   setApiAccessToken,
 } from "@/features/shared/api/client";
@@ -86,11 +86,11 @@ export function getSessionContext() {
 }
 
 export function getSessionWarehouses() {
-  return apiRequest<ApiPage<ApiWarehouse>>(apiEndpoints.warehouses, { query: { pageSize: 100 } });
+  return apiRequestAll<ApiWarehouse>(apiEndpoints.warehouses, {});
 }
 
 export function getSessionCashRegisters() {
-  return apiRequest<ApiPage<ApiCashRegister>>(apiEndpoints.cashRegisters, { query: { pageSize: 100 } });
+  return apiRequestAll<ApiCashRegister>(apiEndpoints.cashRegisters, {});
 }
 
 export async function logoutFromApi() {

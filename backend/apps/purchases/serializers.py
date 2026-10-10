@@ -46,14 +46,14 @@ class PurchaseSerializer(serializers.ModelSerializer):
         branch = attrs.get("branch", getattr(self.instance, "branch", None))
         warehouse = attrs.get("destination_warehouse", getattr(self.instance, "destination_warehouse", None))
         if any(entity.company_id != company.id for entity in (supplier, branch, warehouse)):
-            raise serializers.ValidationError("Proveedor, sucursal y almacen deben pertenecer a la empresa.")
+            raise serializers.ValidationError("Proveedor, sucursal y almacén deben pertenecer a la empresa.")
         if warehouse.branch_id != branch.id:
-            raise serializers.ValidationError("El almacen destino no pertenece a la sucursal seleccionada.")
+            raise serializers.ValidationError("El almacén destino no pertenece a la sucursal seleccionada.")
         ensure_branch_access(user=self.context["request"].user, company=company, branch_id=branch.id)
         condition = attrs.get("payment_condition", getattr(self.instance, "payment_condition", PaymentCondition.CASH))
         due_date = attrs.get("payment_due_date", getattr(self.instance, "payment_due_date", None))
         if condition == PaymentCondition.CREDIT and not due_date:
-            raise serializers.ValidationError({"payment_due_date": "Es obligatoria para compras a credito."})
+            raise serializers.ValidationError({"payment_due_date": "Es obligatoria para compras a crédito."})
         if condition == PaymentCondition.CASH:
             method = attrs.get("payment_method", getattr(self.instance, "payment_method", ""))
             if not method:
@@ -69,7 +69,7 @@ class PurchaseSerializer(serializers.ModelSerializer):
                     {"cash_session": "Solo los pagos en efectivo pueden asociarse a una caja."}
                 )
         elif attrs.get("cash_session", getattr(self.instance, "cash_session", None)) is not None:
-            raise serializers.ValidationError({"cash_session": "Una compra a credito no usa caja al confirmarse."})
+            raise serializers.ValidationError({"cash_session": "Una compra a crédito no usa caja al confirmarse."})
         return attrs
 
     @transaction.atomic
@@ -96,7 +96,7 @@ class PurchaseSerializer(serializers.ModelSerializer):
         normalized_items = []
         for item in items_data:
             if item["variant"].company_id != company.id:
-                raise serializers.ValidationError({"items": "Una presentacion no pertenece a la empresa."})
+                raise serializers.ValidationError({"items": "Una presentación no pertenece a la empresa."})
             pack_quantity = item["pack_quantity"]
             purchase_factor = item["purchase_factor"]
             purchase_pack_price = item["purchase_pack_price"]
@@ -107,7 +107,18 @@ class PurchaseSerializer(serializers.ModelSerializer):
                 Decimal("0.0001"), rounding=ROUND_HALF_UP
             )
             line_subtotal = pack_quantity * purchase_pack_price
-            line_total = line_subtotal - item.get("discount", 0) + item.get("tax", 0)
+            discount = item.get("discount", 0)
+            tax = item.get("tax", 0)
+            if pack_quantity <= 0 or purchase_pack_price < 0 or discount < 0 or tax < 0:
+                raise serializers.ValidationError({"items": "Cantidad, precio, descuento o impuesto inválido."})
+            if discount > line_subtotal:
+                raise serializers.ValidationError({"items": "El descuento no puede superar el subtotal de la línea."})
+            product = item["variant"].product
+            if product.requires_expiry and not item.get("expiry_date"):
+                raise serializers.ValidationError(
+                    {"items": f"El vencimiento es obligatorio para {product.commercial_name}."}
+                )
+            line_total = line_subtotal - discount + tax
             item["line_total"] = line_total
             subtotal += line_subtotal
             discount_total += item.get("discount", 0)

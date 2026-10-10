@@ -1,6 +1,8 @@
 from django.conf import settings
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status, viewsets
+from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -14,6 +16,7 @@ from apps.accounts.serializers import (
     AccessTokenSerializer,
     ChangeOwnPasswordSerializer,
     CompanyUserSerializer,
+    ResetUserPasswordSerializer,
     SessionContextSerializer,
 )
 from apps.audit.services import record_audit
@@ -35,6 +38,7 @@ def _set_refresh_cookie(response, refresh_token):
         httponly=True,
         secure=settings.JWT_COOKIE_SECURE,
         samesite=settings.JWT_COOKIE_SAMESITE,
+        domain=settings.JWT_COOKIE_DOMAIN,
         path="/",
     )
 
@@ -46,7 +50,7 @@ class CookieTokenObtainPairView(APIView):
     @extend_schema(
         request=TokenObtainPairSerializer,
         responses=AccessTokenSerializer,
-        description="Inicia sesion y guarda el refresh token en una cookie HttpOnly.",
+        description="Inicia sesión y guarda el refresh token en una cookie HttpOnly.",
     )
     def post(self, request):
         serializer = TokenObtainPairSerializer(data=request.data)
@@ -68,7 +72,7 @@ class CookieTokenRefreshView(APIView):
     def post(self, request):
         refresh_token = request.COOKIES.get(settings.JWT_REFRESH_COOKIE_NAME)
         if not refresh_token:
-            return Response({"detail": "No existe una sesion renovable."}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"detail": "No existe una sesión renovable."}, status=status.HTTP_401_UNAUTHORIZED)
         serializer = TokenRefreshSerializer(data={"refresh": refresh_token})
         serializer.is_valid(raise_exception=True)
         response = Response({"access": serializer.validated_data["access"]})
@@ -97,6 +101,7 @@ class CookieTokenLogoutView(APIView):
         response.delete_cookie(
             settings.JWT_REFRESH_COOKIE_NAME,
             path="/",
+            domain=settings.JWT_COOKIE_DOMAIN,
             samesite=settings.JWT_COOKIE_SAMESITE,
         )
         return response
@@ -189,6 +194,33 @@ class CompanyUserViewSet(CompanyScopedViewSetMixin, viewsets.ModelViewSet):
             resource=membership,
             payload={"role": membership.role, "branches": branch_ids},
         )
+
+    @extend_schema(request=ResetUserPasswordSerializer, responses={204: None})
+    @action(detail=True, methods=["post"], url_path="reset-password")
+    def reset_password(self, request, pk=None):
+        membership = self.get_object()
+        user = membership.user
+        if user.id == request.user.id:
+            raise ValidationError({"detail": "Para cambiar tu propia clave usa la opcion de cambio de clave."})
+        if user.is_superuser:
+            raise ValidationError({"detail": "No se puede restablecer la clave de un superusuario."})
+        # Un usuario global con acceso a otra empresa solo puede cambiar su clave el mismo.
+        if Membership.objects.filter(user=user).exclude(company=request.company).exists():
+            raise ValidationError(
+                {"detail": "El usuario también pertenece a otra empresa; debe cambiar su clave el mismo."}
+            )
+        serializer = ResetUserPasswordSerializer(data=request.data, context={"user": user})
+        serializer.is_valid(raise_exception=True)
+        user.set_password(serializer.validated_data["new_password"])
+        user.save(update_fields=["password"])
+        record_audit(
+            company=request.company,
+            actor=request.user,
+            action="user.password_reset",
+            resource=membership,
+            payload={"user_id": str(user.id)},
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def perform_destroy(self, instance):
         record_audit(

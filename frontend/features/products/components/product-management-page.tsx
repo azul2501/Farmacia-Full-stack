@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PageHeader } from "@/components/ui/page-header";
 import { useSession } from "@/features/auth/context/session-context";
-import { apiDownload, apiRequest } from "@/features/shared/api/client";
+import { apiDownload, apiRequest, apiRequestAll } from "@/features/shared/api/client";
 import { apiErrorMessage } from "@/features/shared/api/error-message";
 import { apiEndpoints } from "@/features/shared/api/endpoints";
 import type { ApiPage } from "@/features/shared/api/types";
@@ -22,7 +22,7 @@ function apiMessage(error: unknown) {
 }
 
 function money(value?: string) {
-  return new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN", minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(Number(value || 0));
+  return new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(value || 0));
 }
 
 function primaryBarcode(product: Product) {
@@ -59,7 +59,7 @@ export function ProductManagementPage() {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const key = ["products", company?.id];
-  const productsQuery = useQuery({ queryKey: key, queryFn: () => apiRequest<ApiPage<Product>>(apiEndpoints.products, { query: { pageSize: 100, ordering: "commercial_name" } }) });
+  const productsQuery = useQuery({ queryKey: key, queryFn: () => apiRequestAll<Product>(apiEndpoints.products, { query: { ordering: "commercial_name" } }) });
 
   const laboratories = useMemo(() => {
     const names = (productsQuery.data?.items ?? []).map((product) => product.laboratory_name).filter((name): name is string => Boolean(name));
@@ -109,7 +109,7 @@ export function ProductManagementPage() {
   });
 
   async function deactivate(product: Product) {
-    if (!await confirm({ title: "Desactivar producto", description: "El producto dejara de estar disponible para nuevas operaciones, pero conservara su historial.", confirmLabel: "Desactivar", tone: "warning" })) return;
+    if (!await confirm({ title: "Desactivar producto", description: "El producto dejará de estar disponible para nuevas operaciones, pero conservará su historial.", confirmLabel: "Desactivar", tone: "warning" })) return;
     try {
       await setActiveMutation.mutateAsync({ product, isActive: false });
       showToast({ tone: "success", title: "Producto desactivado" });
@@ -162,6 +162,7 @@ export function ProductManagementPage() {
     const averageMargin = margins.length ? margins.reduce((sum, value) => sum + value, 0) / margins.length : 0;
     return {
       active: products.filter((product) => product.is_active).length,
+      variantCount: variants.length,
       withBarcodeCount: withBarcode.length,
       withoutPriceCount: withoutPrice.length,
       averageMargin,
@@ -169,11 +170,11 @@ export function ProductManagementPage() {
   }, [productsQuery.data?.items]);
 
   const columns = useMemo<DataTableColumn<Product>[]>(() => [
-    { id: "code", header: "Codigo", value: (row) => row.internal_code, sortable: true },
+    { id: "code", header: "Código", value: (row) => row.internal_code, sortable: true },
     { id: "name", header: "Producto", value: (row) => row.commercial_name, sortable: true },
-    { id: "barcode", header: "Codigo barras", value: primaryBarcode },
+    { id: "barcode", header: "Código barras", value: primaryBarcode },
     { id: "lab", header: "Laboratorio", value: (row) => row.laboratory_name ?? "-", sortable: true },
-    { id: "presentation", header: "Presentacion", value: (row) => row.variants[0]?.presentation ?? "-" },
+    { id: "presentation", header: "Presentación", value: (row) => row.variants[0]?.presentation ?? "-" },
     { id: "cost", header: "Costo unit.", value: (row) => money(row.variants[0]?.unit_purchase_cost), align: "right" },
     { id: "price", header: "P. venta", value: (row) => money(row.variants[0]?.base_sale_price), align: "right" },
     { id: "margin", header: "Margen", value: (row) => row.variants[0]?.margin_on_cost ? `${Number(row.variants[0].margin_on_cost).toFixed(1)}%` : "-" },
@@ -188,12 +189,11 @@ export function ProductManagementPage() {
   return <>
     <PageHeader
       title="Productos"
-      description="Catalogo maestro, presentaciones y precios"
+      description="Catálogo maestro, presentaciones y precios"
       actions={<>
         <button type="button" className="ghost-button" onClick={() => setImportOpen(true)}><i className="fa fa-file-import" /> Importar</button>
         <button type="button" className="ghost-button" onClick={() => void download(apiEndpoints.productExport, "productos.csv")}><i className="fa fa-file-export" /> Exportar</button>
         <button type="button" className="ghost-button" onClick={() => void download(apiEndpoints.productTemplate, "plantilla-productos.csv")}><i className="fa fa-download" /> Plantilla</button>
-        <button type="button" className="ghost-button" onClick={() => void download(apiEndpoints.productStockTemplate, "plantilla-lotes-stock-inicial.csv")} title="Plantilla separada para stock inicial y lotes"><i className="fa fa-boxes-stacked" /> Plantilla lotes/stock</button>
         {hasPermission("records.create") ? <button type="button" className="app-button primary" onClick={() => setCreateOpen(true)}><i className="fa fa-plus" /> Nuevo producto</button> : null}
       </>}
     />
@@ -206,13 +206,13 @@ export function ProductManagementPage() {
         </div>
         <div className="stat-card">
           <span className="stat-label">Presentaciones</span>
-          <strong className="stat-value">{stats.withBarcodeCount.toLocaleString("es-PE")}</strong>
-          <span className="stat-caption">con codigo de barras</span>
+          <strong className="stat-value">{stats.variantCount.toLocaleString("es-PE")}</strong>
+          <span className="stat-caption">{stats.withBarcodeCount.toLocaleString("es-PE")} con código de barras</span>
         </div>
         <div className="stat-card">
           <span className="stat-label">Sin precio de venta</span>
           <strong className="stat-value is-warning">{stats.withoutPriceCount.toLocaleString("es-PE")}</strong>
-          <span className="stat-caption">requieren revision</span>
+          <span className="stat-caption">requieren revisión</span>
         </div>
         <div className="stat-card">
           <span className="stat-label">Margen promedio</span>
@@ -227,7 +227,7 @@ export function ProductManagementPage() {
         columns={columns}
         rowKey={(row) => row.id}
         searchText={(row) => `${row.internal_code} ${primaryBarcode(row)} ${row.commercial_name} ${row.laboratory_name ?? ""}`}
-        searchPlaceholder="Buscar por nombre, codigo interno o codigo de barras"
+        searchPlaceholder="Buscar por nombre, código interno o código de barras"
         filters={
           <>
             <select value={labFilter} onChange={(event) => setLabFilter(event.target.value)}>
@@ -235,7 +235,7 @@ export function ProductManagementPage() {
               {laboratories.map((name) => <option value={name} key={name}>{name}</option>)}
             </select>
             <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)}>
-              <option value="">Toda categoria</option>
+              <option value="">Toda categoría</option>
               {categories.map((name) => <option value={name} key={name}>{name}</option>)}
             </select>
             <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
@@ -252,11 +252,11 @@ export function ProductManagementPage() {
         caption="Productos"
       />
     </section>
-    <Modal open={importOpen} title="Importar productos desde Excel" description="Usa la plantilla CSV compatible con Excel. Stock inicial y lotes se importan con otra plantilla." size="lg" busy={previewMutation.isPending || commitMutation.isPending} onClose={() => setImportOpen(false)} footer={<><button type="button" className="ghost-button" onClick={() => setImportOpen(false)} disabled={previewMutation.isPending || commitMutation.isPending}>Cerrar</button><button type="button" className="ghost-button" onClick={() => void previewImport()} disabled={!selectedFile || previewMutation.isPending}>{previewMutation.isPending ? "Validando..." : "Vista previa"}</button><button type="button" className="app-button primary" onClick={() => void commitImport()} disabled={!preview?.valid_count || commitMutation.isPending}>{commitMutation.isPending ? "Guardando..." : "Confirmar importacion"}</button></>}>
+    <Modal open={importOpen} title="Importar productos desde Excel" description="Usa la plantilla CSV compatible con Excel. El stock inicial por lote se importa desde Stock e inventario." size="lg" busy={previewMutation.isPending || commitMutation.isPending} onClose={() => setImportOpen(false)} footer={<><button type="button" className="ghost-button" onClick={() => setImportOpen(false)} disabled={previewMutation.isPending || commitMutation.isPending}>Cerrar</button><button type="button" className="ghost-button" onClick={() => void previewImport()} disabled={!selectedFile || previewMutation.isPending}>{previewMutation.isPending ? "Validando..." : "Vista previa"}</button><button type="button" className="app-button primary" onClick={() => void commitImport()} disabled={!preview?.valid_count || commitMutation.isPending}>{commitMutation.isPending ? "Guardando..." : "Confirmar importación"}</button></>}>
       <div className="import-panel">
         <label><span>Archivo CSV guardado desde Excel</span><input type="file" accept=".csv,text/csv" onChange={(event) => { setSelectedFile(event.target.files?.[0] ?? null); setPreview(null); }} /></label>
-        {preview ? <div className="import-summary"><strong>{preview.valid_count} filas validas</strong><span>{preview.error_count} filas con errores</span></div> : null}
-        {preview ? <div className="table-wrap"><table className="data-table"><thead><tr><th>Fila</th><th>Producto</th><th>Codigo de barras</th><th>Estado</th><th>Errores</th></tr></thead><tbody>{preview.rows.map((row) => <tr key={row.row}><td>{row.row}</td><td>{row.name}</td><td>{row.barcode || "-"}</td><td>{row.valid ? "Lista" : "Corregir"}</td><td>{row.errors.join(" · ") || "-"}</td></tr>)}</tbody></table></div> : null}
+        {preview ? <div className="import-summary"><strong>{preview.valid_count} filas válidas</strong><span>{preview.error_count} filas con errores</span></div> : null}
+        {preview ? <div className="table-wrap"><table className="data-table"><thead><tr><th>Fila</th><th>Producto</th><th>Código de barras</th><th>Estado</th><th>Errores</th></tr></thead><tbody>{preview.rows.map((row) => <tr key={row.row}><td>{row.row}</td><td>{row.name}</td><td>{row.barcode || "-"}</td><td>{row.valid ? "Lista" : "Corregir"}</td><td>{row.errors.join(" · ") || "-"}</td></tr>)}</tbody></table></div> : null}
       </div>
     </Modal>
     <ProductCreateModal open={createOpen} onClose={() => setCreateOpen(false)} />

@@ -18,5 +18,12 @@ CACHES = {
     }
 }
 
+# Cookie de refresco sin "Secure" para que funcione en http://localhost con cualquier navegador.
+JWT_COOKIE_SECURE = env_bool("JWT_COOKIE_SECURE", False)  # noqa: F405
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+}
+
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 SILENCED_SYSTEM_CHECKS = ["models.W047"]

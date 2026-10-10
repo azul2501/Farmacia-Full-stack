@@ -32,9 +32,9 @@ class FinanceService:
     @staticmethod
     def _validate_cash_session(*, session, company, branch):
         if session is None:
-            raise ValidationError("Una operacion en efectivo requiere una caja abierta.")
+            raise ValidationError("Una operación en efectivo requiere una caja abierta.")
         if session.company_id != company.id or session.register.branch_id != branch.id:
-            raise ValidationError("La caja no pertenece a la empresa y sucursal de la operacion.")
+            raise ValidationError("La caja no pertenece a la empresa y sucursal de la operación.")
         if session.status != CashSessionStatus.OPEN:
             raise ValidationError("La caja seleccionada no esta abierta.")
 
@@ -112,7 +112,7 @@ class FinanceService:
             defaults={
                 "customer": sale.customer,
                 "branch": sale.branch,
-                "issue_date": sale.sold_at.date(),
+                "issue_date": timezone.localdate(sale.sold_at),
                 "due_date": sale.payment_due_date,
                 "original_amount": sale.total,
                 "collected_amount": sale.amount_paid,
@@ -150,11 +150,11 @@ class FinanceService:
         )
         ensure_branch_access(user=user, company=company, branch_id=account.branch_id)
         if account.status == AccountStatus.CANCELLED or amount <= 0 or amount > account.balance:
-            raise ValidationError("El monto no es valido para el saldo pendiente.")
+            raise ValidationError("El monto no es válido para el saldo pendiente.")
         if method == PaymentMethod.CASH:
             cls._validate_cash_session(session=cash_session, company=company, branch=account.branch)
         elif cash_session is not None:
-            raise ValidationError("Solo una operacion en efectivo puede asociarse a una caja.")
+            raise ValidationError("Solo una operación en efectivo puede asociarse a una caja.")
         payment = PayablePayment.objects.create(
             company=company,
             account=account,
@@ -228,11 +228,11 @@ class FinanceService:
         )
         ensure_branch_access(user=user, company=company, branch_id=account.branch_id)
         if account.status == AccountStatus.CANCELLED or amount <= 0 or amount > account.balance:
-            raise ValidationError("El monto no es valido para el saldo pendiente.")
+            raise ValidationError("El monto no es válido para el saldo pendiente.")
         if method == PaymentMethod.CASH:
             cls._validate_cash_session(session=cash_session, company=company, branch=account.branch)
         elif cash_session is not None:
-            raise ValidationError("Solo una operacion en efectivo puede asociarse a una caja.")
+            raise ValidationError("Solo una operación en efectivo puede asociarse a una caja.")
         collection = ReceivableCollection.objects.create(
             company=company,
             account=account,
@@ -307,12 +307,12 @@ class FinanceService:
         ensure_branch_access(user=user, company=company, branch_id=branch.id)
         expected_type = "EXPENSE" if origin == FinancialOrigin.EXPENSE else "INCOME"
         if category.company_id != company.id or category.category_type != expected_type:
-            raise ValidationError("La categoria no corresponde al tipo de movimiento.")
+            raise ValidationError("La categoría no corresponde al tipo de movimiento.")
         direction = FinancialDirection.OUT if origin == FinancialOrigin.EXPENSE else FinancialDirection.IN
         if method == PaymentMethod.CASH:
             cls._validate_cash_session(session=cash_session, company=company, branch=branch)
         elif cash_session is not None:
-            raise ValidationError("Solo una operacion en efectivo puede asociarse a una caja.")
+            raise ValidationError("Solo una operación en efectivo puede asociarse a una caja.")
         movement = FinancialMovement.objects.create(
             company=company,
             branch=branch,
@@ -360,7 +360,7 @@ class FinanceService:
         if movement.status != FinancialMovementStatus.ACTIVE:
             raise ValidationError("El movimiento ya fue anulado.")
         if movement.origin not in {FinancialOrigin.EXPENSE, FinancialOrigin.ADDITIONAL_INCOME}:
-            raise ValidationError("Solo los movimientos manuales pueden anularse desde este modulo.")
+            raise ValidationError("Solo los movimientos manuales pueden anularse desde este módulo.")
         if movement.method == PaymentMethod.CASH:
             cls._validate_cash_session(session=movement.cash_session, company=company, branch=movement.branch)
             CashService.record_movement(

@@ -35,7 +35,7 @@ class CashService:
         if CashSession.objects.filter(
             register=register, status__in=[CashSessionStatus.OPEN, CashSessionStatus.CLOSING]
         ).exists():
-            raise ValidationError("La caja ya tiene una sesion activa.")
+            raise ValidationError("La caja ya tiene una sesión activa.")
         if opening_amount < 0:
             raise ValidationError("El monto inicial no puede ser negativo.")
 
@@ -98,7 +98,7 @@ class CashService:
             raise ValidationError("El efectivo contado no puede ser negativo.")
         difference = counted_cash - session.expected_cash
         if difference != Decimal("0") and not notes.strip():
-            raise ValidationError("Un cierre con diferencia requiere una observacion.")
+            raise ValidationError("Un cierre con diferencia requiere una observación.")
         breakdown = CashService.expected_breakdown(session=session)
         final_count = CashCount.objects.create(
             company=company,
@@ -141,7 +141,7 @@ class CashService:
     def expected_breakdown(*, session):
         from apps.core.choices import PaymentMethod
         from apps.finance.models import FinancialDirection, FinancialMovement, FinancialMovementStatus
-        from apps.sales.models import SalePayment
+        from apps.sales.models import SalePayment, SaleStatus
 
         breakdown = {
             "opening": session.opening_amount,
@@ -180,7 +180,11 @@ class CashService:
             PaymentMethod.CARD: "card_sales",
             PaymentMethod.TRANSFER: "transfer_sales",
         }
-        for payment in SalePayment.objects.filter(sale__cash_session=session).exclude(method=PaymentMethod.CASH):
+        for payment in (
+            SalePayment.objects.filter(sale__cash_session=session)
+            .exclude(method=PaymentMethod.CASH)
+            .exclude(sale__status=SaleStatus.CANCELLED)
+        ):
             breakdown[payment_keys[payment.method]] += payment.amount
 
         # Non-cash finance movements remain visible without affecting expected cash.
@@ -221,7 +225,7 @@ class CashService:
         expected = cls.expected_breakdown(session=session)
         difference = counted_cash - session.expected_cash
         if count_type == CashCountType.FINAL and difference != Decimal("0") and not observation.strip():
-            raise ValidationError("Un arqueo final con diferencia requiere observacion.")
+            raise ValidationError("Un arqueo final con diferencia requiere observación.")
         count = CashCount.objects.create(
             company=company,
             session=session,

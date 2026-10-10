@@ -57,7 +57,7 @@ class TransferService:
         transfer = Transfer.objects.select_for_update().get(id=transfer_id, company=company)
         ensure_branch_access(user=user, company=company, branch_id=transfer.origin_branch_id)
         if transfer.status != TransferStatus.DISPATCHED:
-            raise ValidationError("Solo una transferencia despachada puede pasar a transito.")
+            raise ValidationError("Solo una transferencia despachada puede pasar a tránsito.")
         transfer.status = TransferStatus.IN_TRANSIT
         transfer.save(update_fields=["status", "updated_at"])
         record_audit(company=company, actor=user, action="transfer.in_transit", resource=transfer)
@@ -73,13 +73,13 @@ class TransferService:
             .get(id=transfer_id, company=company)
         )
         if transfer.status != TransferStatus.IN_TRANSIT:
-            raise ValidationError("Solo una transferencia en transito puede recibirse.")
+            raise ValidationError("Solo una transferencia en tránsito puede recibirse.")
         ensure_branch_access(user=user, company=company, branch_id=transfer.destination_warehouse.branch_id)
         items = {str(item.id): item for item in transfer.items.all()}
         if not received_lines:
             raise ValidationError("Debe indicar al menos una cantidad recibida.")
         if len({str(line["item_id"]) for line in received_lines}) != len(received_lines):
-            raise ValidationError("No se puede repetir un detalle en la misma recepcion.")
+            raise ValidationError("No se puede repetir un detalle en la misma recepción.")
 
         receipt = TransferReceipt.objects.create(
             company=company,

@@ -4,7 +4,7 @@ import { FormEvent, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PageHeader } from "@/components/ui/page-header";
 import { useSession } from "@/features/auth/context/session-context";
-import { apiRequest } from "@/features/shared/api/client";
+import { apiRequest, apiRequestAll } from "@/features/shared/api/client";
 import { apiErrorMessage } from "@/features/shared/api/error-message";
 import { apiEndpoints } from "@/features/shared/api/endpoints";
 import type { ApiPage } from "@/features/shared/api/types";
@@ -26,14 +26,15 @@ function errorMessage(error: unknown) {
 }
 
 function defaultValues(fields: ResourceField[]) {
-  return Object.fromEntries(fields.map((field) => [field.name, field.type === "checkbox" ? true : ""]));
+  return Object.fromEntries(fields.map((field) => [field.name, field.type === "checkbox" ? true : field.type === "multiselect" ? [] : ""]));
 }
 
-function displayValue(row: ResourceRecord, name: string, format?: string) {
+function displayValue(row: ResourceRecord, name: string, format?: string, labels?: Record<string, string>) {
   const value = row[name];
+  if (labels && typeof value === "string") return labels[value] ?? value;
   if (format === "status") return value ? "Activo" : "Inactivo";
   if (format === "boolean") return value ? "Si" : "No";
-  if (format === "currency") return `S/ ${Number(value ?? 0).toFixed(1)}`;
+  if (format === "currency") return `S/ ${Number(value ?? 0).toFixed(2)}`;
   if (format === "count") return Array.isArray(value) ? value.length : 0;
   return String(value ?? "-");
 }
@@ -49,28 +50,33 @@ export function ApiResourcePage({ config, embedded = false }: ApiResourcePagePro
   const { showToast } = useToast();
   const [editing, setEditing] = useState<ResourceRecord | null | undefined>(undefined);
   const [values, setValues] = useState<Record<string, unknown>>(() => defaultValues(config.fields));
+  const [resetting, setResetting] = useState<ResourceRecord | null>(null);
+  const [newPassword, setNewPassword] = useState("");
+  const resetMutation = useMutation({
+    mutationFn: (row: ResourceRecord) => apiRequest(`${config.endpoint}${row.id}/reset-password/`, { method: "POST", body: { new_password: newPassword } }),
+  });
   const resourceKey = ["resource", company?.id, config.endpoint] as const;
   const resourceQuery = useQuery({
     queryKey: resourceKey,
-    queryFn: () => apiRequest<ApiPage<ResourceRecord>>(config.endpoint, {
-      query: { pageSize: 100, ordering: config.columns[0]?.name },
+    queryFn: () => apiRequestAll<ResourceRecord>(config.endpoint, {
+      query: { ordering: config.columns[0]?.name },
     }),
     enabled: Boolean(company),
   });
   const optionSources = new Set(config.fields.map((field) => field.optionSource).filter(Boolean));
   const categoriesQuery = useQuery({
     queryKey: ["options", company?.id, "categories"],
-    queryFn: () => apiRequest<ApiPage<ResourceRecord>>(apiEndpoints.categories, { query: { pageSize: 100 } }),
+    queryFn: () => apiRequestAll<ResourceRecord>(apiEndpoints.categories, {}),
     enabled: optionSources.has("categories"),
   });
   const laboratoriesQuery = useQuery({
     queryKey: ["options", company?.id, "laboratories"],
-    queryFn: () => apiRequest<ApiPage<ResourceRecord>>(apiEndpoints.laboratories, { query: { pageSize: 100 } }),
+    queryFn: () => apiRequestAll<ResourceRecord>(apiEndpoints.laboratories, {}),
     enabled: optionSources.has("laboratories"),
   });
   const variantsQuery = useQuery({
     queryKey: ["options", company?.id, "product-variants"],
-    queryFn: () => apiRequest<ApiPage<ResourceRecord>>(apiEndpoints.productVariants, { query: { pageSize: 100, is_active: true } }),
+    queryFn: () => apiRequestAll<ResourceRecord>(apiEndpoints.productVariants, { query: { is_active: true } }),
     enabled: optionSources.has("productVariants"),
   });
   const saveMutation = useMutation({
@@ -89,7 +95,7 @@ export function ApiResourcePage({ config, embedded = false }: ApiResourcePagePro
       ...config.columns.map((column) => ({
         id: column.name,
         header: column.label,
-        value: (row: ResourceRecord) => displayValue(row, column.name, column.format),
+        value: (row: ResourceRecord) => displayValue(row, column.name, column.format, column.labels),
         render: column.format === "status" ? (row: ResourceRecord) => statusChip(Boolean(row[column.name])) : undefined,
         sortable: true,
       })),
@@ -104,8 +110,13 @@ export function ApiResourcePage({ config, embedded = false }: ApiResourcePagePro
                 <i className="fa fa-edit" aria-hidden="true" />
               </button>
             ) : null}
+            {config.passwordReset && hasPermission("records.update") ? (
+              <button type="button" className="row-action-edit" title="Restablecer clave" aria-label={`Restablecer clave de ${config.singular}`} onClick={() => { setNewPassword(""); resetMutation.reset(); setResetting(row); }}>
+                <i className="fa fa-key" aria-hidden="true" />
+              </button>
+            ) : null}
             {hasPermission("records.delete") ? (
-              <button type="button" className="row-action-delete" title="Eliminar" aria-label={`Eliminar ${config.singular}`} onClick={() => void remove(row)}>
+              <button type="button" className="row-action-delete" title={config.deactivateOnly ? "Desactivar" : "Eliminar"} aria-label={`${config.deactivateOnly ? "Desactivar" : "Eliminar"} ${config.singular}`} onClick={() => void remove(row)}>
                 <i className="fa fa-trash" aria-hidden="true" />
               </button>
             ) : null}
@@ -131,7 +142,7 @@ export function ApiResourcePage({ config, embedded = false }: ApiResourcePagePro
   }
 
   function openEdit(row: ResourceRecord) {
-    setValues(Object.fromEntries(config.fields.map((field) => [field.name, row[field.name] ?? (field.type === "checkbox" ? false : "")])));
+    setValues(Object.fromEntries(config.fields.filter((field) => !field.createOnly).map((field) => [field.name, row[field.name] ?? (field.type === "checkbox" ? false : field.type === "multiselect" ? [] : "")])));
     setEditing(row);
   }
 
@@ -140,9 +151,11 @@ export function ApiResourcePage({ config, embedded = false }: ApiResourcePagePro
     if (busy) return;
     try {
       const path = editing ? `${config.endpoint}${editing.id}/` : config.endpoint;
-      await saveMutation.mutateAsync({ path, method: editing ? "PATCH" : "POST", body: values });
+      const passwordFields = new Set(config.fields.filter((field) => field.type === "password").map((field) => field.name));
+      const body = Object.fromEntries(Object.entries(values).filter(([name, value]) => !(passwordFields.has(name) && value === "")));
+      await saveMutation.mutateAsync({ path, method: editing ? "PATCH" : "POST", body });
       setEditing(undefined);
-      showToast({ tone: "success", title: editing ? "Registro actualizado" : "Registro creado", description: `La API guardo el ${config.singular}.` });
+      showToast({ tone: "success", title: editing ? "Registro actualizado" : "Registro creado", description: `Se guardo el ${config.singular}.` });
     } catch (caughtError) {
       showToast({ tone: "error", title: "No se pudo guardar", description: errorMessage(caughtError) });
     }
@@ -150,9 +163,9 @@ export function ApiResourcePage({ config, embedded = false }: ApiResourcePagePro
 
   async function remove(row: ResourceRecord) {
     const accepted = await confirm({
-      title: `Eliminar ${config.singular}`,
-      description: "Esta operacion se enviara a la API y no es solo un cambio visual.",
-      confirmLabel: "Eliminar",
+      title: `${config.deactivateOnly ? "Desactivar" : "Eliminar"} ${config.singular}`,
+      description: config.deactivateOnly ? "Dejará de estar disponible, pero su historial se conserva. Puedes reactivarlo editandolo." : "Esta acción no se puede deshacer.",
+      confirmLabel: config.deactivateOnly ? "Desactivar" : "Eliminar",
       tone: "danger",
     });
     if (!accepted) return;
@@ -187,7 +200,7 @@ export function ApiResourcePage({ config, embedded = false }: ApiResourcePagePro
           rows={resourceQuery.data?.items ?? []}
           columns={columns}
           rowKey={(row) => row.id}
-          searchText={(row) => config.columns.map((column) => displayValue(row, column.name, column.format)).join(" ")}
+          searchText={(row) => config.columns.map((column) => displayValue(row, column.name, column.format, column.labels)).join(" ")}
           searchPlaceholder={config.searchPlaceholder ?? `Buscar ${config.title.toLowerCase()}`}
           toolbarActions={embedded ? createButton ?? undefined : undefined}
           loading={resourceQuery.isLoading}
@@ -206,7 +219,7 @@ export function ApiResourcePage({ config, embedded = false }: ApiResourcePagePro
         footer={<><button type="button" className="ghost-button" disabled={busy} onClick={() => setEditing(undefined)}>Cancelar</button><button type="submit" form="api-resource-form" className="app-button primary" disabled={busy}><i className={`fa ${busy ? "fa-circle-notch fa-spin" : "fa-save"}`} aria-hidden="true" /> {busy ? "Guardando..." : "Guardar"}</button></>}
       >
         <form id="api-resource-form" className="form-grid" onSubmit={(event) => void submit(event)}>
-          {config.fields.map((field) => (
+          {config.fields.filter((field) => !(editing && field.createOnly)).map((field) => (
             <label key={field.name} className={field.type === "checkbox" ? "checkbox-field" : undefined}>
               {field.type === "checkbox" ? (
                 <><input type="checkbox" checked={Boolean(values[field.name])} onChange={(event) => setValues((current) => ({ ...current, [field.name]: event.target.checked }))} /><span>{field.label}</span></>
@@ -216,16 +229,44 @@ export function ApiResourcePage({ config, embedded = false }: ApiResourcePagePro
                     <option value="">Seleccionar</option>
                     {optionsFor(field).map((option) => <option value={option.value} key={option.value}>{option.label}</option>)}
                   </select>
+                ) : field.type === "multiselect" ? (
+                  <span className="checkbox-group">
+                    {optionsFor(field).map((option) => {
+                      const selected = Array.isArray(values[field.name]) ? (values[field.name] as string[]) : [];
+                      return (
+                        <label key={option.value} className="checkbox-field">
+                          <input type="checkbox" checked={selected.includes(option.value)} onChange={(event) => setValues((current) => ({ ...current, [field.name]: event.target.checked ? [...selected, option.value] : selected.filter((item) => item !== option.value) }))} />
+                          <span>{option.label}</span>
+                        </label>
+                      );
+                    })}
+                  </span>
                 ) : field.type === "textarea" ? (
                   <textarea required={field.required} value={String(values[field.name] ?? "")} onChange={(event) => setValues((current) => ({ ...current, [field.name]: event.target.value }))} />
                 ) : (
-                  <input type={field.type ?? "text"} required={field.required} value={String(values[field.name] ?? "")} onChange={(event) => setValues((current) => ({ ...current, [field.name]: field.type === "number" ? Number(event.target.value) : event.target.value }))} />
-                )}</>
+                  <input type={field.type ?? "text"} required={field.required} minLength={field.type === "password" ? 8 : undefined} autoComplete={field.type === "password" ? "new-password" : undefined} value={String(values[field.name] ?? "")} onChange={(event) => setValues((current) => ({ ...current, [field.name]: field.type === "number" ? Number(event.target.value) : event.target.value }))} />
+                )}{field.hint ? <small className="field-hint">{field.hint}</small> : null}</>
               )}
             </label>
           ))}
         </form>
       </Modal>
+      {config.passwordReset ? (
+        <Modal
+          open={resetting !== null}
+          title="Restablecer clave"
+          description={resetting ? `Nueva clave para ${String(resetting.full_name ?? resetting.email ?? "")}. Compartela de forma privada; el usuario podra cambiarla despues.` : undefined}
+          size="sm"
+          busy={resetMutation.isPending}
+          onClose={() => setResetting(null)}
+          footer={<><button type="button" className="ghost-button" onClick={() => setResetting(null)}>Cancelar</button><button type="submit" form="reset-password-form" className="app-button primary" disabled={resetMutation.isPending}>{resetMutation.isPending ? "Guardando..." : "Guardar clave"}</button></>}
+        >
+          <form id="reset-password-form" className="form-grid" onSubmit={(event) => { event.preventDefault(); if (!resetting) return; resetMutation.mutate(resetting, { onSuccess: () => { showToast({ tone: "success", title: "Clave restablecida" }); setResetting(null); } }); }}>
+            <label className="form-span-full"><span>Nueva clave</span><input type="password" required minLength={8} autoComplete="new-password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} /><small className="field-hint">Mínimo 8 caracteres; evita claves comunes o solo números.</small></label>
+            {resetMutation.error ? <p className="form-span-full field-error" role="alert">{apiErrorMessage(resetMutation.error, "No se pudo restablecer la clave.")}</p> : null}
+          </form>
+        </Modal>
+      ) : null}
     </>
   );
 }

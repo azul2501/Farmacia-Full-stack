@@ -47,7 +47,7 @@ class PurchaseViewSet(CompanyScopedViewSetMixin, viewsets.ModelViewSet):
         serializer.save()
 
     def destroy(self, request, *args, **kwargs):
-        raise ValidationError("Las compras no se eliminan. Usa la accion de anulacion.")
+        raise ValidationError("Las compras no se eliminan. Usa la acción de anulación.")
 
     @action(detail=True, methods=["post"], url_path="cancel")
     def cancel(self, request, pk=None):

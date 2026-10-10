@@ -4,7 +4,7 @@ import { FormEvent, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PageHeader } from "@/components/ui/page-header";
 import { useSession } from "@/features/auth/context/session-context";
-import { apiRequest } from "@/features/shared/api/client";
+import { apiRequest, apiRequestAll } from "@/features/shared/api/client";
 import { apiErrorMessage } from "@/features/shared/api/error-message";
 import { apiEndpoints } from "@/features/shared/api/endpoints";
 import type { ApiPage } from "@/features/shared/api/types";
@@ -59,7 +59,7 @@ const emptyLine: Line = { stockId: "", requested_quantity: "1" };
 const statusLabels: Record<Transfer["status"], string> = {
   DRAFT: "Borrador",
   DISPATCHED: "Despachada",
-  IN_TRANSIT: "En transito",
+  IN_TRANSIT: "En tránsito",
   RECEIVED: "Recibida",
   CANCELLED: "Cancelada",
 };
@@ -110,14 +110,14 @@ export function TransfersPage() {
 
   const transfersQuery = useQuery({
     queryKey: ["transfers"],
-    queryFn: () => apiRequest<ApiPage<Transfer>>(apiEndpoints.transfers, { query: { pageSize: 100, ordering: "-created_at" } }),
+    queryFn: () => apiRequestAll<Transfer>(apiEndpoints.transfers, { query: { ordering: "-created_at" } }),
   });
   const originStockQuery = useQuery({
     queryKey: ["stock", "by-warehouse", header.origin_warehouse],
     enabled: Boolean(header.origin_warehouse),
     queryFn: () =>
-      apiRequest<ApiPage<StockRow>>(apiEndpoints.stock, {
-        query: { pageSize: 200, warehouse: header.origin_warehouse },
+      apiRequestAll<StockRow>(apiEndpoints.stock, {
+        query: { warehouse: header.origin_warehouse },
       }),
   });
 
@@ -196,7 +196,7 @@ export function TransfersPage() {
     event.preventDefault();
     try {
       await createMutation.mutateAsync();
-      showToast({ tone: "success", title: "Transferencia creada", description: "Quedo en borrador. Despachala cuando la mercaderia salga del almacen." });
+      showToast({ tone: "success", title: "Transferencia creada", description: "Quedo en borrador. Despachala cuando la mercaderia salga del almacén." });
       setCreateOpen(false);
       resetCreateForm();
     } catch (error) {
@@ -208,13 +208,13 @@ export function TransfersPage() {
     const copy = {
       dispatch: {
         title: "Despachar transferencia",
-        description: "Esto descontara el stock del almacen de origen. No podras editar la transferencia despues.",
+        description: "Esto descontará el stock del almacén de origen. No podrás editar la transferencia después.",
         success: "Transferencia despachada",
       },
       "start-transit": {
-        title: "Marcar en transito",
-        description: "Confirma que la mercaderia salio hacia el almacen de destino.",
-        success: "Transferencia en transito",
+        title: "Marcar en tránsito",
+        description: "Confirma que la mercaderia salio hacia el almacén de destino.",
+        success: "Transferencia en tránsito",
       },
       cancel: {
         title: "Cancelar transferencia",
@@ -227,12 +227,12 @@ export function TransfersPage() {
       await actionMutation.mutateAsync({ id: transfer.id, action });
       showToast({ tone: "success", title: copy.success });
     } catch (error) {
-      showToast({ tone: "error", title: "No se pudo completar la accion", description: message(error) });
+      showToast({ tone: "error", title: "No se pudo completar la acción", description: message(error) });
     }
   }
 
   async function runDelete(transfer: Transfer) {
-    if (!(await confirm({ title: "Eliminar transferencia", description: `Se eliminara la transferencia ${transfer.number}. Esta accion no se puede deshacer.`, confirmLabel: "Eliminar", tone: "danger" }))) return;
+    if (!(await confirm({ title: "Eliminar transferencia", description: `Se eliminará la transferencia ${transfer.number}. Esta accion no se puede deshacer.`, confirmLabel: "Eliminar", tone: "danger" }))) return;
     try {
       await deleteMutation.mutateAsync(transfer.id);
       showToast({ tone: "success", title: "Transferencia eliminada" });
@@ -256,16 +256,16 @@ export function TransfersPage() {
     event.preventDefault();
     try {
       await receiveMutation.mutateAsync();
-      showToast({ tone: "success", title: "Recepcion registrada", description: "El stock del almacen destino fue actualizado." });
+      showToast({ tone: "success", title: "Recepción registrada", description: "El stock del almacén destino fue actualizado." });
       setReceiveTarget(null);
     } catch (error) {
-      showToast({ tone: "error", title: "No se pudo registrar la recepcion", description: message(error) });
+      showToast({ tone: "error", title: "No se pudo registrar la recepción", description: message(error) });
     }
   }
 
   const columns = useMemo<DataTableColumn<Transfer>[]>(
     () => [
-      { id: "number", header: "Numero", value: (row) => row.number, sortable: true },
+      { id: "number", header: "Número", value: (row) => row.number, sortable: true },
       { id: "origin", header: "Origen", value: (row) => warehouseName(row.origin_warehouse) },
       { id: "destination", header: "Destino", value: (row) => warehouseName(row.destination_warehouse) },
       { id: "items", header: "Productos", value: (row) => row.items?.length ?? 0, align: "right" },
@@ -293,7 +293,7 @@ export function TransfersPage() {
               </>
             ) : null}
             {canManage && row.status === "DISPATCHED" ? (
-              <button type="button" className="row-action-edit" title="Marcar en transito" onClick={() => void runAction(row, "start-transit")}>
+              <button type="button" className="row-action-edit" title="Marcar en tránsito" onClick={() => void runAction(row, "start-transit")}>
                 <i className="fas fa-shipping-fast" />
               </button>
             ) : null}
@@ -314,7 +314,7 @@ export function TransfersPage() {
     <>
       <PageHeader
         title="Transferencias"
-        description="Traslados de inventario entre almacenes con despacho y recepcion controlados."
+        description="Traslados de inventario entre almacenes con despacho y recepción controlados."
         actions={
           canManage ? (
             <button type="button" className="app-button primary" onClick={() => setCreateOpen(true)}>
@@ -342,7 +342,7 @@ export function TransfersPage() {
       <Modal
         open={createOpen}
         title="Nueva transferencia"
-        description="Selecciona el almacen de origen para ver el stock disponible que puedes transferir."
+        description="Selecciona el almacén de origen para ver el stock disponible que puedes transferir."
         size="xl"
         busy={createMutation.isPending}
         onClose={() => { setCreateOpen(false); resetCreateForm(); }}
@@ -365,7 +365,7 @@ export function TransfersPage() {
                 </select>
               </label>
               <label>
-                <span>Almacen origen</span>
+                <span>Almacén origen</span>
                 <select required value={header.origin_warehouse} onChange={(e) => setHeader({ ...header, origin_warehouse: e.target.value })}>
                   <option value="">Seleccionar</option>
                   {originBranchWarehouses.map((warehouse) => <option value={warehouse.id} key={warehouse.id}>{warehouse.name}</option>)}
@@ -379,14 +379,14 @@ export function TransfersPage() {
                 </select>
               </label>
               <label>
-                <span>Almacen destino</span>
+                <span>Almacén destino</span>
                 <select required value={header.destination_warehouse} onChange={(e) => setHeader({ ...header, destination_warehouse: e.target.value })}>
                   <option value="">Seleccionar</option>
                   {destinationBranchWarehouses.map((warehouse) => <option value={warehouse.id} key={warehouse.id}>{warehouse.name}</option>)}
                 </select>
               </label>
               <label className="form-span-full">
-                <span>Observacion</span>
+                <span>Observación</span>
                 <textarea value={header.notes} onChange={(e) => setHeader({ ...header, notes: e.target.value })} />
               </label>
             </div>
@@ -394,9 +394,9 @@ export function TransfersPage() {
           <fieldset>
             <legend>Productos a transferir</legend>
             {!header.origin_warehouse ? (
-              <p className="form-hint">Elige primero el almacen de origen para ver el stock disponible.</p>
+              <p className="form-hint">Elige primero el almacén de origen para ver el stock disponible.</p>
             ) : availableStock.length === 0 && !originStockQuery.isLoading ? (
-              <p className="form-hint">Este almacen no tiene stock disponible para transferir.</p>
+              <p className="form-hint">Este almacén no tiene stock disponible para transferir.</p>
             ) : null}
             <div className="purchase-lines">
               {lines.map((line, index) => {
@@ -465,7 +465,7 @@ export function TransfersPage() {
                 ))}
               </tbody>
             </table>
-            {detail.notes ? <p className="form-hint">Observacion: {detail.notes}</p> : null}
+            {detail.notes ? <p className="form-hint">Observación: {detail.notes}</p> : null}
           </div>
         ) : null}
       </Modal>
@@ -473,13 +473,13 @@ export function TransfersPage() {
       <Modal
         open={Boolean(receiveTarget)}
         title={receiveTarget ? `Recibir transferencia ${receiveTarget.number}` : "Recibir"}
-        description="Indica la cantidad realmente recibida por producto. Puede ser parcial; lo pendiente queda para una siguiente recepcion."
+        description="Indica la cantidad realmente recibida por producto. Puede ser parcial; lo pendiente queda para una siguiente recepción."
         busy={receiveMutation.isPending}
         onClose={() => setReceiveTarget(null)}
         footer={
           <>
             <button type="button" className="ghost-button" onClick={() => setReceiveTarget(null)}>Cancelar</button>
-            <button form="transfer-receive-form" type="submit" className="app-button primary" disabled={receiveMutation.isPending}>Confirmar recepcion</button>
+            <button form="transfer-receive-form" type="submit" className="app-button primary" disabled={receiveMutation.isPending}>Confirmar recepción</button>
           </>
         }
       >
@@ -503,7 +503,7 @@ export function TransfersPage() {
             );
           })}
           <label className="form-span-full">
-            <span>Observacion</span>
+            <span>Observación</span>
             <textarea value={receiveNotes} onChange={(e) => setReceiveNotes(e.target.value)} />
           </label>
         </form>

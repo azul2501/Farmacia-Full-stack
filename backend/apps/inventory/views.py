@@ -1,6 +1,8 @@
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.shortcuts import get_object_or_404
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from apps.accounts.models import ALL_COMPANY_ROLES, INVENTORY_ROLES
@@ -45,7 +47,7 @@ class StockViewSet(CompanyScopedViewSetMixin, viewsets.ReadOnlyModelViewSet):
         "variant__product__commercial_name",
         "lot__expiry_date",
     ]
-    filterset_fields = ["warehouse", "variant", "lot"]
+    filterset_fields = {"warehouse": ["exact"], "variant": ["exact", "in"], "lot": ["exact"]}
 
     @action(detail=False, methods=["post"], url_path="adjustments")
     def adjustment(self, request):
@@ -59,22 +61,26 @@ class StockViewSet(CompanyScopedViewSetMixin, viewsets.ReadOnlyModelViewSet):
         if data.get("lot"):
             lot = get_object_or_404(Lot, id=data["lot"], company=request.company, variant=variant)
 
-        movement = InventoryService.apply_movement(
-            MovementCommand(
-                company=request.company,
-                warehouse=warehouse,
-                variant=variant,
-                lot=lot,
-                movement_type=(
-                    MovementType.ADJUSTMENT_IN if data["adjustment_type"] == "IN" else MovementType.ADJUSTMENT_OUT
-                ),
-                quantity=data["quantity"],
-                reference_type="inventory.adjustment",
-                reference_id=serializer.context.get("request_id", movement_id()),
-                performed_by=request.user,
-                reason=f"{data['reason']} - {data.get('observation', '')}".strip(" -"),
+        reason = f"{data['reason']} - {data.get('observation', '')}".strip(" -")[:240]
+        try:
+            movement = InventoryService.apply_movement(
+                MovementCommand(
+                    company=request.company,
+                    warehouse=warehouse,
+                    variant=variant,
+                    lot=lot,
+                    movement_type=(
+                        MovementType.ADJUSTMENT_IN if data["adjustment_type"] == "IN" else MovementType.ADJUSTMENT_OUT
+                    ),
+                    quantity=data["quantity"],
+                    reference_type="inventory.adjustment",
+                    reference_id=serializer.context.get("request_id", movement_id()),
+                    performed_by=request.user,
+                    reason=reason,
+                )
             )
-        )
+        except DjangoValidationError as exc:
+            raise ValidationError(exc.messages) from exc
         record_audit(
             company=request.company,
             actor=request.user,
@@ -111,4 +117,11 @@ class InventoryMovementViewSet(
         "reason",
     ]
     ordering_fields = ["created_at", "quantity", "balance_after"]
-    filterset_fields = ["warehouse", "variant", "lot", "movement_type", "performed_by"]
+    filterset_fields = {
+        "warehouse": ["exact"],
+        "variant": ["exact"],
+        "lot": ["exact"],
+        "movement_type": ["exact"],
+        "performed_by": ["exact"],
+        "created_at": ["date__gte", "date__lte"],
+    }

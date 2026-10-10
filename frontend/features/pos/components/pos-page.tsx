@@ -1,15 +1,17 @@
 "use client";
 
 import { KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "@/features/auth/context/session-context";
-import { apiRequest, ApiError } from "@/features/shared/api/client";
+import { apiRequest, apiRequestAll, ApiError } from "@/features/shared/api/client";
 import { apiErrorMessage } from "@/features/shared/api/error-message";
+import { invalidateOperationalData } from "@/features/shared/api/invalidate";
 import { apiEndpoints } from "@/features/shared/api/endpoints";
 import type { ApiPage } from "@/features/shared/api/types";
 import { EmptyState, ErrorState, LoadingState } from "@/features/shared/ui/states/async-state";
 import { useToast } from "@/features/shared/ui/toast/toast-provider";
-import { roundDecimal, roundInteger } from "@/features/shared/utils/formatters";
+import { roundDecimal, roundInteger, localDateIso } from "@/features/shared/utils/formatters";
 
 type ApiVariant = {
   id: string;
@@ -75,11 +77,11 @@ function stockTier(available: number, minimum: number): "success" | "warning" | 
 }
 
 function message(error: unknown) {
-  return apiErrorMessage(error, "No se pudo completar la operacion.");
+  return apiErrorMessage(error, "No se pudo completar la operación.");
 }
 
 function currency(value: number | string) {
-  return new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN", minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(Number(value));
+  return new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(value));
 }
 
 export function PosPage() {
@@ -136,14 +138,10 @@ export function PosPage() {
     }),
     enabled: debouncedSearch.length >= 2,
   });
-  const stockLevelsQuery = useQuery({
-    queryKey: ["pos", "stock-levels", activeWarehouseId],
-    queryFn: () => apiRequest<ApiPage<ApiStock>>(apiEndpoints.stock, { query: { pageSize: 500, warehouse: activeWarehouseId } }),
-    enabled: Boolean(activeWarehouseId) && debouncedSearch.length >= 2,
-  });
-  const terminalsQuery = useQuery({ queryKey: ["pos", "terminals", activeBranchId], queryFn: () => apiRequest<ApiPage<ApiTerminal>>(apiEndpoints.posTerminals, { query: { pageSize: 100, branch: activeBranchId, is_active: true } }), enabled: Boolean(activeBranchId) });
-  const sessionsQuery = useQuery({ queryKey: ["pos", "cash-sessions"], queryFn: () => apiRequest<ApiPage<ApiCashSession>>(apiEndpoints.cashSessions, { query: { pageSize: 100, status: "OPEN" } }) });
-  const customersQuery = useQuery({ queryKey: ["pos", "customers"], queryFn: () => apiRequest<ApiPage<ApiCustomer>>(apiEndpoints.customers, { query: { pageSize: 100, is_active: true } }) });
+
+  const terminalsQuery = useQuery({ queryKey: ["pos", "terminals", activeBranchId], queryFn: () => apiRequestAll<ApiTerminal>(apiEndpoints.posTerminals, { query: { branch: activeBranchId, is_active: true } }), enabled: Boolean(activeBranchId) });
+  const sessionsQuery = useQuery({ queryKey: ["cash-sessions", "pos"], queryFn: () => apiRequestAll<ApiCashSession>(apiEndpoints.cashSessions, { query: { status: "OPEN" } }) });
+  const customersQuery = useQuery({ queryKey: ["pos", "customers"], queryFn: () => apiRequestAll<ApiCustomer>(apiEndpoints.customers, { query: { is_active: true } }) });
 
   const activeRegisterIds = useMemo(() => new Set(cashRegisters.filter((item) => item.branchId === activeBranchId).map((item) => item.id)), [activeBranchId, cashRegisters]);
   const cashSession = sessionsQuery.data?.items.find((session) => activeRegisterIds.has(session.register));
@@ -164,9 +162,16 @@ export function PosPage() {
     [productsQuery.data],
   );
 
+  const visibleVariantIds = visibleProducts.map(({ variant }) => variant.id).join(",");
+  const stockLevelsQuery = useQuery({
+    queryKey: ["pos", "stock-levels", activeWarehouseId, visibleVariantIds],
+    queryFn: () => apiRequestAll<ApiStock>(apiEndpoints.stock, { query: { warehouse: activeWarehouseId, variant__in: visibleVariantIds } }),
+    enabled: Boolean(activeWarehouseId) && visibleVariantIds.length > 0,
+  });
+
   const stockByVariant = useMemo(() => {
     const map = new Map<string, { available: number; batchNumber: string | null; expiryDate: string | null }>();
-    const today = new Date().toISOString().slice(0, 10);
+    const today = localDateIso();
     for (const row of stockLevelsQuery.data?.items ?? []) {
       const available = Number(row.available_quantity);
       if (available <= 0) continue;
@@ -188,34 +193,39 @@ export function PosPage() {
     try {
       const stockPage = await queryClient.fetchQuery({
         queryKey: ["pos", "stock", activeWarehouseId, variant.id],
-        queryFn: () => apiRequest<ApiPage<ApiStock>>(apiEndpoints.stock, {
-          query: { pageSize: 100, warehouse: activeWarehouseId, variant: variant.id, ordering: "lot__expiry_date" },
+        queryFn: () => apiRequestAll<ApiStock>(apiEndpoints.stock, {
+          query: { warehouse: activeWarehouseId, variant: variant.id, ordering: "lot__expiry_date" },
         }),
         staleTime: 0,
       });
-      const today = new Date().toISOString().slice(0, 10);
-      const stock = stockPage.items
+      const today = localDateIso();
+      // El backend reparte la venta entre lotes vigentes por FEFO; aqui solo se suma el stock disponible.
+      const lots = stockPage.items
         .filter((item) => Number(item.available_quantity) > 0 && (!item.expiry_date || item.expiry_date >= today))
-        .sort((left, right) => String(left.expiry_date ?? "9999").localeCompare(String(right.expiry_date ?? "9999")))[0];
-      if (!stock) {
-        showToast({ tone: "warning", title: "Producto sin stock vigente", description: "No existe un lote disponible para este almacen." });
+        .sort((left, right) => String(left.expiry_date ?? "9999").localeCompare(String(right.expiry_date ?? "9999")));
+      const available = lots.reduce((sum, item) => sum + Number(item.available_quantity), 0);
+      if (!lots.length) {
+        showToast({ tone: "warning", title: "Producto sin stock vigente", description: "No existe un lote disponible para este almacén." });
         return;
       }
+      const lotLabel = lots[0].batch_number
+        ? `${lots[0].batch_number}${lots.length > 1 ? ` y ${lots.length - 1} lote(s) más` : ""}`
+        : "Sin lote";
       setCart((current) => {
-        const existing = current.find((line) => line.variant.id === variant.id && line.lot === stock.lot);
+        const existing = current.find((line) => line.variant.id === variant.id);
         if (existing) {
-          if (existing.quantity + 1 > existing.available) {
-            showToast({ tone: "warning", title: "Stock insuficiente" });
+          if (existing.quantity + 1 > available) {
+            showToast({ tone: "warning", title: "Stock insuficiente", description: `Disponible: ${available}` });
             return current;
           }
-          return current.map((line) => line === existing ? { ...line, quantity: line.quantity + 1 } : line);
+          return current.map((line) => line === existing ? { ...line, available, batchNumber: lotLabel, quantity: line.quantity + 1 } : line);
         }
         return [...current, {
           variant,
           productName,
-          lot: stock.lot,
-          batchNumber: stock.batch_number ?? "Sin lote",
-          available: Number(stock.available_quantity),
+          lot: null,
+          batchNumber: lotLabel,
+          available,
           quantity: 1,
           unitPrice: Number(variant.base_sale_price),
           discount: 0,
@@ -240,20 +250,20 @@ export function PosPage() {
       await addProduct(variant.product_name, variant);
     } catch (error) {
       if (error instanceof ApiError && error.status === 404) {
-        showToast({ tone: "warning", title: "Codigo no encontrado", description: search.trim() });
+        showToast({ tone: "warning", title: "Código no encontrado", description: search.trim() });
       } else {
-        showToast({ tone: "error", title: "No se pudo consultar el codigo", description: message(error) });
+        showToast({ tone: "error", title: "No se pudo consultar el código", description: message(error) });
       }
     }
   }
 
   function changeQuantity(index: number, quantity: number) {
-    setCart((current) => current.map((line, lineIndex) => lineIndex === index ? { ...line, quantity: Math.max(1, Math.min(quantity, line.available)) } : line));
+    setCart((current) => current.map((line, lineIndex) => lineIndex === index ? { ...line, quantity: Math.max(1, Math.min(quantity, line.available)), discount: Math.min(line.discount, roundDecimal(Math.max(1, Math.min(quantity, line.available)) * line.unitPrice)) } : line));
   }
 
   const checkoutMutation = useMutation({
     mutationFn: () => {
-      if (!cashSession || !terminal || !activeBranchId || !activeWarehouseId) throw new Error("Falta caja, terminal o ubicacion activa.");
+      if (!cashSession || !terminal || !activeBranchId || !activeWarehouseId) throw new Error("Falta caja, terminal o ubicación activa.");
       return apiRequest<SaleResult>(`${apiEndpoints.sales}checkout/`, {
         method: "POST",
         body: {
@@ -279,13 +289,7 @@ export function PosPage() {
       setCreditPayment("0");
       setPaymentDueDate("");
       setNotes("");
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["pos", "stock"] }),
-        queryClient.invalidateQueries({ queryKey: ["pos", "stock-levels"] }),
-        queryClient.invalidateQueries({ queryKey: ["pos", "products"] }),
-        queryClient.invalidateQueries({ queryKey: ["resource"] }),
-        queryClient.invalidateQueries({ queryKey: ["dashboard"] }),
-      ]);
+      await invalidateOperationalData(queryClient);
       showToast({ tone: "success", title: "Venta registrada", description: `Nota ${sale.number}` });
     },
     onError: (error) => showToast({ tone: "error", title: "La venta no fue registrada", description: message(error) }),
@@ -303,12 +307,12 @@ export function PosPage() {
         <div><h1>Punto de venta</h1><span>{activeBranch?.name} · {activeWarehouse?.name}</span></div>
         <div className={`pos-cash-status ${cashSession ? "is-open" : "is-closed"}`}><i className={`fas ${cashSession ? "fa-lock-open" : "fa-lock"}`} /> {cashSession ? cashSession.register_name : "Caja cerrada"}</div>
       </header>
-      {!cashSession ? <div className="notice warning"><strong>No hay una caja abierta en esta sucursal.</strong> Abre una caja antes de registrar ventas.</div> : null}
+      {!cashSession ? <div className="notice warning"><strong>No hay una caja abierta en esta sucursal.</strong> Abre una caja antes de registrar ventas. <Link href="/caja">Ir a Caja</Link></div> : null}
       <div className="pos-layout">
         <section className="pos-catalog">
           <label className="pos-search">
             <i className="fas fa-barcode" aria-hidden="true" />
-            <input ref={searchInputRef} type="search" value={search} onChange={(event) => setSearch(event.target.value)} onKeyDown={(event) => void scanBarcode(event)} placeholder="Buscar por nombre o escanear codigo + Enter" autoFocus />
+            <input ref={searchInputRef} type="search" value={search} onChange={(event) => setSearch(event.target.value)} onKeyDown={(event) => void scanBarcode(event)} placeholder="Buscar por nombre o escanear código + Enter" autoFocus />
             <span className="pos-search-hint">Enter</span>
           </label>
           {debouncedSearch.length >= 2 ? (
@@ -335,10 +339,10 @@ export function PosPage() {
                     </button>
                   );
                 })}
-                <div className="table-pagination"><button type="button" disabled={searchPage <= 1} onClick={() => setSearchPage((page) => page - 1)}>Anterior</button><span>Pagina {searchPage}</span><button type="button" disabled={searchPage * 20 >= (productsQuery.data?.total ?? 0)} onClick={() => setSearchPage((page) => page + 1)}>Siguiente</button></div>
-              </> : <EmptyState title="Sin coincidencias" description="La busqueda remota no encontro productos." />}
+                <div className="table-pagination"><button type="button" disabled={searchPage <= 1} onClick={() => setSearchPage((page) => page - 1)}>Anterior</button><span>Página {searchPage}</span><button type="button" disabled={searchPage * 20 >= (productsQuery.data?.total ?? 0)} onClick={() => setSearchPage((page) => page + 1)}>Siguiente</button></div>
+              </> : <EmptyState title="Sin coincidencias" description="La búsqueda remota no encontro productos." />}
             </div>
-          ) : <EmptyState title="Escanea o busca un producto" description="Escribe al menos 2 caracteres o escanea un codigo y presiona Enter." />}
+          ) : <EmptyState title="Escanea o busca un producto" description="Escribe al menos 2 caracteres o escanea un código y presiona Enter." />}
           <div className="pos-hints">
             <span><span className="pos-hint-key">F2</span> Buscar producto</span>
             <span><span className="pos-hint-key">F4</span> Cambiar cliente</span>
@@ -364,22 +368,22 @@ export function PosPage() {
               </div>
               {hasPermission("sales.discount") ? (
                 <div className="pos-line-discount">
-                  <input aria-label="Descuento" type="number" min="0" max={line.quantity * line.unitPrice} step="0.1" placeholder="Descuento" value={line.discount || ""} onChange={(event) => setCart((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, discount: Math.min(Math.max(0, Number(event.target.value)), item.quantity * item.unitPrice) } : item))} onBlur={(event) => setCart((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, discount: Math.min(roundDecimal(Math.max(0, Number(event.target.value))), item.quantity * item.unitPrice) } : item))} />
+                  <input aria-label="Descuento" type="number" min="0" max={line.quantity * line.unitPrice} step="0.01" placeholder="Descuento" value={line.discount || ""} onChange={(event) => setCart((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, discount: Math.min(Math.max(0, Number(event.target.value)), item.quantity * item.unitPrice) } : item))} onBlur={(event) => setCart((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, discount: Math.min(roundDecimal(Math.max(0, Number(event.target.value))), item.quantity * item.unitPrice) } : item))} />
                   {line.discount > 0 ? <input aria-label="Motivo del descuento" placeholder="Motivo del descuento" value={line.discountReason} onChange={(event) => setCart((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, discountReason: event.target.value } : item))} /> : null}
                 </div>
               ) : null}
             </article>
-          )) : <EmptyState title="Carrito vacio" description="Agrega productos desde el buscador." />}</div>
+          )) : <EmptyState title="Carrito vacío" description="Agrega productos desde el buscador." />}</div>
           <div className="pos-checkout-fields">
-            <label><span>Cliente</span><select ref={customerSelectRef} value={customerId} onChange={(event) => setCustomerId(event.target.value)}><option value="">Publico general</option>{customersQuery.data?.items.map((customer) => <option value={customer.id} key={customer.id}>{customer.full_name}</option>)}</select></label>
-            <label><span>Observacion (opcional)</span><input value={notes} maxLength={500} placeholder="Ej: entrega despues de las 5pm" onChange={(event) => setNotes(event.target.value)} /></label>
-            {hasPermission("sales.credit") ? <label><span>Condicion</span><select value={paymentCondition} onChange={(event) => setPaymentCondition(event.target.value as "CASH" | "CREDIT")}><option value="CASH">Contado</option><option value="CREDIT">Credito</option></select></label> : null}
-            {paymentCondition === "CREDIT" ? <><label><span>Vencimiento</span><input type="date" required value={paymentDueDate} onChange={(event) => setPaymentDueDate(event.target.value)} /></label><label><span>Pago inicial</span><input type="number" min="0" max={total} step="0.1" value={creditPayment} onChange={(event) => setCreditPayment(event.target.value)} onBlur={(event) => setCreditPayment(String(roundDecimal(Number(event.target.value))))} /></label></> : null}
+            <label><span>Cliente</span><select ref={customerSelectRef} value={customerId} onChange={(event) => setCustomerId(event.target.value)}><option value="">Público general</option>{customersQuery.data?.items.map((customer) => <option value={customer.id} key={customer.id}>{customer.full_name}</option>)}</select></label>
+            <label><span>Observación (opcional)</span><input value={notes} maxLength={500} placeholder="Ej: entrega después de las 5pm" onChange={(event) => setNotes(event.target.value)} /></label>
+            {hasPermission("sales.credit") ? <label><span>Condición</span><select value={paymentCondition} onChange={(event) => setPaymentCondition(event.target.value as "CASH" | "CREDIT")}><option value="CASH">Contado</option><option value="CREDIT">Crédito</option></select></label> : null}
+            {paymentCondition === "CREDIT" ? <><label><span>Vencimiento</span><input type="date" required value={paymentDueDate} onChange={(event) => setPaymentDueDate(event.target.value)} /></label><label><span>Pago inicial</span><input type="number" min="0" max={total} step="0.01" value={creditPayment} onChange={(event) => setCreditPayment(event.target.value)} onBlur={(event) => setCreditPayment(String(roundDecimal(Number(event.target.value))))} /></label></> : null}
             <fieldset>
               <legend>Medio de pago</legend>
               <div className="payment-methods">{paymentMethods.map((method) => <button type="button" className={paymentMethod === method ? "is-active" : ""} key={method} onClick={() => setPaymentMethod(method)}>{paymentMethodLabels[method]}</button>)}</div>
             </fieldset>
-            {paymentMethod === "CASH" && amountToPay > 0 ? <label><span>Efectivo recibido</span><input type="number" min="0" step="0.1" value={cashReceived} onChange={(event) => setCashReceived(event.target.value)} onBlur={(event) => setCashReceived(String(roundDecimal(Number(event.target.value))))} /></label> : null}
+            {paymentMethod === "CASH" && amountToPay > 0 ? <label><span>Efectivo recibido</span><input type="number" min="0" step="0.01" value={cashReceived} onChange={(event) => setCashReceived(event.target.value)} onBlur={(event) => setCashReceived(String(roundDecimal(Number(event.target.value))))} /></label> : null}
           </div>
           <div className="pos-totals">
             <div><span>Subtotal</span><span>{currency(subtotal)}</span></div>

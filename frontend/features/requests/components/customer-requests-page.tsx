@@ -5,7 +5,7 @@ import { FormEvent, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PageHeader } from "@/components/ui/page-header";
 import { useSession } from "@/features/auth/context/session-context";
-import { apiRequest } from "@/features/shared/api/client";
+import { apiRequest, apiRequestAll } from "@/features/shared/api/client";
 import { apiErrorMessage } from "@/features/shared/api/error-message";
 import { apiEndpoints } from "@/features/shared/api/endpoints";
 import type { ApiPage } from "@/features/shared/api/types";
@@ -41,7 +41,7 @@ const transitionCopy: Record<string, { title: string; description: string; label
   submit: { title: "Enviar solicitud", description: "La solicitud pasara de borrador a pendiente para que el equipo la revise.", label: "Enviar", tone: "primary" },
   confirm: { title: "Confirmar solicitud", description: "Confirma que el pedido fue validado y puede prepararse.", label: "Confirmar", tone: "primary" },
   prepare: { title: "Marcar como preparada", description: "Confirma que los productos quedaron listos para recojo o entrega.", label: "Preparada", tone: "primary" },
-  cancel: { title: "Cancelar solicitud", description: "La solicitud quedara cancelada y ya no podra convertirse en venta.", label: "Cancelar solicitud", tone: "danger" },
+  cancel: { title: "Cancelar solicitud", description: "La solicitud quedará cancelada y ya no podrá convertirse en venta.", label: "Cancelar solicitud", tone: "danger" },
 };
 
 function errorMessage(error: unknown) {
@@ -64,17 +64,17 @@ export function CustomerRequestsPage() {
   const [payment, setPayment] = useState({ condition: "CASH", due_date: "", method: "CASH", amount: "", received: "" });
   const targetBranchId = convertTarget?.branch ?? activeBranchId;
 
-  const requests = useQuery({ queryKey: ["customer-requests"], queryFn: () => apiRequest<ApiPage<CustomerRequest>>(apiEndpoints.customerRequests, { query: { pageSize: 100, ordering: "scheduled_at" } }) });
-  const customers = useQuery({ queryKey: ["customers", "request-options"], queryFn: () => apiRequest<ApiPage<Customer>>(apiEndpoints.customers, { query: { pageSize: 100, is_active: true } }) });
-  const variants = useQuery({ queryKey: ["variants", "request-options"], queryFn: () => apiRequest<ApiPage<Variant>>(apiEndpoints.productVariants, { query: { pageSize: 100, is_active: true } }) });
-  const sessions = useQuery({ queryKey: ["cash-sessions", "request-convert"], queryFn: () => apiRequest<ApiPage<CashSession>>(apiEndpoints.cashSessions, { query: { pageSize: 100, status: "OPEN" } }) });
-  const terminals = useQuery({ queryKey: ["terminals", "request-convert", targetBranchId], queryFn: () => apiRequest<ApiPage<Terminal>>(apiEndpoints.posTerminals, { query: { pageSize: 100, branch: targetBranchId, is_active: true } }), enabled: Boolean(targetBranchId) });
+  const requests = useQuery({ queryKey: ["customer-requests"], queryFn: () => apiRequestAll<CustomerRequest>(apiEndpoints.customerRequests, { query: { ordering: "scheduled_at" } }) });
+  const customers = useQuery({ queryKey: ["customers", "request-options"], queryFn: () => apiRequestAll<Customer>(apiEndpoints.customers, { query: { is_active: true } }) });
+  const variants = useQuery({ queryKey: ["variants", "request-options"], queryFn: () => apiRequestAll<Variant>(apiEndpoints.productVariants, { query: { is_active: true } }) });
+  const sessions = useQuery({ queryKey: ["cash-sessions", "request-convert"], queryFn: () => apiRequestAll<CashSession>(apiEndpoints.cashSessions, { query: { status: "OPEN" } }) });
+  const terminals = useQuery({ queryKey: ["terminals", "request-convert", targetBranchId], queryFn: () => apiRequestAll<Terminal>(apiEndpoints.posTerminals, { query: { branch: targetBranchId, is_active: true } }), enabled: Boolean(targetBranchId) });
   const detailWarehouses = warehouses.filter((item) => item.branchId === detailTarget?.branch);
   const detailStockQuery = useQuery({
     queryKey: ["stock", "request-detail", detailTarget?.id],
     enabled: Boolean(detailTarget) && detailWarehouses.length > 0,
     queryFn: async () => {
-      const pages = await Promise.all(detailWarehouses.map((item) => apiRequest<ApiPage<StockRow>>(apiEndpoints.stock, { query: { pageSize: 500, warehouse: item.id } })));
+      const pages = await Promise.all(detailWarehouses.map((item) => apiRequestAll<StockRow>(apiEndpoints.stock, { query: { warehouse: item.id } })));
       const totals = new Map<string, number>();
       for (const page of pages) {
         for (const row of page.items) totals.set(row.variant, (totals.get(row.variant) ?? 0) + Number(row.available_quantity));
@@ -99,7 +99,7 @@ export function CustomerRequestsPage() {
   });
   const convertMutation = useMutation({
     mutationFn: () => {
-      if (!convertTarget || !warehouse || !terminal || !cashSession) throw new Error("Selecciona una sucursal con almacen, terminal y caja abierta.");
+      if (!convertTarget || !warehouse || !terminal || !cashSession) throw new Error("Selecciona una sucursal con almacén, terminal y caja abierta.");
       const paid = payment.condition === "CASH" ? total : new Decimal(payment.amount || 0);
       return apiRequest(`${apiEndpoints.customerRequests}${convertTarget.id}/convert/`, { method: "POST", body: {
         warehouse: warehouse.id,
@@ -146,7 +146,7 @@ export function CustomerRequestsPage() {
   function openConvert(row: CustomerRequest) {
     const rowTotal = row.items.reduce((sum, item) => sum.plus(new Decimal(item.reference_price).mul(item.quantity).minus(item.authorized_discount)), new Decimal(0));
     setConvertTarget(row);
-    setPayment({ condition: "CASH", due_date: "", method: "CASH", amount: rowTotal.toFixed(1), received: rowTotal.toFixed(1) });
+    setPayment({ condition: "CASH", due_date: "", method: "CASH", amount: rowTotal.toFixed(2), received: rowTotal.toFixed(2) });
   }
 
   function renderProgress(status: string) {
@@ -160,7 +160,7 @@ export function CustomerRequestsPage() {
     { id: "customer", header: "Cliente", value: (row) => row.customer_name },
     { id: "branch", header: "Sucursal", value: (row) => row.branch_name },
     { id: "scheduled", header: "Programada", value: (row) => new Date(row.scheduled_at).toLocaleString("es-PE"), sortable: true },
-    { id: "service", header: "Atencion", value: (row) => row.service_type === "STORE_PICKUP" ? "Recojo" : "Entrega" },
+    { id: "service", header: "Atención", value: (row) => row.service_type === "STORE_PICKUP" ? "Recojo" : "Entrega" },
     { id: "status", header: "Flujo", render: (row) => renderProgress(row.status) },
     { id: "detail", header: "Detalle", render: (row) => <button type="button" className="row-action-edit" title="Ver detalle" aria-label={`Ver detalle de ${row.code}`} onClick={() => setDetailTarget(row)}><i className="fas fa-eye" /></button> },
     { id: "actions", header: "Siguiente paso", render: (row) => <div className="request-actions">
@@ -182,7 +182,7 @@ export function CustomerRequestsPage() {
 
   return <>
     <PageHeader title="Solicitudes programadas" section="Ventas" current="Agenda de clientes" actions={<button type="button" className="app-button primary" onClick={() => setFormOpen(true)}><i className="fas fa-plus" /> Nueva solicitud</button>} />
-    <div className="request-summary"><span><strong>{requests.data?.items.filter((item) => new Date(item.scheduled_at).toDateString() === new Date().toDateString()).length ?? 0}</strong> Para hoy</span><span><strong>{requests.data?.items.filter((item) => item.status === "PENDING").length ?? 0}</strong> Pendientes</span><span><strong>{requests.data?.items.filter((item) => new Date(item.scheduled_at) < new Date() && !["FULFILLED", "CANCELLED"].includes(item.status)).length ?? 0}</strong> Atrasadas</span></div>
+    <div className="request-summary"><span><strong>{requests.data?.items.filter((item) => new Date(item.scheduled_at).toDateString() === new Date().toDateString()).length ?? 0}</strong> Para hoy</span><span><strong>{requests.data?.items.filter((item) => !["FULFILLED", "CANCELLED", "EXPIRED"].includes(item.status)).length ?? 0}</strong> Pendientes</span><span><strong>{requests.data?.items.filter((item) => new Date(item.scheduled_at) < new Date() && !["FULFILLED", "CANCELLED"].includes(item.status)).length ?? 0}</strong> Atrasadas</span></div>
     <section className="content-panel">
       <DataTable
         rows={filteredRequests}
@@ -216,16 +216,16 @@ export function CustomerRequestsPage() {
     <Modal open={formOpen} title="Nueva solicitud programada" size="xl" busy={createMutation.isPending} onClose={() => setFormOpen(false)} footer={<><button type="button" className="ghost-button" onClick={() => setFormOpen(false)}>Cancelar</button><button type="submit" form="request-form" className="app-button primary" disabled={createMutation.isPending}>Guardar borrador</button></>}>
       <form id="request-form" className="request-form" onSubmit={(event) => void submit(event)}><div className="form-grid">
         <label><span>Cliente</span><select required value={header.customer} onChange={(e) => { const customer = customers.data?.items.find((item) => item.id === e.target.value); setHeader({ ...header, customer: e.target.value, contact_phone: customer?.phone ?? header.contact_phone }); }}><option value="">Seleccionar</option>{customers.data?.items.map((customer) => <option key={customer.id} value={customer.id}>{customer.full_name}</option>)}</select></label>
-        <label><span>Telefono</span><input required value={header.contact_phone} onChange={(e) => setHeader({ ...header, contact_phone: e.target.value })} /></label>
+        <label><span>Teléfono</span><input required value={header.contact_phone} onChange={(e) => setHeader({ ...header, contact_phone: e.target.value })} /></label>
         <label><span>Sucursal</span><select required value={header.branch} onChange={(e) => setHeader({ ...header, branch: e.target.value })}>{branches.map((branch) => <option value={branch.id} key={branch.id}>{branch.name}</option>)}</select></label>
         <label><span>Fecha y hora</span><input type="datetime-local" required value={header.scheduled_at} onChange={(e) => setHeader({ ...header, scheduled_at: e.target.value })} /></label>
-        <label><span>Tipo de atencion</span><select value={header.service_type} onChange={(e) => setHeader({ ...header, service_type: e.target.value })}><option value="STORE_PICKUP">Recojo en tienda</option><option value="SCHEDULED_DELIVERY">Entrega programada</option></select></label>
-        {header.service_type === "SCHEDULED_DELIVERY" ? <label><span>Direccion</span><input required value={header.delivery_address} onChange={(e) => setHeader({ ...header, delivery_address: e.target.value })} /></label> : null}
-      </div><div className="request-lines">{items.map((item, index) => <div className="request-line" key={index}><label><span>Producto</span><select required value={item.variant} onChange={(e) => chooseVariant(index, e.target.value)}><option value="">Seleccionar</option>{variants.data?.items.map((variant) => <option value={variant.id} key={variant.id}>{variant.product_name} - {variant.presentation}</option>)}</select></label><label><span>Cantidad</span><input type="number" min="1" step="1" required value={item.quantity} onChange={(e) => setItems((current) => current.map((line, i) => i === index ? { ...line, quantity: e.target.value } : line))} onBlur={(e) => setItems((current) => current.map((line, i) => i === index ? { ...line, quantity: String(roundInteger(Number(e.target.value)) || 1) } : line))} /></label><label><span>Precio referencial</span><input type="number" min="0" step="0.1" required value={item.reference_price} onChange={(e) => setItems((current) => current.map((line, i) => i === index ? { ...line, reference_price: e.target.value } : line))} onBlur={(e) => setItems((current) => current.map((line, i) => i === index ? { ...line, reference_price: String(roundDecimal(Number(e.target.value))) } : line))} /></label><button type="button" className="row-action-delete" disabled={items.length === 1} onClick={() => setItems((current) => current.filter((_, i) => i !== index))}><i className="fas fa-trash" /></button></div>)}</div><button type="button" className="ghost-button" onClick={() => setItems((current) => [...current, { ...emptyItem }])}><i className="fas fa-plus" /> Agregar producto</button>
+        <label><span>Tipo de atención</span><select value={header.service_type} onChange={(e) => setHeader({ ...header, service_type: e.target.value })}><option value="STORE_PICKUP">Recojo en tienda</option><option value="SCHEDULED_DELIVERY">Entrega programada</option></select></label>
+        {header.service_type === "SCHEDULED_DELIVERY" ? <label><span>Dirección</span><input required value={header.delivery_address} onChange={(e) => setHeader({ ...header, delivery_address: e.target.value })} /></label> : null}
+      </div><div className="request-lines">{items.map((item, index) => <div className="request-line" key={index}><label><span>Producto</span><select required value={item.variant} onChange={(e) => chooseVariant(index, e.target.value)}><option value="">Seleccionar</option>{variants.data?.items.map((variant) => <option value={variant.id} key={variant.id}>{variant.product_name} - {variant.presentation}</option>)}</select></label><label><span>Cantidad</span><input type="number" min="1" step="1" required value={item.quantity} onChange={(e) => setItems((current) => current.map((line, i) => i === index ? { ...line, quantity: e.target.value } : line))} onBlur={(e) => setItems((current) => current.map((line, i) => i === index ? { ...line, quantity: String(roundInteger(Number(e.target.value)) || 1) } : line))} /></label><label><span>Precio referencial</span><input type="number" min="0" step="0.01" required value={item.reference_price} onChange={(e) => setItems((current) => current.map((line, i) => i === index ? { ...line, reference_price: e.target.value } : line))} onBlur={(e) => setItems((current) => current.map((line, i) => i === index ? { ...line, reference_price: String(roundDecimal(Number(e.target.value))) } : line))} /></label><button type="button" className="row-action-delete" disabled={items.length === 1} onClick={() => setItems((current) => current.filter((_, i) => i !== index))}><i className="fas fa-trash" /></button></div>)}</div><button type="button" className="ghost-button" onClick={() => setItems((current) => [...current, { ...emptyItem }])}><i className="fas fa-plus" /> Agregar producto</button>
       </form>
     </Modal>
     <Modal open={Boolean(convertTarget)} title="Entregar y convertir en venta" busy={convertMutation.isPending} onClose={() => setConvertTarget(null)} footer={<><button type="button" className="ghost-button" onClick={() => setConvertTarget(null)}>Cancelar</button><button type="button" className="app-button primary" disabled={!cashSession || !warehouse || !terminal || convertMutation.isPending || (payment.condition === "CREDIT" && !payment.due_date) || (payment.method === "CASH" && new Decimal(payment.received || 0).lt(payment.condition === "CASH" ? total : new Decimal(payment.amount || 0)))} onClick={() => convertMutation.mutate()}>Confirmar entrega y venta</button></>}>
-      <div className="form-grid"><p className="form-span-full">Paso final tipo delivery: registra la venta, descuenta stock y marca la solicitud como atendida por <strong>S/ {total.toFixed(1)}</strong>.</p><p className="form-span-full field-warning">Requiere almacen, terminal y caja abierta en la sucursal de la solicitud.</p><label><span>Condicion</span><select value={payment.condition} onChange={(e) => setPayment({ ...payment, condition: e.target.value })}><option value="CASH">Contado</option><option value="CREDIT">Credito</option></select></label>{payment.condition === "CREDIT" ? <><label><span>Vencimiento</span><input type="date" required value={payment.due_date} onChange={(e) => setPayment({ ...payment, due_date: e.target.value })} /></label><label><span>Pago inicial</span><input type="number" min="0" max={total.toFixed(1)} step="0.1" value={payment.amount} onChange={(e) => setPayment({ ...payment, amount: e.target.value })} onBlur={(e) => setPayment((current) => ({ ...current, amount: String(roundDecimal(Number(e.target.value))) }))} /></label></> : null}<label><span>Medio</span><select value={payment.method} onChange={(e) => setPayment({ ...payment, method: e.target.value })}><option value="CASH">Efectivo</option><option value="YAPE">Yape</option><option value="PLIN">Plin</option><option value="CARD">Tarjeta</option><option value="TRANSFER">Transferencia</option></select></label>{payment.method === "CASH" ? <label><span>Efectivo recibido</span><input type="number" min="0" step="0.1" value={payment.received} onChange={(e) => setPayment({ ...payment, received: e.target.value })} onBlur={(e) => setPayment((current) => ({ ...current, received: String(roundDecimal(Number(e.target.value))) }))} /></label> : null}</div>
+      <div className="form-grid"><p className="form-span-full">Paso final tipo delivery: registra la venta, descuenta stock y marca la solicitud como atendida por <strong>S/ {total.toFixed(2)}</strong>.</p><p className="form-span-full field-warning">Requiere almacén, terminal y caja abierta en la sucursal de la solicitud.</p><label><span>Condición</span><select value={payment.condition} onChange={(e) => setPayment({ ...payment, condition: e.target.value })}><option value="CASH">Contado</option><option value="CREDIT">Crédito</option></select></label>{payment.condition === "CREDIT" ? <><label><span>Vencimiento</span><input type="date" required value={payment.due_date} onChange={(e) => setPayment({ ...payment, due_date: e.target.value })} /></label><label><span>Pago inicial</span><input type="number" min="0" max={total.toFixed(2)} step="0.01" value={payment.amount} onChange={(e) => setPayment({ ...payment, amount: e.target.value })} onBlur={(e) => setPayment((current) => ({ ...current, amount: String(roundDecimal(Number(e.target.value))) }))} /></label></> : null}<label><span>Medio</span><select value={payment.method} onChange={(e) => setPayment({ ...payment, method: e.target.value })}><option value="CASH">Efectivo</option><option value="YAPE">Yape</option><option value="PLIN">Plin</option><option value="CARD">Tarjeta</option><option value="TRANSFER">Transferencia</option></select></label>{payment.method === "CASH" ? <label><span>Efectivo recibido</span><input type="number" min="0" step="0.01" value={payment.received} onChange={(e) => setPayment({ ...payment, received: e.target.value })} onBlur={(e) => setPayment((current) => ({ ...current, received: String(roundDecimal(Number(e.target.value))) }))} /></label> : null}</div>
     </Modal>
     <Modal
       open={Boolean(detailTarget)}
@@ -239,7 +239,7 @@ export function CustomerRequestsPage() {
         <div className="table-wrap">
           {detailWarehouses.length === 0 ? <p className="field-warning">La sucursal no tiene almacenes configurados; no se puede validar el stock.</p> : null}
           <table className="data-table">
-            <thead><tr><th>Producto</th><th>Presentacion</th><th>Cantidad</th><th>Precio ref.</th><th>Stock disponible</th></tr></thead>
+            <thead><tr><th>Producto</th><th>Presentación</th><th>Cantidad</th><th>Precio ref.</th><th>Stock disponible</th></tr></thead>
             <tbody>
               {detailTarget.items.map((item) => {
                 const requested = Number(item.quantity);
@@ -250,7 +250,7 @@ export function CustomerRequestsPage() {
                     <td>{item.product_name}</td>
                     <td>{item.presentation}</td>
                     <td>{requested.toLocaleString("es-PE")}</td>
-                    <td>S/ {Number(item.reference_price).toFixed(1)}</td>
+                    <td>S/ {Number(item.reference_price).toFixed(2)}</td>
                     <td>
                       {detailStockQuery.isLoading ? "Calculando..." : (
                         <span className={`sale-chip ${short ? "danger" : "success"}`}>

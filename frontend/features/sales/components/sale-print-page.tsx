@@ -24,7 +24,7 @@ type SaleDetail = {
 };
 
 function money(value: string) {
-  return new Intl.NumberFormat("es-PE", { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(Number(value));
+  return new Intl.NumberFormat("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(value));
 }
 
 function integer(value: string) {
@@ -51,7 +51,7 @@ export function SalePrintPage({ saleId }: { saleId: string }) {
       </div>
       <article className={`sale-document paper-${paper}`}>
         <header><img src="/legacy/logo/logo.png" alt="" /><h1>{company?.tradeName ?? "Botica Farma"}</h1><p>{sale.branch_name}</p><strong>NOTA DE VENTA {sale.number}</strong></header>
-        <dl className="sale-print-meta"><div><dt>Fecha</dt><dd>{new Date(sale.sold_at).toLocaleString("es-PE")}</dd></div><div><dt>Cajero</dt><dd>{sale.cashier_name}</dd></div><div><dt>Cliente</dt><dd>{sale.customer_name ?? "Publico general"}</dd></div></dl>
+        <dl className="sale-print-meta"><div><dt>Fecha</dt><dd>{new Date(sale.sold_at).toLocaleString("es-PE")}</dd></div><div><dt>Cajero</dt><dd>{sale.cashier_name}</dd></div><div><dt>Cliente</dt><dd>{sale.customer_name ?? "Público general"}</dd></div></dl>
         <table><thead><tr><th>Producto</th><th>Cant.</th><th>P. unit.</th><th>Total</th></tr></thead><tbody>{sale.items.map((item) => <tr key={item.id}><td>{item.product_name}<small>{item.presentation}{item.batch_number ? ` / Lote ${item.batch_number}` : ""}</small></td><td>{integer(item.quantity)}</td><td>{money(item.unit_price)}</td><td>{money(item.line_total)}</td></tr>)}</tbody></table>
         <dl className="sale-print-totals"><div><dt>Subtotal</dt><dd>S/ {money(sale.subtotal)}</dd></div><div><dt>Descuento</dt><dd>S/ {money(sale.discount_total)}</dd></div><div className="total"><dt>Total</dt><dd>S/ {money(sale.total)}</dd></div>{sale.payments.map((payment) => <div key={payment.id}><dt>{payment.method}</dt><dd>S/ {money(payment.amount)}</dd></div>)}<div><dt>Vuelto</dt><dd>S/ {money(sale.change_total)}</dd></div></dl>
         {sale.notes ? <p className="sale-print-notes">{sale.notes}</p> : null}

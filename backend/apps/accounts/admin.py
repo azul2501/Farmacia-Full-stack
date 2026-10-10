@@ -27,10 +27,22 @@ class UserAdmin(DjangoUserAdmin):
         ("Fechas", {"fields": ("last_login", "date_joined")}),
     )
     add_fieldsets = (
-        (None, {
-            "classes": ("wide",),
-            "fields": ("email", "full_name", "phone", "password1", "password2", "is_staff", "is_superuser", "is_active"),
-        }),
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": (
+                    "email",
+                    "full_name",
+                    "phone",
+                    "password1",
+                    "password2",
+                    "is_staff",
+                    "is_superuser",
+                    "is_active",
+                ),
+            },
+        ),
     )
     inlines = (MembershipInline,)
 

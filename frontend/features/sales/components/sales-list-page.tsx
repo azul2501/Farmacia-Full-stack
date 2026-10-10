@@ -4,14 +4,16 @@ import { FormEvent, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PageHeader } from "@/components/ui/page-header";
 import { useSession } from "@/features/auth/context/session-context";
-import { apiRequest } from "@/features/shared/api/client";
+import { apiRequest, apiRequestAll } from "@/features/shared/api/client";
 import { apiErrorMessage } from "@/features/shared/api/error-message";
+import { invalidateOperationalData } from "@/features/shared/api/invalidate";
 import { apiEndpoints } from "@/features/shared/api/endpoints";
 import type { ApiPage } from "@/features/shared/api/types";
 import { DataTable, type DataTableColumn } from "@/features/shared/ui/data-table/data-table";
 import { Modal } from "@/features/shared/ui/modal/modal";
 import { ErrorState, LoadingState } from "@/features/shared/ui/states/async-state";
 import { useToast } from "@/features/shared/ui/toast/toast-provider";
+import { daysAgoIso } from "@/features/shared/utils/formatters";
 
 type SaleRow = {
   id: string;
@@ -70,11 +72,12 @@ type SaleFilters = {
   dateTo: string;
 };
 
+// Por defecto se cargan los ultimos 30 dias; el rango de fechas se filtra en el servidor.
 const emptyFilters: SaleFilters = {
   branch: "",
   status: "",
   condition: "",
-  dateFrom: "",
+  dateFrom: daysAgoIso(30),
   dateTo: "",
 };
 
@@ -85,7 +88,7 @@ const statusLabels: Record<string, string> = {
 
 const conditionLabels: Record<string, string> = {
   CASH: "Contado",
-  CREDIT: "Credito",
+  CREDIT: "Crédito",
 };
 
 const paymentLabels: Record<string, string> = {
@@ -109,7 +112,7 @@ function message(error: unknown) {
 }
 
 function money(value: string) {
-  return new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN", minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(Number(value || 0));
+  return new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(value || 0));
 }
 
 function dateTime(value: string) {
@@ -164,8 +167,14 @@ export function SalesListPage() {
   const [saleToCancel, setSaleToCancel] = useState<SaleRow | null>(null);
   const [cancelReason, setCancelReason] = useState("");
   const salesQuery = useQuery({
-    queryKey: ["sales", "list"],
-    queryFn: () => apiRequest<ApiPage<SaleRow>>(apiEndpoints.sales, { query: { pageSize: 500, ordering: "-sold_at" } }),
+    queryKey: ["sales", "list", filters.dateFrom, filters.dateTo],
+    queryFn: () => apiRequestAll<SaleRow>(apiEndpoints.sales, {
+      query: {
+        ordering: "-sold_at",
+        sold_at__date__gte: filters.dateFrom || undefined,
+        sold_at__date__lte: filters.dateTo || undefined,
+      },
+    }),
   });
   const saleDetailQuery = useQuery({
     queryKey: ["sales", "detail", selectedSaleId],
@@ -179,8 +188,7 @@ export function SalesListPage() {
         body: { reason: cancelReason },
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["sales", "list"] });
-      queryClient.invalidateQueries({ queryKey: ["sales", "detail", saleToCancel?.id] });
+      void invalidateOperationalData(queryClient);
       showToast({ tone: "success", title: "Venta anulada", description: "El stock y la caja fueron revertidos." });
       setSaleToCancel(null);
       setCancelReason("");
@@ -220,16 +228,16 @@ export function SalesListPage() {
     };
   }, [salesQuery.data?.items]);
 
-  const hasFilters = Object.values(filters).some(Boolean);
+  const hasFilters = (Object.keys(filters) as Array<keyof SaleFilters>).some((key) => filters[key] !== emptyFilters[key]);
   const selectedSale = saleDetailQuery.data;
   const canCancel = hasPermission("sales.cancel");
   const columns: DataTableColumn<SaleRow>[] = [
-    { id: "number", header: "Numero", value: (row) => row.number, sortable: true },
+    { id: "number", header: "Número", value: (row) => row.number, sortable: true },
     { id: "sold_at", header: "Fecha", value: (row) => dateTime(row.sold_at), sortable: true },
     { id: "branch", header: "Sucursal", value: (row) => row.branch_name, sortable: true },
-    { id: "customer", header: "Cliente", value: (row) => row.customer_name ?? "Publico general", sortable: true },
+    { id: "customer", header: "Cliente", value: (row) => row.customer_name ?? "Público general", sortable: true },
     { id: "cashier", header: "Cajero", value: (row) => row.cashier_name, sortable: true },
-    { id: "condition", header: "Condicion", value: (row) => conditionLabels[row.payment_condition] ?? row.payment_condition, render: (row) => conditionBadge(row.payment_condition), sortable: true },
+    { id: "condition", header: "Condición", value: (row) => conditionLabels[row.payment_condition] ?? row.payment_condition, render: (row) => conditionBadge(row.payment_condition), sortable: true },
     { id: "status", header: "Estado", value: (row) => statusLabels[row.status] ?? row.status, render: (row) => statusBadge(row.status), sortable: true },
     { id: "total", header: "Total", value: (row) => Number(row.total), render: (row) => money(row.total), sortable: true, align: "right" },
     { id: "balance", header: "Saldo", value: (row) => Number(row.balance_due), render: (row) => <strong className={Number(row.balance_due) > 0 ? "sale-balance-due" : undefined}>{money(row.balance_due)}</strong>, sortable: true, align: "right" },
@@ -252,7 +260,7 @@ export function SalesListPage() {
             <span className="stat-caption">{stats.cashCount} comprobantes</span>
           </div>
           <div className="stat-card">
-            <span className="stat-label">Credito</span>
+            <span className="stat-label">Crédito</span>
             <strong className="stat-value">{money(String(stats.creditTotal))}</strong>
             <span className="stat-caption">{stats.creditCount} comprobantes</span>
           </div>
@@ -269,7 +277,7 @@ export function SalesListPage() {
           columns={columns}
           rowKey={(row) => row.id}
           searchText={(row) => `${row.number} ${row.branch_name} ${row.customer_name ?? ""} ${row.cashier_name}`}
-          searchPlaceholder="Buscar venta por numero, cliente, sucursal o cajero"
+          searchPlaceholder="Buscar venta por número, cliente, sucursal o cajero"
           filters={
             <>
               <label>
@@ -288,11 +296,11 @@ export function SalesListPage() {
                 </select>
               </label>
               <label>
-                <span>Condicion</span>
+                <span>Condición</span>
                 <select value={filters.condition} onChange={(event) => setFilters((current) => ({ ...current, condition: event.target.value }))}>
                   <option value="">Todas</option>
                   <option value="CASH">Contado</option>
-                  <option value="CREDIT">Credito</option>
+                  <option value="CREDIT">Crédito</option>
                 </select>
               </label>
               <label>
@@ -339,21 +347,21 @@ export function SalesListPage() {
       <Modal
         open={Boolean(saleToCancel)}
         title={saleToCancel ? `Anular venta ${saleToCancel.number}` : "Anular venta"}
-        description="Esta accion revierte el stock vendido y, si aplica, el efectivo registrado en caja. No se puede deshacer."
+        description="Esta acción revierte el stock vendido y, si aplica, el efectivo registrado en caja. No se puede deshacer."
         busy={cancelMutation.isPending}
         onClose={() => { setSaleToCancel(null); setCancelReason(""); }}
         footer={
           <>
             <button type="button" className="ghost-button" onClick={() => { setSaleToCancel(null); setCancelReason(""); }}>Cancelar</button>
             <button form="sale-cancel-form" type="submit" className="app-button danger" disabled={cancelMutation.isPending || !cancelReason.trim()}>
-              {cancelMutation.isPending ? "Anulando..." : "Confirmar anulacion"}
+              {cancelMutation.isPending ? "Anulando..." : "Confirmar anulación"}
             </button>
           </>
         }
       >
         <form id="sale-cancel-form" className="form-grid" onSubmit={(event) => void confirmCancel(event)}>
           <label className="form-span-full">
-            <span>Motivo de la anulacion</span>
+            <span>Motivo de la anulación</span>
             <textarea required value={cancelReason} onChange={(event) => setCancelReason(event.target.value)} placeholder="Ej: cliente se arrepintio, error en el registro..." />
           </label>
         </form>
@@ -369,18 +377,18 @@ function SaleDetailContent({ sale }: { sale: SaleDetail }) {
         <div><dt>Fecha</dt><dd>{dateTime(sale.sold_at)}</dd></div>
         <div><dt>Sucursal</dt><dd>{sale.branch_name}</dd></div>
         <div><dt>Cajero</dt><dd>{sale.cashier_name}</dd></div>
-        <div><dt>Cliente</dt><dd>{sale.customer_name ?? "Publico general"}</dd></div>
+        <div><dt>Cliente</dt><dd>{sale.customer_name ?? "Público general"}</dd></div>
         <div><dt>Estado</dt><dd>{statusBadge(sale.status)}</dd></div>
-        <div><dt>Condicion</dt><dd>{conditionBadge(sale.payment_condition)}</dd></div>
+        <div><dt>Condición</dt><dd>{conditionBadge(sale.payment_condition)}</dd></div>
         {sale.payment_due_date ? <div><dt>Vence</dt><dd>{sale.payment_due_date}</dd></div> : null}
-        {sale.notes ? <div className="form-span-full"><dt>Observacion</dt><dd>{sale.notes}</dd></div> : null}
+        {sale.notes ? <div className="form-span-full"><dt>Observación</dt><dd>{sale.notes}</dd></div> : null}
       </dl>
 
       <section className="sale-detail-section">
         <h3><i className="fas fa-capsules" aria-hidden="true" /> Productos</h3>
         <div className="table-wrap">
           <table className="data-table">
-            <thead><tr><th>Producto</th><th>Presentacion / lote</th><th>Cantidad</th><th>Precio</th><th>Descuento</th><th>Total</th></tr></thead>
+            <thead><tr><th>Producto</th><th>Presentación / lote</th><th>Cantidad</th><th>Precio</th><th>Descuento</th><th>Total</th></tr></thead>
             <tbody>
               {sale.items.map((item) => (
                 <tr key={item.id}>

@@ -57,7 +57,7 @@ class CustomerRequestSerializer(serializers.ModelSerializer):
         if branch:
             ensure_branch_access(user=self.context["request"].user, company=company, branch_id=branch.id)
         if attrs.get("service_type") == ServiceType.SCHEDULED_DELIVERY and not attrs.get("delivery_address"):
-            raise serializers.ValidationError({"delivery_address": "La direccion es obligatoria para entrega."})
+            raise serializers.ValidationError({"delivery_address": "La dirección es obligatoria para entrega."})
         if self.instance and self.instance.status != CustomerRequestStatus.DRAFT:
             raise serializers.ValidationError("Solo una solicitud en borrador puede editarse.")
         if "items" in attrs and not attrs["items"]:
@@ -75,7 +75,7 @@ class CustomerRequestSerializer(serializers.ModelSerializer):
         )
         for item in items:
             if item["variant"].company_id != company.id:
-                raise serializers.ValidationError({"items": "Una presentacion no pertenece a la empresa."})
+                raise serializers.ValidationError({"items": "Una presentación no pertenece a la empresa."})
             lot = item.get("preferred_lot")
             if lot and (lot.company_id != company.id or lot.variant_id != item["variant"].id):
                 raise serializers.ValidationError({"items": "El lote preferido no corresponde al producto."})

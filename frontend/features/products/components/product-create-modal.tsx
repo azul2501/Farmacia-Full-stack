@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/features/shared/api/client";
+import { apiRequest, apiRequestAll } from "@/features/shared/api/client";
 import { apiErrorMessage } from "@/features/shared/api/error-message";
 import { apiEndpoints } from "@/features/shared/api/endpoints";
 import type { ApiPage } from "@/features/shared/api/types";
@@ -51,7 +51,7 @@ const quickEndpoints: Record<QuickType, string> = {
 };
 
 const quickTitles: Record<QuickType, string> = {
-  category: "Nueva categoria",
+  category: "Nueva categoría",
   laboratory: "Nuevo laboratorio",
   active_ingredient: "Nuevo principio activo",
 };
@@ -96,9 +96,9 @@ export function ProductCreateModal({ open, onClose, product }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, product?.id]);
 
-  const categoriesQuery = useQuery({ queryKey: ["catalog", "categories"], queryFn: () => apiRequest<ApiPage<NamedOption>>(apiEndpoints.categories, { query: { pageSize: 100, is_active: true, ordering: "name" } }) });
-  const laboratoriesQuery = useQuery({ queryKey: ["catalog", "laboratories"], queryFn: () => apiRequest<ApiPage<NamedOption>>(apiEndpoints.laboratories, { query: { pageSize: 100, is_active: true, ordering: "name" } }) });
-  const ingredientsQuery = useQuery({ queryKey: ["catalog", "active-ingredients"], queryFn: () => apiRequest<ApiPage<NamedOption>>(apiEndpoints.activeIngredients, { query: { pageSize: 100, is_active: true, ordering: "name" } }) });
+  const categoriesQuery = useQuery({ queryKey: ["catalog", "categories"], queryFn: () => apiRequestAll<NamedOption>(apiEndpoints.categories, { query: { is_active: true, ordering: "name" } }) });
+  const laboratoriesQuery = useQuery({ queryKey: ["catalog", "laboratories"], queryFn: () => apiRequestAll<NamedOption>(apiEndpoints.laboratories, { query: { is_active: true, ordering: "name" } }) });
+  const ingredientsQuery = useQuery({ queryKey: ["catalog", "active-ingredients"], queryFn: () => apiRequestAll<NamedOption>(apiEndpoints.activeIngredients, { query: { is_active: true, ordering: "name" } }) });
 
   const quickCreateMutation = useMutation({
     mutationFn: () => apiRequest<NamedOption>(quickEndpoints[quick as QuickType], { method: "POST", body: { name: quickName.trim(), is_active: true } }),
@@ -177,10 +177,10 @@ export function ProductCreateModal({ open, onClose, product }: Props) {
   function validate() {
     const next: Partial<Record<keyof FormState, string>> = {};
     if (!form.commercial_name.trim()) next.commercial_name = "Ingresa el nombre comercial.";
-    if (!form.category) next.category = "Selecciona una categoria.";
+    if (!form.category) next.category = "Selecciona una categoría.";
     if (!editing) {
-      if (!form.presentation.trim()) next.presentation = "Describe la presentacion (ej: Caja x 100 tab).";
-      if (!form.base_sale_price || Number(form.base_sale_price) <= 0) next.base_sale_price = "Ingresa un precio de venta valido.";
+      if (!form.presentation.trim()) next.presentation = "Describe la presentación (ej: Caja x 100 tab).";
+      if (!form.base_sale_price || Number(form.base_sale_price) <= 0) next.base_sale_price = "Ingresa un precio de venta válido.";
     }
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -219,7 +219,7 @@ export function ProductCreateModal({ open, onClose, product }: Props) {
       <Modal
         open={open}
         title={editing ? "Editar producto" : "Nuevo producto"}
-        description={editing ? "Datos generales del producto. Las presentaciones y precios se administran aparte." : "Catalogo maestro. Podras agregar mas presentaciones y detalles desde Editar."}
+        description={editing ? "Datos generales del producto. Las presentaciones y precios se administran aparte." : "Catálogo maestro. Podrás agregar más presentaciones y detalles desde Editar."}
         size="lg"
         busy={saveMutation.isPending}
         onClose={() => { if (!saveMutation.isPending) { reset(); onClose(); } }}
@@ -235,8 +235,8 @@ export function ProductCreateModal({ open, onClose, product }: Props) {
         <form id="product-create-form" className="form-grid" onSubmit={(event) => void submit(event)}>
           <span className="form-section-label">Identificacion</span>
           <label>
-            <span>Codigo interno</span>
-            <input placeholder="Ej: PAR-500 (automatico si lo dejas vacio)" value={form.internal_code} onChange={(event) => field("internal_code", event.target.value)} />
+            <span>Código interno</span>
+            <input placeholder="Ej: PAR-500 (automático si lo dejas vacío)" value={form.internal_code} onChange={(event) => field("internal_code", event.target.value)} />
           </label>
           <label>
             <span>Nombre comercial *</span>
@@ -244,8 +244,8 @@ export function ProductCreateModal({ open, onClose, product }: Props) {
             {errors.commercial_name ? <small className="field-error">{errors.commercial_name}</small> : null}
           </label>
 
-          <span className="form-section-label">Clasificacion</span>
-          {selectWithQuick("category", "Categoria *", <><option value="">Seleccionar</option>{categoriesQuery.data?.items.map(option)}</>, true)}
+          <span className="form-section-label">Clasificación</span>
+          {selectWithQuick("category", "Categoría *", <><option value="">Seleccionar</option>{categoriesQuery.data?.items.map(option)}</>, true)}
           {selectWithQuick("laboratory", "Laboratorio", <><option value="">Seleccionar</option>{laboratoriesQuery.data?.items.map(option)}</>)}
           {selectWithQuick("active_ingredient", "Principio activo", <><option value="">Seleccionar</option>{ingredientsQuery.data?.items.map(option)}</>)}
           <label>
@@ -259,20 +259,20 @@ export function ProductCreateModal({ open, onClose, product }: Props) {
 
           {!editing ? (
             <>
-              <span className="form-section-label">Presentacion y precio</span>
+              <span className="form-section-label">Presentación y precio</span>
               <label>
-                <span>Presentacion *</span>
+                <span>Presentación *</span>
                 <input required placeholder="Ej: Caja x 100 tab" value={form.presentation} onChange={(event) => field("presentation", event.target.value)} />
                 {errors.presentation ? <small className="field-error">{errors.presentation}</small> : null}
               </label>
               <label>
                 <span>Precio de venta *</span>
-                <input required type="number" min="0.1" step="0.1" placeholder="S/" value={form.base_sale_price} onChange={(event) => field("base_sale_price", event.target.value)} onBlur={(event) => field("base_sale_price", String(roundDecimal(Number(event.target.value))))} />
+                <input required type="number" min="0.1" step="0.01" placeholder="S/" value={form.base_sale_price} onChange={(event) => field("base_sale_price", event.target.value)} onBlur={(event) => field("base_sale_price", String(roundDecimal(Number(event.target.value))))} />
                 {errors.base_sale_price ? <small className="field-error">{errors.base_sale_price}</small> : null}
               </label>
               <label>
                 <span>Costo de compra</span>
-                <input type="number" min="0" step="0.1" placeholder="S/ (opcional)" value={form.purchase_pack_price} onChange={(event) => field("purchase_pack_price", event.target.value)} onBlur={(event) => field("purchase_pack_price", String(roundDecimal(Number(event.target.value))))} />
+                <input type="number" min="0" step="0.01" placeholder="S/ (opcional)" value={form.purchase_pack_price} onChange={(event) => field("purchase_pack_price", event.target.value)} onBlur={(event) => field("purchase_pack_price", String(roundDecimal(Number(event.target.value))))} />
               </label>
             </>
           ) : null}
@@ -285,7 +285,7 @@ export function ProductCreateModal({ open, onClose, product }: Props) {
             </label>
             <label className="checkbox-card">
               <input type="checkbox" checked={form.requires_expiry} onChange={(event) => field("requires_expiry", event.target.checked)} />
-              <span className="checkbox-card-copy"><strong>Requiere vencimiento</strong><span>Controla fecha de expiracion por lote</span></span>
+              <span className="checkbox-card-copy"><strong>Requiere vencimiento</strong><span>Controla fecha de expiración por lote</span></span>
             </label>
             <label className="checkbox-card">
               <input type="checkbox" checked={form.is_controlled} onChange={(event) => field("is_controlled", event.target.checked)} />

@@ -28,9 +28,20 @@ DATABASES = {
     }
 }
 
+# WhiteNoise sirve /static/ (admin y Swagger) directamente desde gunicorn.
+MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")  # noqa: F405
+
+if not ALLOWED_HOSTS:  # noqa: F405
+    raise ImproperlyConfigured("DJANGO_ALLOWED_HOSTS es obligatorio en produccion.")
+
+# DJANGO_HTTPS=false solo para levantar la imagen de produccion en http://localhost (docker compose).
+HTTPS = env_bool("DJANGO_HTTPS", True)  # noqa: F405
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SECURE_HSTS_SECONDS = 31536000
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_SSL_REDIRECT = HTTPS and env_bool("DJANGO_SECURE_SSL_REDIRECT", True)  # noqa: F405
+SECURE_REDIRECT_EXEMPT = [r"^health/$"]
+SESSION_COOKIE_SECURE = HTTPS
+CSRF_COOKIE_SECURE = HTTPS
+JWT_COOKIE_SECURE = env_bool("JWT_COOKIE_SECURE", HTTPS)  # noqa: F405
+SECURE_HSTS_SECONDS = 31536000 if HTTPS else 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = HTTPS
 SECURE_CONTENT_TYPE_NOSNIFF = True

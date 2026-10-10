@@ -266,7 +266,7 @@ paths:
   /api/v1/auth/login/:
     post:
       operationId: api_v1_auth_login_create
-      description: Inicia sesion y guarda el refresh token en una cookie HttpOnly.
+      description: Inicia sesión y guarda el refresh token en una cookie HttpOnly.
       tags:
       - api
       requestBody:
@@ -2255,6 +2255,16 @@ paths:
       operationId: api_v1_inventory_movements_list
       parameters:
       - in: query
+        name: created_at__date__gte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: created_at__date__lte
+        schema:
+          type: string
+          format: date
+      - in: query
         name: lot
         schema:
           type: string
@@ -3840,6 +3850,31 @@ paths:
               schema:
                 $ref: '#/components/schemas/Product'
           description: ''
+  /api/v1/products/stock-import/:
+    post:
+      operationId: api_v1_products_stock_import_create
+      description: Carga stock inicial por lote desde CSV. Sin `commit=true` solo
+        valida y devuelve la vista previa.
+      tags:
+      - api
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Product'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Product'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: ''
   /api/v1/products/stock-template/:
     get:
       operationId: api_v1_products_stock_template_retrieve
@@ -4323,12 +4358,32 @@ paths:
         description: Número de resultados a devolver por página.
         schema:
           type: integer
+      - in: query
+        name: payment_condition
+        schema:
+          type: string
+          enum:
+          - CASH
+          - CREDIT
+        description: |-
+          * `CASH` - Contado
+          * `CREDIT` - Credito
       - name: search
         required: false
         in: query
         description: Un término de búsqueda.
         schema:
           type: string
+      - in: query
+        name: sold_at__date__gte
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: sold_at__date__lte
+        schema:
+          type: string
+          format: date
       - in: query
         name: sold_by
         schema:
@@ -4377,6 +4432,39 @@ paths:
         required: true
       tags:
       - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sale'
+          description: ''
+  /api/v1/sales/{id}/cancel/:
+    post:
+      operationId: api_v1_sales_cancel_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: Un Cadena UUID que identifique este sale.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sale'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Sale'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Sale'
       security:
       - jwtAuth: []
       responses:
@@ -4449,6 +4537,16 @@ paths:
         schema:
           type: string
           format: uuid
+      - in: query
+        name: variant__in
+        schema:
+          type: array
+          items:
+            type: string
+            format: uuid
+        description: Múltiples valores separados por comas.
+        explode: false
+        style: form
       - in: query
         name: warehouse
         schema:
@@ -5397,6 +5495,36 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/users/{id}/reset-password/:
+    post:
+      operationId: api_v1_users_reset_password_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: Un Cadena UUID que identifique este membership.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetUserPassword'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResetUserPassword'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResetUserPassword'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/v1/warehouses/:
     get:
       operationId: api_v1_warehouses_list
@@ -6117,9 +6245,12 @@ components:
           type: string
           maxLength: 30
         email:
-          type: string
-          format: email
-          maxLength: 254
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
         is_active:
           type: boolean
       required:
@@ -6133,6 +6264,9 @@ components:
         id:
           type: string
           format: uuid
+          readOnly: true
+        code:
+          type: string
           readOnly: true
         items:
           type: array
@@ -6155,9 +6289,6 @@ components:
         updated_at:
           type: string
           format: date-time
-          readOnly: true
-        code:
-          type: string
           readOnly: true
         contact_phone:
           type: string
@@ -6421,6 +6552,7 @@ components:
         attachment:
           type: string
           format: uri
+          nullable: true
           readOnly: true
         source_type:
           type: string
@@ -6580,7 +6712,6 @@ components:
       - base_sale_price
       - conversion_factor
       - minimum_stock
-      - presentation
       - purchase_factor
       - purchase_pack_price
       - sale_factor
@@ -6823,6 +6954,9 @@ components:
         branch:
           type: string
           format: uuid
+        branch_name:
+          type: string
+          readOnly: true
         code:
           type: string
           maxLength: 32
@@ -6833,6 +6967,7 @@ components:
           type: boolean
       required:
       - branch
+      - branch_name
       - code
       - id
       - name
@@ -7671,9 +7806,12 @@ components:
           type: string
           maxLength: 30
         email:
-          type: string
-          format: email
-          maxLength: 254
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
         is_active:
           type: boolean
     PatchedCustomerRequest:
@@ -7682,6 +7820,9 @@ components:
         id:
           type: string
           format: uuid
+          readOnly: true
+        code:
+          type: string
           readOnly: true
         items:
           type: array
@@ -7704,9 +7845,6 @@ components:
         updated_at:
           type: string
           format: date-time
-          readOnly: true
-        code:
-          type: string
           readOnly: true
         contact_phone:
           type: string
@@ -7813,6 +7951,9 @@ components:
         branch:
           type: string
           format: uuid
+        branch_name:
+          type: string
+          readOnly: true
         code:
           type: string
           maxLength: 32
@@ -7961,6 +8102,12 @@ components:
           pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
           readOnly: true
           nullable: true
+        requires_lot:
+          type: boolean
+          readOnly: true
+        requires_expiry:
+          type: boolean
+          readOnly: true
         created_at:
           type: string
           format: date-time
@@ -8206,9 +8353,12 @@ components:
           type: string
           maxLength: 30
         email:
-          type: string
-          format: email
-          maxLength: 254
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
         is_active:
           type: boolean
     PatchedTherapeuticAction:
@@ -8230,6 +8380,9 @@ components:
           type: string
           format: uuid
           readOnly: true
+        number:
+          type: string
+          readOnly: true
         items:
           type: array
           items:
@@ -8247,9 +8400,6 @@ components:
           type: string
           format: date-time
           readOnly: true
-        number:
-          type: string
-          maxLength: 40
         status:
           allOf:
           - $ref: '#/components/schemas/TransferStatusEnum'
@@ -8674,6 +8824,12 @@ components:
           pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
           readOnly: true
           nullable: true
+        requires_lot:
+          type: boolean
+          readOnly: true
+        requires_expiry:
+          type: boolean
+          readOnly: true
         created_at:
           type: string
           format: date-time
@@ -8742,6 +8898,8 @@ components:
       - presentation
       - product
       - product_name
+      - requires_expiry
+      - requires_lot
       - sale_unit
       - sku
       - unit_gain
@@ -9259,6 +9417,15 @@ components:
       - performed_by_name
       - reference
       - updated_at
+    ResetUserPassword:
+      type: object
+      properties:
+        new_password:
+          type: string
+          writeOnly: true
+          minLength: 8
+      required:
+      - new_password
     RoleEnum:
       enum:
       - SUPERADMIN
@@ -9362,6 +9529,9 @@ components:
         idempotency_key:
           type: string
           readOnly: true
+        notes:
+          type: string
+          readOnly: true
         sold_at:
           type: string
           format: date-time
@@ -9405,6 +9575,7 @@ components:
       - id
       - idempotency_key
       - items
+      - notes
       - number
       - payment_condition
       - payment_due_date
@@ -9595,10 +9766,6 @@ components:
           $ref: '#/components/schemas/Company'
         membership:
           $ref: '#/components/schemas/Membership'
-        available_companies:
-          type: array
-          items:
-            $ref: '#/components/schemas/Company'
         available_branches:
           type: array
           items:
@@ -9610,7 +9777,6 @@ components:
       required:
       - active_company
       - available_branches
-      - available_companies
       - membership
       - permissions
       - user
@@ -9719,9 +9885,12 @@ components:
           type: string
           maxLength: 30
         email:
-          type: string
-          format: email
-          maxLength: 254
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
         is_active:
           type: boolean
       required:
@@ -9792,6 +9961,9 @@ components:
           type: string
           format: uuid
           readOnly: true
+        number:
+          type: string
+          readOnly: true
         items:
           type: array
           items:
@@ -9809,9 +9981,6 @@ components:
           type: string
           format: date-time
           readOnly: true
-        number:
-          type: string
-          maxLength: 40
         status:
           allOf:
           - $ref: '#/components/schemas/TransferStatusEnum'

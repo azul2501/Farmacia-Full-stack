@@ -7,7 +7,7 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PageHeader } from "@/components/ui/page-header";
 import { useSession } from "@/features/auth/context/session-context";
-import { ApiError, apiRequest } from "@/features/shared/api/client";
+import { ApiError, apiRequest, apiRequestAll } from "@/features/shared/api/client";
 import { apiErrorMessage } from "@/features/shared/api/error-message";
 import { apiEndpoints } from "@/features/shared/api/endpoints";
 import type { ApiPage } from "@/features/shared/api/types";
@@ -93,7 +93,7 @@ const initialForm: FormState = {
   requires_expiry: true,
   requires_prescription: false,
   is_controlled: false,
-  earns_points: true,
+  earns_points: false,
   active_ingredient: "",
   therapeutic_action: "",
   sanitary_registration: "",
@@ -130,7 +130,7 @@ function decimal(value: string) {
 
 function money(value: Decimal | string | null) {
   if (value === null) return "-";
-  return `S/ ${new Decimal(value || 0).toFixed(1)}`;
+  return `S/ ${new Decimal(value || 0).toFixed(2)}`;
 }
 
 function mainVariant(product: Product) {
@@ -222,11 +222,11 @@ export function ProductFormPage({ mode, productId }: ProductFormPageProps) {
     queryFn: () => apiRequest<Product>(`${apiEndpoints.products}${productId}/`),
     enabled: mode === "edit" && Boolean(productId),
   });
-  const categoriesQuery = useQuery({ queryKey: ["catalog", "categories"], queryFn: () => apiRequest<ApiPage<NamedOption>>(apiEndpoints.categories, { query: { pageSize: 100, is_active: true, ordering: "name" } }) });
-  const labsQuery = useQuery({ queryKey: ["catalog", "laboratories"], queryFn: () => apiRequest<ApiPage<NamedOption>>(apiEndpoints.laboratories, { query: { pageSize: 100, is_active: true, ordering: "name" } }) });
-  const ingredientsQuery = useQuery({ queryKey: ["catalog", "active-ingredients"], queryFn: () => apiRequest<ApiPage<NamedOption>>(apiEndpoints.activeIngredients, { query: { pageSize: 100, is_active: true, ordering: "name" } }) });
-  const actionsQuery = useQuery({ queryKey: ["catalog", "therapeutic-actions"], queryFn: () => apiRequest<ApiPage<NamedOption>>(apiEndpoints.therapeuticActions, { query: { pageSize: 100, is_active: true, ordering: "name" } }) });
-  const suppliersQuery = useQuery({ queryKey: ["catalog", "suppliers"], queryFn: () => apiRequest<ApiPage<SupplierOption>>(apiEndpoints.suppliers, { query: { pageSize: 100, is_active: true, ordering: "legal_name" } }) });
+  const categoriesQuery = useQuery({ queryKey: ["catalog", "categories"], queryFn: () => apiRequestAll<NamedOption>(apiEndpoints.categories, { query: { is_active: true, ordering: "name" } }) });
+  const labsQuery = useQuery({ queryKey: ["catalog", "laboratories"], queryFn: () => apiRequestAll<NamedOption>(apiEndpoints.laboratories, { query: { is_active: true, ordering: "name" } }) });
+  const ingredientsQuery = useQuery({ queryKey: ["catalog", "active-ingredients"], queryFn: () => apiRequestAll<NamedOption>(apiEndpoints.activeIngredients, { query: { is_active: true, ordering: "name" } }) });
+  const actionsQuery = useQuery({ queryKey: ["catalog", "therapeutic-actions"], queryFn: () => apiRequestAll<NamedOption>(apiEndpoints.therapeuticActions, { query: { is_active: true, ordering: "name" } }) });
+  const suppliersQuery = useQuery({ queryKey: ["catalog", "suppliers"], queryFn: () => apiRequestAll<SupplierOption>(apiEndpoints.suppliers, { query: { is_active: true, ordering: "legal_name" } }) });
 
   const unitMetrics = calculatePriceMetrics(form.purchase_pack_price, form.purchase_factor, form.unit_price);
   const blisterCost = unitMetrics.unitCost ? unitMetrics.unitCost.mul(decimal(form.blister_units || "0")) : null;
@@ -466,7 +466,6 @@ export function ProductFormPage({ mode, productId }: ProductFormPageProps) {
           <legend>Datos del producto</legend>
           <p className="generated-code">Código interno: {mode === "edit" && productQuery.data?.internal_code ? productQuery.data.internal_code : "generado automáticamente por el sistema"}</p>
           <div className="form-grid compact-product-grid">
-            <label><span>Código de barras</span><input value={form.barcode} onChange={(event) => field("barcode", event.target.value)} /></label>
             <label><span>Nombre comercial</span><input required value={form.commercial_name} onChange={(event) => field("commercial_name", event.target.value)} />{errors.commercial_name ? <small className="field-error">{errors.commercial_name}</small> : null}</label>
             {selectWithQuick("category", "Categoría", <><option value="">Seleccionar</option>{categoriesQuery.data?.items.map(option)}</>, "category", true)}
             {selectWithQuick("laboratory", "Laboratorio", <><option value="">Sin laboratorio</option>{labsQuery.data?.items.map(option)}</>, "laboratory")}
@@ -484,7 +483,7 @@ export function ProductFormPage({ mode, productId }: ProductFormPageProps) {
               <div className="form-grid compact-product-grid">
                 <label><span>Se compra por</span><select value={form.purchase_unit} onChange={(event) => field("purchase_unit", event.target.value)}>{purchaseUnits.map((unit) => <option value={unit} key={unit}>{unit}</option>)}</select></label>
                 <label><span>La caja contiene</span><input type="number" min="1" step="1" value={form.purchase_factor} onChange={(event) => field("purchase_factor", event.target.value)} onBlur={(event) => field("purchase_factor", String(roundInteger(Number(event.target.value)) || 1))} />{errors.purchase_factor ? <small className="field-error">{errors.purchase_factor}</small> : null}</label>
-                <label><span>Costo de compra por caja</span><input type="number" min="0" step="0.1" value={form.purchase_pack_price} onChange={(event) => field("purchase_pack_price", event.target.value)} onBlur={(event) => field("purchase_pack_price", String(roundDecimal(Number(event.target.value))))} />{errors.purchase_pack_price ? <small className="field-error">{errors.purchase_pack_price}</small> : null}</label>
+                <label><span>Costo de compra por caja</span><input type="number" min="0" step="0.01" value={form.purchase_pack_price} onChange={(event) => field("purchase_pack_price", event.target.value)} onBlur={(event) => field("purchase_pack_price", String(roundDecimal(Number(event.target.value))))} />{errors.purchase_pack_price ? <small className="field-error">{errors.purchase_pack_price}</small> : null}</label>
               </div>
               <output className="price-calculation"><span>Costo aproximado por unidad</span><strong>{unitMetrics.unitCost ? money(unitMetrics.unitCost) : "Cantidad inválida"}</strong></output>
             </div>
@@ -492,9 +491,9 @@ export function ProductFormPage({ mode, productId }: ProductFormPageProps) {
             <div className="sale-box">
               <h3>¿Cómo vendes este producto?</h3>
               <div className="sale-form-list">
-                <label className="sale-form-row"><input type="checkbox" checked={form.sell_unit} onChange={(event) => field("sell_unit", event.target.checked)} /><span>Por unidad</span><input aria-label="Precio por unidad" type="number" min="0.1" step="0.1" placeholder="Precio S/" value={form.unit_price} onChange={(event) => field("unit_price", event.target.value)} onBlur={(event) => field("unit_price", String(roundDecimal(Number(event.target.value))))} /></label>
-                <label className="sale-form-row"><input type="checkbox" checked={form.sell_blister} onChange={(event) => field("sell_blister", event.target.checked)} /><span>Por blíster</span><input aria-label="Unidades por blíster" type="number" min="1" step="1" value={form.blister_units} onChange={(event) => field("blister_units", event.target.value)} onBlur={(event) => field("blister_units", String(roundInteger(Number(event.target.value)) || 1))} /><input aria-label="Precio por blíster" type="number" min="0.1" step="0.1" placeholder="Precio S/" value={form.blister_price} onChange={(event) => field("blister_price", event.target.value)} onBlur={(event) => field("blister_price", String(roundDecimal(Number(event.target.value))))} /></label>
-                <label className="sale-form-row"><input type="checkbox" checked={form.sell_box} onChange={(event) => field("sell_box", event.target.checked)} /><span>Por caja</span><input aria-label="Precio por caja" type="number" min="0.1" step="0.1" placeholder="Precio S/" value={form.box_price} onChange={(event) => field("box_price", event.target.value)} onBlur={(event) => field("box_price", String(roundDecimal(Number(event.target.value))))} /></label>
+                <label className="sale-form-row"><input type="checkbox" checked={form.sell_unit} onChange={(event) => field("sell_unit", event.target.checked)} /><span>Por unidad</span><input aria-label="Precio por unidad" type="number" min="0.1" step="0.01" placeholder="Precio S/" value={form.unit_price} onChange={(event) => field("unit_price", event.target.value)} onBlur={(event) => field("unit_price", String(roundDecimal(Number(event.target.value))))} /></label>
+                <label className="sale-form-row"><input type="checkbox" checked={form.sell_blister} onChange={(event) => field("sell_blister", event.target.checked)} /><span>Por blíster</span><input aria-label="Unidades por blíster" type="number" min="1" step="1" value={form.blister_units} onChange={(event) => field("blister_units", event.target.value)} onBlur={(event) => field("blister_units", String(roundInteger(Number(event.target.value)) || 1))} /><input aria-label="Precio por blíster" type="number" min="0.1" step="0.01" placeholder="Precio S/" value={form.blister_price} onChange={(event) => field("blister_price", event.target.value)} onBlur={(event) => field("blister_price", String(roundDecimal(Number(event.target.value))))} /></label>
+                <label className="sale-form-row"><input type="checkbox" checked={form.sell_box} onChange={(event) => field("sell_box", event.target.checked)} /><span>Por caja</span><input aria-label="Precio por caja" type="number" min="0.1" step="0.01" placeholder="Precio S/" value={form.box_price} onChange={(event) => field("box_price", event.target.value)} onBlur={(event) => field("box_price", String(roundDecimal(Number(event.target.value))))} /></label>
               </div>
               {errors.sale_forms ? <small className="field-error">{errors.sale_forms}</small> : null}
               <div className="price-chip-grid">
@@ -513,7 +512,6 @@ export function ProductFormPage({ mode, productId }: ProductFormPageProps) {
             {switchField("requires_expiry", "Controla vencimiento", "Si se activa, el producto también manejará lotes.")}
             {switchField("requires_prescription", "Venta con receta")}
             {switchField("is_controlled", "Medicamento controlado")}
-            {switchField("earns_points", "Acumula puntos")}
           </div>
           {hasWarehouses ? (
             <div className="form-grid compact-product-grid">

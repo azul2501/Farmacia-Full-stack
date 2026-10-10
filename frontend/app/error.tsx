@@ -13,7 +13,7 @@ export default function RouteError({ error, reset }: { error: Error & { digest?:
     <main className="session-loading route-error-page" aria-live="polite">
       <div className="content-state error-content-state">
         <i className="fas fa-triangle-exclamation" aria-hidden="true" />
-        <strong>Ocurrio un error inesperado</strong>
+        <strong>Ocurrió un error inesperado</strong>
         <p>Esta pantalla no pudo mostrarse. Puedes intentarlo de nuevo o volver al inicio.</p>
         <div className="route-error-actions">
           <button type="button" className="app-button primary" onClick={() => reset()}>

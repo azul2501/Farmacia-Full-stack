@@ -50,17 +50,22 @@ requiere `DATABASE_URL` PostgreSQL.
 
 ## Desarrollo con infraestructura completa
 
+El `compose.yml` esta en la raiz del repositorio y levanta backend y frontend juntos:
+
 ```bash
-cd backend
-docker compose up --build
+cd ..   # raiz del repositorio
+docker compose up -d --build
 docker compose exec api python manage.py bootstrap_demo
 ```
 
 Servicios:
 
+- Web: `http://localhost:3000`
 - API: `http://localhost:8000`
 - OpenAPI: `http://localhost:8000/api/docs/`
-- MinIO Console: `http://localhost:9001`
+- MinIO Console (opcional, `--profile s3`): `http://localhost:9001`
+
+Variables de entorno: ver `.env.example` en la raiz.
 
 ## Acceso demo
 
@@ -111,6 +116,8 @@ La paginacion responde con el contrato esperado por Next:
 .venv/bin/python manage.py makemigrations --check --dry-run
 .venv/bin/python manage.py spectacular --file openapi.yaml --validate
 .venv/bin/pytest -W error
+# Opcional, contra PostgreSQL:
+TEST_DATABASE_URL=postgresql://user:pass@localhost:5432/boticas_test .venv/bin/pytest -W error
 ```
 
 ## Alcance aplazado

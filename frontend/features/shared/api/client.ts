@@ -1,5 +1,5 @@
 import { runtimeConfig } from "@/features/shared/config/runtime";
-import type { ApiErrorPayload } from "@/features/shared/api/types";
+import type { ApiErrorPayload, ApiPage } from "@/features/shared/api/types";
 import { apiEndpoints } from "@/features/shared/api/endpoints";
 
 type QueryValue = string | number | boolean | undefined;
@@ -102,7 +102,7 @@ async function refreshAccessToken() {
 export async function apiRequest<T>(path: string, options: ApiRequestOptions = {}): Promise<T> {
   if (runtimeConfig.dataSource === "mock") {
     throw new ApiError(
-      "Esta pantalla necesita datos reales. Estas en modo de demostracion visual (NEXT_PUBLIC_DATA_SOURCE=mock); cambia a modo API o conectate al backend para usarla.",
+      "Esta pantalla necesita datos reales. Estas en modo de demostración visual (NEXT_PUBLIC_DATA_SOURCE=mock); cambia a modo API o conectate al backend para usarla.",
       0,
       "mock_mode_blocked",
     );
@@ -159,7 +159,7 @@ export async function apiRequest<T>(path: string, options: ApiRequestOptions = {
 export async function apiDownload(path: string, options: ApiRequestOptions = {}): Promise<Blob> {
   if (runtimeConfig.dataSource === "mock") {
     throw new ApiError(
-      "Esta descarga necesita datos reales. Estas en modo de demostracion visual (NEXT_PUBLIC_DATA_SOURCE=mock); cambia a modo API o conectate al backend para usarla.",
+      "Esta descarga necesita datos reales. Estas en modo de demostración visual (NEXT_PUBLIC_DATA_SOURCE=mock); cambia a modo API o conectate al backend para usarla.",
       0,
       "mock_mode_blocked",
     );
@@ -186,4 +186,31 @@ export async function apiDownload(path: string, options: ApiRequestOptions = {})
 
 export function clearApiSession() {
   accessToken = null;
+}
+
+const API_MAX_PAGE_SIZE = 100;
+
+/**
+ * Recorre todas las paginas de un listado (el backend limita cada pagina a 100 registros) para que
+ * las tablas y selectores no omitan datos. `maxItems` evita descargas desmedidas; usa filtros de
+ * servidor (fechas, sucursal) en historiales que crecen sin limite.
+ */
+export async function apiRequestAll<T>(
+  path: string,
+  options: ApiRequestOptions = {},
+  maxItems = 5000,
+): Promise<ApiPage<T> & { truncated: boolean }> {
+  const query = { ...options.query, pageSize: API_MAX_PAGE_SIZE };
+  const first = await apiRequest<ApiPage<T>>(path, { ...options, query: { ...query, page: 1 } });
+  const lastPage = Math.min(Math.ceil(first.total / API_MAX_PAGE_SIZE), Math.ceil(maxItems / API_MAX_PAGE_SIZE));
+  const items = [...first.items];
+  for (let start = 2; start <= lastPage; start += 4) {
+    const pages = await Promise.all(
+      Array.from({ length: Math.min(4, lastPage - start + 1) }, (_, offset) =>
+        apiRequest<ApiPage<T>>(path, { ...options, query: { ...query, page: start + offset } }),
+      ),
+    );
+    pages.forEach((page) => items.push(...page.items));
+  }
+  return { items, page: 1, pageSize: items.length, total: first.total, truncated: items.length < first.total };
 }

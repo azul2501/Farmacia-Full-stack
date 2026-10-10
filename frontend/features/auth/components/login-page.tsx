@@ -28,7 +28,7 @@ export function LoginPage() {
     event.preventDefault();
     setError("");
     if (!/^\S+@\S+\.\S+$/.test(email)) {
-      setError("Ingresa un correo electronico valido.");
+      setError("Ingresa un correo electrónico válido.");
       return;
     }
     setIsSubmitting(true);
@@ -39,11 +39,11 @@ export function LoginPage() {
       if (caughtError instanceof ApiError) {
         setError(
           caughtError.status === 401
-            ? "Correo o contrasena incorrectos."
+            ? "Correo o contraseña incorrectos."
             : caughtError.message,
         );
       } else {
-        setError("No fue posible iniciar sesion.");
+        setError("No fue posible iniciar sesión.");
       }
     } finally {
       setIsSubmitting(false);
@@ -56,7 +56,7 @@ export function LoginPage() {
         <div>
           <span className="brand-mark">BF</span>
           <h1>Sistema Botica</h1>
-          <p>Inicio de sesion</p>
+          <p>Inicio de sesión</p>
         </div>
 
         {isDemoMode ? <div className="demo-login-note">
@@ -72,7 +72,7 @@ export function LoginPage() {
         ) : null}
 
         <label>
-          <span>Correo electronico</span>
+          <span>Correo electrónico</span>
           <div className="input-with-icon">
             <input name="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="nombre@empresa.com" autoComplete="email" required autoFocus disabled={isSubmitting} />
             <i className="fas fa-envelope" />
@@ -83,16 +83,16 @@ export function LoginPage() {
           <div className="input-with-icon">
             <input name="password" type={showPassword ? "text" : "password"} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Ingrese la clave" autoComplete="current-password" required disabled={isSubmitting} />
             <i className="fas fa-lock" />
-            <button type="button" className="password-visibility" aria-label={showPassword ? "Ocultar contrasena" : "Mostrar contrasena"} onClick={() => setShowPassword((current) => !current)}>
+            <button type="button" className="password-visibility" aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"} onClick={() => setShowPassword((current) => !current)}>
               <i className={`fas ${showPassword ? "fa-eye-slash" : "fa-eye"}`} aria-hidden="true" />
             </button>
           </div>
         </label>
-        <button type="button" className="forgot-password-link" disabled title="Proximamente">Olvide mi contrasena</button>
+        <button type="button" className="forgot-password-link" disabled title="Proximamente">Olvide mi contraseña</button>
         {error ? <div className="login-error" role="alert"><i className="fas fa-exclamation-circle" aria-hidden="true" /> {error}</div> : null}
         <button type="submit" className="app-button primary" disabled={isSubmitting}>
           <i className={`fas ${isSubmitting ? "fa-circle-notch fa-spin" : "fa-sign-in-alt"}`} aria-hidden="true" />
-          {isSubmitting ? "Iniciando sesion..." : "Iniciar sesion"}
+          {isSubmitting ? "Iniciando sesión..." : "Iniciar sesión"}
         </button>
       </form>
     </main>

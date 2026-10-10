@@ -28,7 +28,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
         >
           <strong style={{ fontSize: 20 }}>El sistema no pudo cargar</strong>
           <p style={{ maxWidth: 420 }}>
-            Ocurrio un error grave al iniciar la aplicacion. Intenta recargar la pagina; si el problema
+            Ocurrió un error grave al iniciar la aplicación. Intenta recargar la página; si el problema
             persiste, comunicate con soporte.
           </p>
           <div style={{ display: "flex", gap: 12 }}>

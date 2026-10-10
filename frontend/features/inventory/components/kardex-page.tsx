@@ -4,11 +4,12 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { PageHeader } from "@/components/ui/page-header";
 import { useSession } from "@/features/auth/context/session-context";
-import { apiRequest } from "@/features/shared/api/client";
+import { apiRequest, apiRequestAll } from "@/features/shared/api/client";
 import { apiErrorMessage } from "@/features/shared/api/error-message";
 import { apiEndpoints } from "@/features/shared/api/endpoints";
 import type { ApiPage } from "@/features/shared/api/types";
 import { DataTable, type DataTableColumn } from "@/features/shared/ui/data-table/data-table";
+import { daysAgoIso, formatQuantity } from "@/features/shared/utils/formatters";
 
 type MovementRow = {
   id: string;
@@ -32,7 +33,7 @@ const movementLabels: Record<string, string> = {
   TRANSFER_IN: "Ingreso por transferencia",
   ADJUSTMENT_IN: "Ajuste positivo",
   ADJUSTMENT_OUT: "Ajuste negativo",
-  RETURN_IN: "Ingreso por devolucion",
+  RETURN_IN: "Ingreso por devolución",
 };
 
 const movementIcons: Record<string, string> = {
@@ -58,8 +59,8 @@ function movementChip(type: string) {
 }
 
 function integerSigned(value: string) {
-  const number = Math.round(Number(value || 0));
-  const text = Math.abs(number).toLocaleString("es-PE");
+  const number = Number(value || 0);
+  const text = formatQuantity(Math.abs(number));
   return number > 0 ? `+${text}` : number < 0 ? `-${text}` : text;
 }
 
@@ -76,10 +77,19 @@ export function KardexPage() {
   const { warehouses } = useSession();
   const [warehouseFilter, setWarehouseFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
+  const [dateFrom, setDateFrom] = useState(() => daysAgoIso(30));
+  const [dateTo, setDateTo] = useState("");
 
   const movementsQuery = useQuery({
-    queryKey: ["inventory-movements", "list"],
-    queryFn: () => apiRequest<ApiPage<MovementRow>>(apiEndpoints.inventoryMovements, { query: { pageSize: 500, ordering: "-created_at" } }),
+    queryKey: ["inventory-movements", "list", warehouseFilter, dateFrom, dateTo],
+    queryFn: () => apiRequestAll<MovementRow>(apiEndpoints.inventoryMovements, {
+      query: {
+        ordering: "-created_at",
+        warehouse: warehouseFilter || undefined,
+        created_at__date__gte: dateFrom || undefined,
+        created_at__date__lte: dateTo || undefined,
+      },
+    }),
   });
 
   const rows = movementsQuery.data?.items ?? [];
@@ -98,9 +108,9 @@ export function KardexPage() {
     { id: "date", header: "Fecha", value: (row) => row.created_at, render: (row) => dateTime(row.created_at), sortable: true },
     { id: "type", header: "Movimiento", value: (row) => movementLabels[row.movement_type] ?? row.movement_type, render: (row) => movementChip(row.movement_type), sortable: true },
     { id: "product", header: "Producto", value: (row) => row.product_name, sortable: true, render: (row) => <strong>{row.product_name}</strong> },
-    { id: "presentation", header: "Presentacion", value: (row) => row.presentation },
+    { id: "presentation", header: "Presentación", value: (row) => row.presentation },
     { id: "lot", header: "Lote", value: (row) => row.batch_number ?? "-" },
-    { id: "warehouse", header: "Almacen", value: (row) => row.warehouse_name, sortable: true },
+    { id: "warehouse", header: "Almacén", value: (row) => row.warehouse_name, sortable: true },
     {
       id: "quantity",
       header: "Cantidad",
@@ -109,7 +119,7 @@ export function KardexPage() {
       sortable: true,
       render: (row) => <strong className={Number(row.quantity) < 0 ? "sale-balance-due" : undefined}>{integerSigned(row.quantity)}</strong>,
     },
-    { id: "balance", header: "Saldo", value: (row) => Number(row.balance_after), render: (row) => Math.round(Number(row.balance_after)).toLocaleString("es-PE"), align: "right", sortable: true },
+    { id: "balance", header: "Saldo", value: (row) => Number(row.balance_after), render: (row) => formatQuantity(Number(row.balance_after)), align: "right", sortable: true },
     { id: "document", header: "Documento", value: (row) => row.document_number || "-" },
     { id: "user", header: "Usuario", value: (row) => row.performed_by_name },
   ];
@@ -138,6 +148,14 @@ export function KardexPage() {
                 <option value="">Todos los movimientos</option>
                 {Object.entries(movementLabels).map(([value, label]) => <option value={value} key={value}>{label}</option>)}
               </select>
+              <label>
+                <span>Desde</span>
+                <input type="date" value={dateFrom} onChange={(event) => setDateFrom(event.target.value)} />
+              </label>
+              <label>
+                <span>Hasta</span>
+                <input type="date" value={dateTo} onChange={(event) => setDateTo(event.target.value)} />
+              </label>
             </>
           }
           loading={movementsQuery.isLoading}
