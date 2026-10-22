@@ -64,7 +64,6 @@ class TransferSerializer(serializers.ModelSerializer):
         exclude = ["company"]
         read_only_fields = [
             "id",
-            "number",
             "status",
             "created_by",
             "dispatched_by",
