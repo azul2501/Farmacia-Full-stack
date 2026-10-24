@@ -1,6 +1,7 @@
 import { roleLabels } from "@/features/auth/types/session";
 import { apiEndpoints } from "@/features/shared/api/endpoints";
 import type { ResourceConfig } from "@/features/shared/resources/resource-types";
+import { isFeatureEnabled } from "@/lib/features";
 
 const activeField = { name: "is_active", label: "Activo", type: "checkbox" as const };
 
@@ -332,7 +333,7 @@ export const userListResource: ResourceConfig = {
   endpoint: "/users/",
   title: "Usuarios",
   singular: "usuario",
-  description: "Personas con acceso a la empresa, su rol y las sucursales donde pueden operar.",
+  description: "Personas con acceso a la botica y su rol.",
   permission: "users.view",
   deactivateOnly: true,
   passwordReset: true,
@@ -353,14 +354,23 @@ export const userListResource: ResourceConfig = {
       label: "Rol",
       type: "select",
       required: true,
-      options: [
-        { value: "BRANCH_ADMIN", label: roleLabels.BRANCH_ADMIN },
-        { value: "CASHIER", label: roleLabels.CASHIER },
-        { value: "WAREHOUSE_OPERATOR", label: roleLabels.WAREHOUSE_OPERATOR },
-        { value: "OWNER", label: roleLabels.OWNER },
-      ],
+      // Con una sola tienda (antes de la V3) solo existen Dueño y Cajero.
+      options: isFeatureEnabled("multi_branch")
+        ? [
+            { value: "BRANCH_ADMIN", label: roleLabels.BRANCH_ADMIN },
+            { value: "CASHIER", label: roleLabels.CASHIER },
+            { value: "WAREHOUSE_OPERATOR", label: roleLabels.WAREHOUSE_OPERATOR },
+            { value: "OWNER", label: roleLabels.OWNER },
+          ]
+        : [
+            { value: "CASHIER", label: roleLabels.CASHIER },
+            { value: "OWNER", label: roleLabels.OWNER },
+          ],
     },
-    { name: "branch_ids", label: "Sucursales autorizadas", type: "multiselect", optionSource: "branches" },
+    // Antes de la V3 el backend asigna la tienda automáticamente.
+    ...(isFeatureEnabled("multi_branch")
+      ? [{ name: "branch_ids", label: "Sucursales autorizadas", type: "multiselect" as const, optionSource: "branches" as const }]
+      : []),
     { name: "is_active", label: "Activo", type: "checkbox" },
   ],
 };

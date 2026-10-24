@@ -4,6 +4,7 @@ from django.utils.crypto import get_random_string
 from rest_framework import serializers
 
 from apps.accounts.models import Membership, Role, User
+from apps.core.features import feature_enabled
 from apps.core.permissions import ensure_branch_access, get_active_membership
 from apps.tenancy.models import Branch
 from apps.tenancy.serializers import BranchSummarySerializer, CompanySerializer
@@ -69,6 +70,8 @@ class CompanyUserSerializer(serializers.ModelSerializer):
         membership = get_active_membership(user=request.user, company=request.company)
         if membership and membership.role == Role.BRANCH_ADMIN and role in {Role.OWNER, Role.SUPERADMIN}:
             raise serializers.ValidationError("Un administrador de sucursal no puede asignar un rol global.")
+        if not feature_enabled("multi_branch") and role in {Role.BRANCH_ADMIN, Role.WAREHOUSE_OPERATOR}:
+            raise serializers.ValidationError("En esta versión solo se asignan los roles Dueño y Cajero.")
         return role
 
     def validate(self, attrs):
@@ -99,6 +102,10 @@ class CompanyUserSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({"password": "La clave inicial es obligatoria."})
         role = attrs.get("role", getattr(self.instance, "role", None))
         branches = attrs.get("branches", self.instance.branches.all() if self.instance else [])
+        if not branches and not feature_enabled("multi_branch"):
+            # Con una sola tienda, el usuario queda asignado a todas las sucursales activas sin elegirlas.
+            branches = list(Branch.objects.filter(company=self.context["request"].company, is_active=True))
+            attrs["branches"] = branches
         if role in {Role.BRANCH_ADMIN, Role.WAREHOUSE_OPERATOR, Role.CASHIER} and not branches:
             raise serializers.ValidationError({"branch_ids": "El rol requiere al menos una sucursal autorizada."})
         return attrs

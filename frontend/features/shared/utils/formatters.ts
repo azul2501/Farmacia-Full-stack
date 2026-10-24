@@ -32,6 +32,23 @@ export function roundDecimal(value: number) {
   return Number.isFinite(value) ? Math.round((value + Number.EPSILON) * 100) / 100 : 0;
 }
 
+/**
+ * Valor para un campo de precio: siempre 2 decimales ("0.2000" del backend -> "0.20").
+ * El backend guarda algunos costos con 4 decimales; en pantalla y en los formularios se usan 2.
+ */
+export function toMoneyInput(value: string | number | null | undefined, empty = "") {
+  if (value === null || value === undefined || value === "") return empty;
+  const number = Number(value);
+  return Number.isFinite(number) ? roundDecimal(number).toFixed(2) : empty;
+}
+
+/** Valor para un campo de cantidad entera o factor ("100.0000" -> "100"). */
+export function toIntegerInput(value: string | number | null | undefined, empty = "") {
+  if (value === null || value === undefined || value === "") return empty;
+  const number = Number(value);
+  return Number.isFinite(number) ? String(roundInteger(number)) : empty;
+}
+
 export function formatCurrency(value: number) {
   return currencyFormatter.format(value);
 }

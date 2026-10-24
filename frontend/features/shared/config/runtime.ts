@@ -4,7 +4,14 @@ function resolveDataSource(value: string | undefined): DataSourceMode {
   return value === "api" ? "api" : "mock";
 }
 
+function resolveAppVersion(value: string | undefined): number {
+  const version = Number(value ?? 1);
+  return Number.isInteger(version) && version > 0 ? version : 1;
+}
+
 export const runtimeConfig = {
+  // Versión publicada del producto; debe coincidir con APP_VERSION del backend.
+  appVersion: resolveAppVersion(process.env.NEXT_PUBLIC_APP_VERSION),
   dataSource: resolveDataSource(process.env.NEXT_PUBLIC_DATA_SOURCE),
   apiBaseUrl: process.env.NEXT_PUBLIC_API_BASE_URL ?? "",
   apiTimeoutMs: Number(process.env.NEXT_PUBLIC_API_TIMEOUT_MS ?? 15000),

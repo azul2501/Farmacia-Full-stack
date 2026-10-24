@@ -4,6 +4,7 @@ from django.db import transaction
 from rest_framework import serializers
 
 from apps.core.choices import PaymentCondition, PaymentMethod
+from apps.core.features import feature_enabled
 from apps.core.permissions import ensure_branch_access
 from apps.purchases.models import Purchase, PurchaseItem
 
@@ -52,6 +53,10 @@ class PurchaseSerializer(serializers.ModelSerializer):
         ensure_branch_access(user=self.context["request"].user, company=company, branch_id=branch.id)
         condition = attrs.get("payment_condition", getattr(self.instance, "payment_condition", PaymentCondition.CASH))
         due_date = attrs.get("payment_due_date", getattr(self.instance, "payment_due_date", None))
+        if condition == PaymentCondition.CREDIT and not feature_enabled("finance"):
+            raise serializers.ValidationError(
+                {"payment_condition": "Las compras a crédito no están disponibles en esta versión."}
+            )
         if condition == PaymentCondition.CREDIT and not due_date:
             raise serializers.ValidationError({"payment_due_date": "Es obligatoria para compras a crédito."})
         if condition == PaymentCondition.CASH:

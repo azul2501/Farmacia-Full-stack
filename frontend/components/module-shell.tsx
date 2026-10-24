@@ -1,5 +1,4 @@
 import Link from "next/link";
-import type { InitialModuleAction } from "@/features/modules/components/module-screen-page";
 import { PageHeader } from "@/components/ui/page-header";
 import type { AppModule } from "@/types/domain";
 import { ApiResourcePage } from "@/features/shared/resources/api-resource-page";
@@ -27,7 +26,6 @@ import {
 
 type ModuleShellProps = {
   module: AppModule;
-  initialAction?: InitialModuleAction;
 };
 
 export function ModuleShell({ module }: ModuleShellProps) {
@@ -53,7 +51,7 @@ export function ModuleShell({ module }: ModuleShellProps) {
   if (rootPath === "/ingreso") return <FinancialMovementsPage kind="income" />;
   if (rootPath === "/solicitud") return <CustomerRequestsPage />;
   if (rootPath === "/reporte") return <ReportsPage />;
-  // Modulos fuera del alcance del MVP: no se muestran pantallas simuladas con datos falsos.
+  // Un módulo del catálogo sin pantalla propia todavía: aviso en lugar de datos simulados.
   return (
     <>
       <PageHeader title={module.label} current={module.label} />

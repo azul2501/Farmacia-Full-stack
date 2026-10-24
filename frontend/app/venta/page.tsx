@@ -1,6 +1,9 @@
+import { notFound } from "next/navigation";
 import { ModuleShell } from "@/components/module-shell";
 import { findModuleByHref } from "@/lib/modules";
 
 export default function SalePage() {
-  return <ModuleShell module={findModuleByHref("/venta")!} />;
+  const appModule = findModuleByHref("/venta");
+  if (!appModule) notFound();
+  return <ModuleShell module={appModule} />;
 }

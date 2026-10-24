@@ -1,0 +1,566 @@
+Codigo;Nombre;Concentracion;Forma farmaceutica;Presentacion;Principio activo;Laboratorio;Precio sugerido;Tipo;Fuente
+RM220-001;Acetazolamida;250mg;Tableta;;Acetazolamida;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-002;Aciclovir (como sal sódica);250mg;Inyectable;;Aciclovir;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-003;Aciclovir;3%;Ungüento oftálmico;;Aciclovir;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-004;Aciclovir;200mg;Tableta;;Aciclovir;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-005;Aciclovir;400mg;Tableta;;Aciclovir;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-006;Ácido acetilsalicílico;500mg;Tableta;;Ácido acetilsalicílico;;0.20;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-007;Ácido acetilsalicílico;80-100mg;Tableta;;Ácido acetilsalicílico;;0.10;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-008;Ácido alendrónico (como alendronato sódico);70mg;Tableta;;Ácido alendrónico;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-009;Ácido fólico;500mcg (0.5mg);Tableta;;Ácido fólico;;0.10;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-010;Ácido fusídico;2%;Crema tópica;;Ácido fusidico;;12.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-011;Ácido tranexámico;1g;Inyectable;;Ácido tranexámico;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-012;Ácido tranexámico;250mg;Tableta;;Ácido tranexámico;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-013;Ácido valproico (como valproato sódico);250mg/5mL;Líquido oral;;Ácido valproico;;12.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-014;Ácido zoledrónico;4mg;Inyectable;;Ácido zoledrónico;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-015;Acitretina;25mg;Tableta;;Acitretina;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-016;Albendazol;100mg/5mL;Líquido oral;20mL;Albendazol;;4.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-017;Albendazol;200mg;Tableta;;Albendazol;;0.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-018;Albendazol;400mg;Tableta;;Albendazol;;1.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-019;Alopurinol;100mg;Tableta;;Alopurinol;;0.20;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-020;Alopurinol;300mg;Tableta;;Alopurinol;;0.40;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-021;Alprazolam;500mcg (0.5mg);Tableta;;Alprazolam;;0.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-022;Amfotericina B (como deoxicolato sódico);50mg;Inyectable;;Amfotericina b;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-023;Amikacina;250mg/mL;Inyectable;2mL;Amikacina;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-024;Amikacina;50mg/mL;Inyectable;2mL;Amikacina;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-025;Aminofilina;25mg/mL;Inyectable;10mL;Aminofilina;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-026;Amiodarona clorhidrato;200mg;Tableta;;Amiodarona;;0.60;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-027;Amiodarona clorhidrato;50mg/mL;Inyectable;3mL;Amiodarona;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-028;Amitriptilina clorhidrato;25mg;Tableta;;Amitriptilina;;0.20;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-029;Amlodipino (como besilato);10mg;Tableta;;Amlodipina;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-030;Amlodipino (como besilato);5mg;Tableta;;Amlodipina;;0.20;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-031;Amoxicilina;125mg/5mL;Líquido oral;;Amoxicilina;;6.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-032;Amoxicilina;250mg/5mL;Líquido oral;;Amoxicilina;;7.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-033;Amoxicilina;250mg;Tableta;;Amoxicilina;;0.25;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-034;Amoxicilina;500mg/5mL;Líquido oral;;Amoxicilina;;9.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-035;Amoxicilina;500mg;Tableta;;Amoxicilina;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-036;Amoxicilina + ácido clavulánico (como sal potásica);250mg + 62.5mg/5mL;Líquido oral;;Amoxicilina e inhibidores de la enzima;;18.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-037;Amoxicilina + ácido clavulánico (como sal potásica);500mg + 125mg;Tableta;;Amoxicilina e inhibidores de la enzima;;1.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-038;Ampicilina (como sal sódica);1g;Inyectable;;Ampicilina;;4.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-039;Ampicilina (como sal sódica);500mg;Inyectable;;Ampicilina;;3.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-040;Ampicilina (como sal sódica) + sulbactam (como sal sódica);1g + 500mg;Inyectable;;Ampicilina e inhibidores de la enzima;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-041;Anastrozol;1mg;Tableta;;Anastrozol;;2.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-042;Atenolol;100mg;Tableta;;Atenolol;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-043;Atenolol;50mg;Tableta;;Atenolol;;0.20;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-044;Atorvastatina (como sal cálcica);10mg;Tableta;;Atorvastatina;;0.40;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-045;Atorvastatina (como sal cálcica);20mg;Tableta;;Atorvastatina;;0.60;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-046;Atorvastatina (como sal cálcica);40mg;Tableta;;Atorvastatina;;0.90;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-047;Atropina sulfato;1%;Solución oftálmica;5mL;Atropina;;12.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-048;Atropina sulfato;1mg/mL;Inyectable;;Atropina;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-049;Atropina sulfato;250mcg/mL (0.25mg/mL);Inyectable;;Atropina;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-050;Atropina sulfato;500mcg/mL (0.5mg/mL);Inyectable;;Atropina;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-051;Azacitidina;100mg;Inyectable;;Azacitidina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-052;Azatioprina;50mg;Tableta;;Azatioprina;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-053;Azitromicina;200mg/5mL;Líquido oral;;Azitromicina;;12.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-054;Azitromicina;500mg;Tableta;;Azitromicina;;1.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-055;Baclofeno;10mg;Tableta;;Baclofeno;;0.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-056;Beclometasona dipropionato;250mcg/dosis;Aerosol para inhalación;;Beclometasona;;30.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-057;Beclometasona dipropionato;50mcg/dosis;Aerosol para inhalación;;Beclometasona;;25.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-058;Bencilpenicilina sódica equiv.;1 000 000UI Bencilpenicilina;Inyectable;;Bencilpenicilina;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-059;Bencilpenicilina benzatina equiv.;1 200 000UI Bencilpenicilina;Inyectable;;Bencilpenicilina benzatínica;;8.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-060;Bencilpenicilina benzatina equiv.;2 400 000UI Bencilpenicilina;Inyectable;;Bencilpenicilina benzatínica;;10.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-061;Bencilpenicilina procaínica equiv.;1 000 000UI Bencilpenicilina;Inyectable;;Bencilpenicilina procaínica;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-062;Bencilo benzoato;25%;Loción;;Benzoato de bencilo;;8.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-063;Betametasona (como dipropionato);0.05%;Crema tópica;;Betametasona;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-064;Betametasona (como dipropionato);4mg/mL;Inyectable;;Betametasona;;6.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-065;Bicalutamida;150mg;Tableta;;Bicalutamida;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-066;Bicalutamida;50mg;Tableta;;Bicalutamida;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-067;Sodio bicarbonato;8.4%;Inyectable;20mL;Bicarbonato de sodio;;3.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-068;Biperideno clorhidrato;2mg;Tableta;;Biperideno;;0.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-069;Biperideno lactato;5mg/mL;Inyectable;1mL;Biperideno;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-070;Bisacodilo;5mg;Tableta de liberación modificada;;Bisacodilo;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-071;Bismuto subsalicilato;87.33mg/5mL;Líquido oral;;Bismuto subsalicilato;;10.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-072;Bisoprolol fumarato;5mg;Tableta;;Bisoprolol;;0.60;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-073;Bleomicina (como sulfato);15mg (15UI);Inyectable;;Bleomicina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-074;Bortezomib;3.5mg;Inyectable;;Bortezomib;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-075;Bromocriptina (como mesilato);2.5mg;Tableta;;Bromocriptina;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-076;Budesonida;200mcg/dosis;Aerosol para inhalación;;Budesonida;;30.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-077;Bupivacaína clorhidrato + preservante;0.005;Inyectable;20mL;Bupivacaína;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-078;Bupivacaína clorhidrato sin preservante;0.005;Inyectable;20mL;Bupivacaína;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-079;Bupivacaína clorhidrato + glucosa;0.5% + 7.5 - 8.0%;Inyectable;4mL;Bupivacaína + glucosa;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-080;Cabergolina;500mcg (0.5mg);Tableta;;Cabergolina;;6.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-081;Cafeína citrato;20mg/mL (equiv. 10mg cafeína/mL);Líquido oral;;Cafeína;;10.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-082;Calcio gluconato;10% (equiv. 8.4mg/mL Ca);Inyectable;10mL;Calcio gluconato;;2.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-083;Calcitriol;0.25mcg;Tableta;;Calcitriol;;1.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-084;Capecitabina;500mg;Tableta;;Capecitabina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-085;Captopril;25mg;Tableta;;Captopril;;0.15;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-086;Carbamazepina;100mg/5mL;Líquido oral;;Carbamazepina;;12.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-087;Carbamazepina;200mg;Tableta;;Carbamazepina;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-088;Calcio carbonato;1.25g (equiv. 500mg Ca);Tableta;;Carbonato de calcio;;0.20;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-089;Carboplatino;150mg;Inyectable;;Carboplatino;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-090;Carboplatino;450mg;Inyectable;;Carboplatino;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-091;Carvedilol;12.5mg;Tableta;;Carvedilol;;0.40;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-092;Carvedilol;25mg;Tableta;;Carvedilol;;0.60;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-093;Carvedilol;6.25mg;Tableta;;Carvedilol;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-094;Cefalexina;250mg/5mL;Líquido oral;;Cefalexina;;8.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-095;Cefalexina;500mg;Tableta;;Cefalexina;;0.40;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-096;Cefazolina (como sal sódica);1g;Inyectable;;Cefazolina;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-097;Cefotaxima (como sal sódica);500mg;Inyectable;;Cefotaxima;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-098;Ceftazidima;1g;Inyectable;;Ceftazidima;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-099;Ceftriaxona (como sal sódica);1g;Inyectable;;Ceftriaxona;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-100;Cefuroxima (como axetil);250mg/5mL;Líquido oral;;Cefuroxima;;25.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-101;Cefuroxima (como axetil);500mg;Tableta;;Cefuroxima;;2.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-102;Ciclofosfamida;1g;Inyectable;;Ciclofosfamida;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-103;Ciclofosfamida;200mg;Inyectable;;Ciclofosfamida;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-104;Ciclosporina;100mg/mL;Líquido oral;;Ciclosporina;;10.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-105;Ciclosporina;50mg;Tableta;;Ciclosporina;;3.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-106;Ciprofloxacino;0.3%;Solución oftálmica;5mL;Ciprofloxacino;;6.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-107;Ciprofloxacino;2mg/mL;Inyectable;100mL;Ciprofloxacino;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-108;Ciprofloxacino;500mg;Tableta;;Ciprofloxacino;;0.40;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-109;Ciproterona acetato;50mg;Tableta;;Ciproterona;;2.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-110;Citarabina;100mg;Inyectable;;Citarabina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-111;Citarabina;500mg;Inyectable;;Citarabina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-112;Claritromicina;250mg/5mL;Líquido oral;;Claritromicina;;15.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-113;Claritromicina;500mg;Tableta;;Claritromicina;;1.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-114;Clindamicina;150mg/mL;Inyectable;4mL;Clindamicina;;4.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-115;Clindamicina;300mg;Tableta;;Clindamicina;;1.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-116;Clobetasol propionato;0.05%;Crema tópica;;Clobetasol;;8.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-117;Clomipramina clorhidrato;25mg;Tableta;;Clomipramina;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-118;Clonazepam;2mg;Tableta;;Clonazepam;;0.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-119;Clonazepam;500mcg (0.5mg);Tableta;;Clonazepam;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-120;Clopidogrel (como bisulfato);75mg;Tableta;;Clopidogrel;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-121;Cloranfenicol;1g;Inyectable;;Cloranfenicol;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-122;Cloranfenicol;250mg/5mL;Líquido oral;;Cloranfenicol;;8.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-123;Cloranfenicol;500mg;Tableta;;Cloranfenicol;;0.40;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-124;Clorfenamina maleato;10mg/mL;Inyectable;1mL;Clorfenamina;;2.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-125;Clorfenamina maleato;2mg/5mL;Líquido oral;;Clorfenamina;;4.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-126;Clorfenamina maleato;4mg;Tableta;;Clorfenamina;;0.10;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-127;Clorpromazina clorhidrato;100mg;Tableta;;Clorpromazina;;0.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-128;Potasio cloruro;20%;Inyectable;10mL;Cloruro de potasio;;2.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-129;Sodio cloruro;0.9%;Inyectable;100mL;Cloruro de sodio;;4.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-130;Sodio cloruro;0.9%;Inyectable;1L;Cloruro de sodio;;7.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-131;Sodio cloruro;0.9%;Inyectable;20mL;Cloruro de sodio;;1.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-132;Sodio cloruro;0.9%;Inyectable;250mL;Cloruro de sodio;;4.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-133;Sodio cloruro;0.9%;Inyectable;500mL;Cloruro de sodio;;5.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-134;Sodio cloruro;20%;Inyectable;20mL;Cloruro de sodio;;1.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-135;Clotrimazol;1%;Crema tópica;;Clotrimazol;;4.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-136;Clotrimazol;1%;Solución tópica;;Clotrimazol;;6.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-137;Clotrimazol;500mg;Óvulo / tableta vaginal;;Clotrimazol;;3.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-138;Clozapina;100mg;Tableta;;Clozapina;;2.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-139;Codeína fosfato;10-15mg/5mL;Líquido oral;;Codeína;;12.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-140;Colchicina;500mcg (0.5mg);Tableta;;Colchicina;;0.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-141;Colistina (como colistimetato sódico);100mg-150mg;Inyectable;;Colistina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-142;Dacarbazina;200mg;Inyectable;;Dacarbazina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-143;Dactinomicina;500mcg (0.5mg);Inyectable;;Dactinomicina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-144;Danazol;200mg;Tableta;;Danazol;;2.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-145;Dasatinib;50mg;Tableta;;Dasatinib;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-146;Daunorubicina (como clorhidrato);20mg;Inyectable;;Daunorubicina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-147;Dexametasona fosfato (como sal sódica);4mg;Inyectable;;Dexametasona;;2.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-148;Dexametasona;4mg;Tableta;;Dexametasona;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-149;Dexametasona;500mcg (0.5mg);Tableta;;Dexametasona;;0.10;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-150;Dextrometorfano bromhidrato;15mg/5mL;Líquido oral;;Dextrometorfano;;6.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-151;Diazepam;10mg;Tableta;;Diazepam;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-152;Diazepam;5mg/mL;Inyectable;2mL;Diazepam;;2.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-153;Diazepam;5mg;Tableta;;Diazepam;;0.20;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-154;Diclofenaco sódico;0.1%;Solución oftálmica;5mL;Diclofenaco;;8.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-155;Diclofenaco sódico;25mg/mL;Inyectable;3mL;Diclofenaco;;1.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-156;Dicloxacilina;250mg/5mL;Líquido oral;;Dicloxacilina;;8.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-157;Dicloxacilina;250mg;Tableta;;Dicloxacilina;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-158;Dicloxacilina;500mg;Tableta;;Dicloxacilina;;0.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-159;Dietilestilbestrol;1mg;Tableta;;Dietilestilbestrol;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-160;Digoxina;250mcg (0.25mg);Tableta;;Digoxina;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-161;Diltiazem clorhidrato;60mg;Tableta;;Diltiazem;;0.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-162;Dimenhidrinato;10mg/mL;Inyectable;5mL;Dimenhidrinato;;2.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-163;Dimenhidrinato;50mg;Tableta;;Dimenhidrinato;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-164;Simeticona;80mg/mL o más;Líquido oral;gotas;Dimeticona;;6.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-165;Dobutamina (como clorhidrato);12.5mg/mL;Inyectable;20mL;Dobutamina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-166;Docetaxel;20mg;Inyectable;;Docetaxel;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-167;Docetaxel;80mg;Inyectable;;Docetaxel;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-168;Dopamina clorhidrato;40mg/mL;Inyectable;5mL;Dopamina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-169;Doxiciclina (como clorhidrato o hiclato);100mg;Tableta;;Doxiciclina;;0.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-170;Doxorubicina clorhidrato;10mg;Inyectable;;Doxorubicina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-171;Doxorubicina clorhidrato;50mg;Inyectable;;Doxorubicina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-172;Enalapril maleato;10mg;Tableta;;Enalapril;;0.10;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-173;Enalapril maleato;20mg;Tableta;;Enalapril;;0.15;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-174;Epinefrina (como clorhidrato o tartrato ácido);1mg/mL;Inyectable;1mL;Epinefrina;;3.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-175;Epirubicina clorhidrato;50mg;Inyectable;;Epirubicina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-176;Ergometrina maleato;200mcg/mL (0.2mg/mL);Inyectable;1mL;Ergometrina;;3.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-177;Eritromicina (como estearato o etilsuccinato);200-250mg/5mL;Líquido oral;;Eritromicina;;10.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-178;Eritromicina (como estearato o etilsuccinato);500mg;Tableta;;Eritromicina;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-179;Epoetina alfa;2 000UI/mL;Inyectable;1mL;Eritropoyetina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-180;Epoetina alfa;4 000UI/mL;Inyectable;1mL;Eritropoyetina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-181;Erlotinib (como clorhidrato);150mg;Tableta;;Erlotinib;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-182;Escopolamina butilbromuro;10mg;Tableta;;Escopolamina;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-183;Escopolamina butilbromuro;20mg/mL;Inyectable;;Escopolamina;;2.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-184;Espironolactona;100mg;Tableta;;Espironolactona;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-185;Espironolactona;25mg;Tableta;;Espironolactona;;0.40;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-186;Estradiol cipionato + medroxiprogesterona acetato;5mg + 25mg;Inyectable;;Estradiol;;8.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-187;Estriol;0.1%;Crema vaginal;15g;Estriol;;25.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-188;Etilefrina;10mg/mL;Inyectable;;Etilefrina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-189;Etopósido;20mg/mL;Inyectable;5mL;Etopósido;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-190;Fenitoína sódica;100mg;Tableta;;Fenitoína;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-191;Fenitoína sódica;50mg/mL;Inyectable;2mL;Fenitoína;;3.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-192;Fenitoína sódica;50mg/mL;Inyectable;5mL;Fenitoína;;4.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-193;Fenitoína;125mg/5mL;Líquido oral;;Fenitoína;;12.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-194;Fenobarbital (como base o sal sódica);100mg/mL;Inyectable;2mL;Fenobarbital;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-195;Fenobarbital;100mg;Tableta;;Fenobarbital;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-196;Fentanilo (como citrato);50mcg/mL (0.05mg/mL);Inyectable;2mL y 10mL;Fentanilo;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-197;Hierro (como sulfato);15mg Fe/5mL;Líquido oral;;Ferroso sulfato;;6.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-198;Hierro (como sulfato);25mg Fe/mL;Líquido oral;gotas;Ferroso sulfato;;6.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-199;Finasterida;5mg;Tableta;;Finasterida;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-200;Fitomenadiona;10mg/mL;Inyectable;1mL;Fitomenadiona;;3.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-201;Fluconazol;150mg;Tableta;;Fluconazol;;1.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-202;Fluconazol;2mg/mL;Inyectable;;Fluconazol;;15.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-203;Fluconazol;50mg;Tableta;;Fluconazol;;0.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-204;Fludarabina fosfato;50mg;Inyectable;;Fludarabina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-205;Flufenazina decanoato o enantato;25mg/mL;Inyectable;1mL;Flufenazina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-206;Flumazenil;100mcg/mL (0.1mg/mL);Inyectable;5mL;Flumazenil;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-207;Fluorouracilo;50mg/mL;Inyectable;10mL;Fluorouracilo;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-208;Fluorouracilo;50mg/mL;Inyectable;5mL;Fluorouracilo;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-209;Fluoxetina (como clorhidrato);20mg;Tableta;;Fluoxetina;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-210;Flutamida;250mg;Tableta;;Flutamida;;1.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-211;Folinato cálcico equiv.;15mg ácido folínico;Tableta;;Folinato de calcio;;3.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-212;Folinato cálcico equiv.;50mg ácido folínico;Inyectable;;Folinato de calcio;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-213;Furazolidona;100mg;Tableta;;Furazolidona;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-214;Furazolidona;50mg/5mL;Líquido oral;;Furazolidona;;6.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-215;Furosemida;10mg/mL;Inyectable;2mL;Furosemida;;2.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-216;Furosemida;40mg;Tableta;;Furosemida;;0.15;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-217;Gabapentina;300mg;Tableta;;Gabapentina;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-218;Ganciclovir (como sal sódica);500mg;Inyectable;;Ganciclovir;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-219;Gemcitabina (como clorhidrato);1g;Inyectable;;Gemcitabina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-220;Gemcitabina (como clorhidrato);200mg;Inyectable;;Gemcitabina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-221;Gemfibrozilo;600mg;Tableta;;Gemfibrozilo;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-222;Gentamicina (como sulfato);10mg/mL;Inyectable;2mL;Gentamicina;;2.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-223;Gentamicina (como sulfato);40mg/mL;Inyectable;2mL;Gentamicina;;2.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-224;Gentamicina (como sulfato);80mg/mL;Inyectable;2mL;Gentamicina;;2.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-225;Glibenclamida;5mg;Tableta;;Glibenclamida;;0.10;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-226;Gliceroltrinitrato;5mg/mL;Inyectable;;Gliceroltrinitrato;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-227;Glucosa en agua;5%;Inyectable;500mL;Glucosa;;6.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-228;Glucosa en agua;10%;Inyectable;1L;Glucosa;;9.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-229;Glucosa en agua;33.3%;Inyectable;20mL;Glucosa;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-230;Glucosa en agua;50%;Inyectable;1L;Glucosa;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-231;Haloperidol;10mg;Tableta;;Haloperidol;;0.60;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-232;Haloperidol;2mg/mL;Líquido oral;gotas;Haloperidol;;10.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-233;Haloperidol;50mg/mL;Inyectable;1mL;Haloperidol;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-234;Haloperidol;5mg/mL;Inyectable;1mL;Haloperidol;;3.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-235;Haloperidol;5mg;Tableta;;Haloperidol;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-236;Heparina sódica;5 000UI/mL;Inyectable;5mL;Heparina;;12.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-237;Hidroclorotiazida;12.5mg;Tableta;;Hidroclorotiazida;;0.15;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-238;Hidroclorotiazida;25mg;Tableta;;Hidroclorotiazida;;0.15;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-239;Hidrocortisona (como acetato);1%;Crema tópica;;Hidrocortisona;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-240;Hidrocortisona (como succinato sódico);100mg;Inyectable;;Hidrocortisona;;8.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-241;Hidrocortisona;20mg;Tableta;;Hidrocortisona;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-242;Hidroxicarbamida;500mg;Tableta;;Hidroxicarbamida;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-243;Hidroxicloroquina sulfato;400mg (equiv. 310mg hidroxicloroquina);Tableta;;Hidroxicloroquina;;2.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-244;Hidroxocobalamina;1mg/mL;Inyectable;1mL;Hidroxocobalamina;;3.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-245;Hierro (como sacarato);20mg Fe/mL;Inyectable;5mL;Hierro sacarato;;15.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-246;Ibuprofeno;100mg/5mL;Líquido oral;;Ibuprofeno;;6.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-247;Ibuprofeno;200mg;Tableta;;Ibuprofeno;;0.15;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-248;Ibuprofeno;400mg;Tableta;;Ibuprofeno;;0.20;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-249;Ifosfamida;1g;Inyectable;;Ifosfamida;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-250;Imatinib (como mesilato);100mg;Tableta;;Imatinib;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-251;Imatinib (como mesilato);400mg;Tableta;;Imatinib;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-252;Imipenem + cilastatina (como sal sódica);500mg + 500mg;Inyectable;;Imipenem e enzima inhibidora;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-253;Insulina isofana humana (NPH) (ADN recombinante);100UI/mL;Inyectable;10mL;Insulina (humana);;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-254;Iohexol equiv.;300mg iodo/mL;Inyectable;100mL;Iohexol;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-255;Iohexol equiv.;300mg iodo/mL;Inyectable;50mL;Iohexol;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-256;Iohexol equiv.;350mg iodo/mL;Inyectable;50mL;Iohexol;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-257;Ipratropio bromuro;20mcg/dosis;Aerosol para inhalación;200 dosis;Ipratropio, bromuro de;;30.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-258;Irinotecán clorhidrato;100mg/5mL;Inyectable;5mL;Irinotecán;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-259;Isoflurano;99.9 - 100%;Líquido para inhalación;100mL;Isoflurano;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-260;Isotretinoína;20mg;Tableta;;Isotretinoína;;3.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-261;Itraconazol;100mg;Tableta;;Itraconazol;;1.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-262;Ivermectina;3mg;Tableta;;Ivermectina;;1.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-263;Ivermectina;6mg/mL;Líquido oral;gotas;Ivermectina;;8.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-264;Ketamina (como clorhidrato);50mg/mL;Inyectable;10mL;Ketamina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-265;Labetalol;5mg/mL;Inyectable;4mL;Labetalol;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-266;Lactulosa;3.1-3.7g/5mL;Líquido oral;;Lactulosa;;18.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-267;Lamotrigina;50mg;Tableta;;Lamotrigina;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-268;Latanoprost;0.005%;Solución oftálmica;2.5mL;Latanoprost;;30.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-269;Leuprorelina acetato;3.75mg;Inyectable;;Leuprorelina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-270;Leuprorelina acetato;7.5mg;Inyectable;;Leuprorelina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-271;Levetiracetam;1000mg;Tableta;;Levetiracetam;;3.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-272;Levetiracetam;100mg/mL;Líquido oral;;Levetiracetam;;40.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-273;Levetiracetam;500mg;Tableta;;Levetiracetam;;1.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-274;Levodopa + carbidopa;250mg + 25mg;Tableta;;Levodopa con inhibidor de la decarboxilasa;;1.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-275;Levofloxacino;250mg;Tableta;;Levofloxacino;;1.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-276;Levofloxacino;500mg;Tableta;;Levofloxacino;;1.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-277;Levomepromazina (como maleato);100mg;Tableta;;Levomepromazina;;1.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-278;Levomepromazina (como maleato);25mg;Tableta;;Levomepromazina;;0.60;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-279;Levonorgestrel;750mcg;Tableta;;Levonorgestrel;;8.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-280;Levotiroxina sódica;100mcg (0.1mg);Tableta;;Levotiroxina sódica;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-281;Levotiroxina sódica;50mcg (0.05mg);Tableta;;Levotiroxina sódica;;0.25;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-282;Levotiroxina sódica;75mcg (0.075mg);Tableta;;Levotiroxina sódica;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-283;Lidocaína;2-4%;Gel / jalea tópica;;Lidocaína;;8.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-284;Lidocaína clorhidrato + preservante sin epinefrina;2%;Inyectable;20mL;Lidocaína;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-285;Lidocaína clorhidrato sin epinefrina;2%;Inyectable;cárpula;Lidocaína;;2.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-286;Lidocaína clorhidrato sin preservante sin epinefrina;2%;Inyectable;20mL;Lidocaína;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-287;Litio carbonato;300mg;Tableta;;Litio;;0.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-288;Loperamida;2mg;Tableta;;Loperamida;;0.20;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-289;Loratadina;10mg;Tableta;;Loratadina;;0.15;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-290;Loratadina;5mg/5mL;Líquido oral;;Loratadina;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-291;Losartán potásico;50mg;Tableta;;Losartán;;0.20;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-292;Manitol;20%;Inyectable;;Manitol;;8.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-293;Mebendazol;100mg/5mL;Líquido oral;;Mebendazol;;4.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-294;Mebendazol;100mg;Tableta;;Mebendazol;;0.20;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-295;Medroxiprogesterona acetato;150mg/mL;Inyectable;1mL;Medroxiprogesterona;;10.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-296;Medroxiprogesterona acetato;5mg;Tableta;;Medroxiprogesterona;;0.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-297;Mercaptopurina;50mg;Tableta;;Mercaptopurina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-298;Meropenem;500mg;Inyectable;;Meropenem;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-299;Mesna;100mg/mL;Inyectable;4mL;Mesna;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-300;Metamizol sódico;500mg/mL;Inyectable;2mL;Metamizol sódico (dipirona);;1.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-301;Metformina clorhidrato;500mg;Tableta;;Metformina;;0.10;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-302;Metformina clorhidrato;850mg;Tableta;;Metformina;;0.15;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-303;Metildopa;250mg;Tableta;;Metildopa (levógira);;0.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-304;Metilfenidato clorhidrato;10mg;Tableta;;Metilfenidato;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-305;Metilprednisolona (como succinato sódico);500mg;Inyectable;;Metilprednisolona;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-306;Metoclopramida clorhidrato;10mg;Tableta;;Metoclopramida;;0.20;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-307;Metoclopramida clorhidrato;5mg/mL;Inyectable;2mL;Metoclopramida;;1.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-308;Metotrexato (como base o sal sódica);2.5mg;Tableta;;Metotrexato;;0.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-309;Metotrexato (como base o sal sódica);500mg;Inyectable;;Metotrexato;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-310;Metotrexato (como sal sódica) sin preservante;50mg;Inyectable;;Metotrexato;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-311;Metronidazol;250mg/5mL;Líquido oral;;Metronidazol;;6.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-312;Metronidazol;500mg;Tableta;;Metronidazol;;0.20;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-313;Metronidazol;5mg/mL;Inyectable;100mL;Metronidazol;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-314;Micofenolato mofetilo;250mg;Tableta;;Micofenolato mofetilo;;3.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-315;Micofenolato mofetilo;500mg;Tableta;;Micofenolato mofetilo;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-316;Midazolam (como clorhidrato);1mg/mL;Inyectable;5mL;Midazolam;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-317;Midazolam (como clorhidrato);5mg/mL;Inyectable;10mL;Midazolam;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-318;Mirtazapina;30mg;Tableta;;Mirtazapina;;1.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-319;Misoprostol;200mcg;Tableta;;Misoprostol;;3.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-320;Mitomicina;20mg;Inyectable;;Mitomicina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-321;Mitomicina;2mg;Inyectable;;Mitomicina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-322;Mitoxantrona (como diclorhidrato);20mg;Inyectable;;Mitoxantrona;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-323;Monoetanolamina oleato;5%;Inyectable;;Monoetanolamina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-324;Isosorbida dinitrato;10mg;Tableta;;Mononitrato de isosorbida;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-325;Isosorbida dinitrato;5mg;Tableta sublingual;;Mononitrato de isosorbida;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-326;Isosorbida mononitrato;20mg;Tableta;;Mononitrato de isosorbida;;0.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-327;Morfina clorhidrato;10mg/mL;Inyectable;1mL;Morfina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-328;Morfina clorhidrato;20mg/mL;Inyectable;1mL;Morfina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-329;Morfina sulfato;30mg;Tableta;;Morfina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-330;Moxifloxacino (como clorhidrato);400mg;Tableta;;Moxifloxacina;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-331;Mupirocina;2%;Ungüento tópico;15g;Mupirocina;;20.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-332;Naproxeno (como base o sal sódica);250mg;Tableta;;Naproxeno;;0.25;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-333;Naproxeno (como base o sal sódica);500mg;Tableta;;Naproxeno;;0.40;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-334;Neostigmina metilsulfato;500mcg/mL (0.5mg/mL);Inyectable;1mL;Neostigmina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-335;Nifedipino;10mg;Tableta;;Nifedipino;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-336;Nifedipino;30mg;Tableta de liberación modificada;;Nifedipino;;1.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-337;Nimodipino;30mg;Tableta;;Nimodipino;;1.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-338;Nistatina;100 000UI/mL;Líquido oral;gotas;Nistatina;;10.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-339;Nitrofurantoína;100mg;Tableta;;Nitrofurantoína;;0.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-340;Nitrofurantoína;25mg/5mL;Líquido oral;;Nitrofurantoína;;12.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-341;Nitroprusiato sódico;50mg;Inyectable;;Nitroprusiato;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-342;Norepinefrina (como tartrato ácido);1mg/mL;Inyectable;4mL;Norepinefrina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-343;Omeprazol (como sal sódica);40mg;Inyectable;;Omeprazol;;8.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-344;Omeprazol;20mg;Tableta de liberación modificada;;Omeprazol;;0.20;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-345;Ondansetrón (como clorhidrato);2mg/mL;Inyectable;4mL;Ondansetrón;;4.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-346;Ondansetrón (como clorhidrato);8mg;Tableta;;Ondansetrón;;1.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-347;Orfenadrina citrato;100mg;Tableta de liberación modificada;;Orfenadrina;;1.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-348;Orfenadrina citrato;30mg/mL;Inyectable;2mL;Orfenadrina;;4.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-349;Oxacilina;1g;Inyectable;;Oxacilina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-350;Oxacilina;500mg;Inyectable;;Oxacilina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-351;Oxaliplatino;100mg;Inyectable;;Oxaliplatino;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-352;Oxaliplatino;50mg;Inyectable;;Oxaliplatino;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-353;Oxibutinina clorhidrato;5mg;Tableta;;Oxibutinina;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-354;Oxicodona clorhidrato;5mg;Tableta;;Oxicodona;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-355;Oxitocina;10UI/mL;Inyectable;1mL;Oxitocina;;3.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-356;Paclitaxel;100mg;Inyectable;;Paclitaxel;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-357;Paclitaxel;300mg;Inyectable;;Paclitaxel;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-358;Paclitaxel;30mg;Inyectable;;Paclitaxel;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-359;Pamidronato disódico;90mg;Inyectable;;Pamidronato;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-360;Paracetamol;100mg/mL;Líquido oral;gotas;Paracetamol;;4.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-361;Paracetamol;120mg/5mL;Líquido oral;;Paracetamol;;4.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-362;Paracetamol;500mg;Tableta;;Paracetamol;;0.10;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-363;Penicilamina;250mg;Tableta;;Penicilamina;;3.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-364;Periciazina;10mg;Tableta;;Periciazina;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-365;Permetrina;5%;Crema tópica;;Permetrina;;10.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-366;Petidina clorhidrato;50mg/mL;Inyectable;2mL;Petidina (meperidina);;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-367;Piperacilina (como sal sódica) + tazobactam (como sal sódica);4g + 500mg;Inyectable;;Piperacilina e inhibidores de la enzima;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-368;Piridostigmina bromuro;60mg;Tableta;;Piridostigmina;;2.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-369;Piridoxina clorhidrato;25mg;Tableta;;Piridoxina (vit b6);;0.20;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-370;Piridoxina clorhidrato;50mg;Tableta;;Piridoxina (vit b6);;0.20;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-371;Gelatina;3.5% - 4%;Inyectable;;Gelatina (incluye la poligelina);;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-372;Potasio citrato;1080mg;Tableta de liberación modificada;;Potasio citrato;;2.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-373;Prednisolona acetato;1%;Suspensión oftálmica;5mL;Prednisolona;;15.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-374;Prednisona;20mg;Tableta;;Prednisona;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-375;Prednisona;50mg;Tableta;;Prednisona;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-376;Prednisona;5mg/5mL;Líquido oral;;Prednisona;;10.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-377;Prednisona;5mg;Tableta;;Prednisona;;0.15;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-378;Propafenona clorhidrato;150mg;Tableta;;Propafenona;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-379;Propofol;1%;Inyectable;20mL;Propofol;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-380;Propranolol clorhidrato;40mg;Tableta;;Propranolol;;0.20;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-381;Proximetacaína clorhidrato;0.5%;Solución oftálmica;15mL;Proximetacaína;;20.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-382;Ranitidina (como clorhidrato);150mg;Tableta;;Ranitidina;;0.15;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-383;Ranitidina (como clorhidrato);25mg/mL;Inyectable;2mL;Ranitidina;;1.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-384;Ranitidina (como clorhidrato);300mg;Tableta;;Ranitidina;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-385;Risperidona;2mg;Tableta;;Risperidona;;0.60;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-386;Rocuronio bromuro;10mg/mL;Inyectable;5mL;Rocuronio, bromuro de;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-387;Salbutamol (como sulfato);100mcg/dosis;Aerosol para inhalación;200-300 dosis;Salbutamol;;15.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-388;Salbutamol (como sulfato);4mg;Tableta;;Salbutamol;;0.15;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-389;Salbutamol (como sulfato);5mg/mL;Solución para nebulizar;;Salbutamol;;15.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-390;Sales de rehidratación oral;20.5g/L;Polvo;;Sales de rehidratación;;1.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-391;Sertralina (como clorhidrato);50mg;Tableta;;Sertralina;;0.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-392;Simvastatina;20mg;Tableta;;Simvastatina;;0.40;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-393;Sodio fosfato monobásico + sodio fosfato dibásico;16g + 6g/100mL;Solución rectal;;Sodio fosfato monobásico + sodio fosfato dibásico;;12.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-394;Solución polielectrolítica;;Inyectable;1L;Solución polielectrolítica;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-395;Sulfadiazina de plata;1%;Crema tópica;400-500g;Sulfadiazina de plata;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-396;Sulfadiazina de plata;1%;Crema tópica;50g;Sulfadiazina de plata;;15.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-397;Sulfametoxazol + trimetoprima;200mg + 40mg/5mL;Líquido oral;;Sulfametoxazol y trimetoprima;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-398;Sulfametoxazol + trimetoprima;400mg + 80mg;Tableta;;Sulfametoxazol y trimetoprima;;0.15;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-399;Sulfametoxazol + trimetoprima;800mg + 160mg;Tableta;;Sulfametoxazol y trimetoprima;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-400;Sulfametoxazol + trimetoprima;80mg + 16mg/mL;Inyectable;;Sulfametoxazol y trimetoprima;;3.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-401;Sulfasalazina;500mg;Tableta;;Sulfasalazina;;1.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-402;Magnesio sulfato;200mg/mL;Inyectable;10mL;Sulfato de magnesio;;3.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-403;Sulpirida;200mg;Tableta;;Sulpirida;;0.60;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-404;Suxametonio cloruro;500mg;Inyectable;;Suxametonio;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-405;Tacrolimus;1mg;Tableta;;Tacrolimus;;5.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-406;Tamoxifeno (como citrato);20mg;Tableta;;Tamoxifeno;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-407;Tamsulosina clorhidrato;400mcg (0.4mg);Tableta de liberación modificada;;Tamsulosina;;1.20;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-408;Temozolomida;100mg;Tableta;;Temozolomida;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-409;Temozolomida;250mg;Tableta;;Temozolomida;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-410;Testosterona enantato;250mg/mL (equiv. 180mg de testosterona/mL);Inyectable;;Testosterona;;25.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-411;Tetraciclina clorhidrato;1%;Ungüento oftálmico;;Tetraciclina;;6.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-412;Tiamazol;5mg;Tableta;;Tiamazol;;0.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-413;Tiamina clorhidrato;100mg;Tableta;;Tiamina (vit b1);;0.20;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-414;Timolol (como maleato);0.5%;Solución oftálmica;5mL;Timolol;;10.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-415;Tioguanina;40mg;Tableta;;Tioguanina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-416;Tioridazina clorhidrato;100mg;Tableta;;Tioridazina;;0.80;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-417;Tramadol clorhidrato;100mg/mL;Líquido oral;gotas;Tramadol;;10.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-418;Tramadol clorhidrato;50mg/mL;Inyectable;;Tramadol;;2.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-419;Tramadol clorhidrato;50mg;Tableta;;Tramadol;;0.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-420;Triamcinolona acetonido;0.025%;Loción;;Triamcinolona;;10.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-421;Triamcinolona acetonido;10mg/mL;Inyectable;5mL;Triamcinolona;;10.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-422;Triamcinolona acetonido;40mg/mL;Inyectable;1mL;Triamcinolona;;12.00;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-423;Trifluoperazina (como clorhidrato);5mg;Tableta;;Trifluoperazina;;0.60;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-424;Valganciclovir;450mg;Tableta;;Valganciclovir;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-425;Vancomicina (como clorhidrato);500mg;Inyectable;;Vancomicina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-426;Vecuronio bromuro;4mg;Inyectable;;Vecuronio;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-427;Verapamilo clorhidrato;2.5mg/mL;Inyectable;2mL;Verapamilo;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-428;Verapamilo clorhidrato;80mg;Tableta;;Verapamilo;;0.40;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-429;Vinblastina sulfato;10mg;Inyectable;;Vinblastina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-430;Vincristina sulfato;1mg;Inyectable;;Vincristina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-431;Vinorelbina (como tartrato o ditartrato);50mg;Inyectable;;Vinorelbina;;;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-432;Warfarina sódica;5mg;Tableta;;Warfarina;;0.50;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-433;Zinc sulfato equiv.;20mg Zn;Tableta;;Zinc sulfato;;0.30;MEDICINE;Genérico esencial RM 220-2024-MINSA
+RM220-434;Zolpidem tartrato;10mg;Tableta;;Zolpidem;;1.20;MEDICINE;Genérico esencial RM 220-2024-MINSA
+BASE-001;Panadol;500mg;Tableta;Caja x 100;Paracetamol;Haleon;0.80;MEDICINE;Producto comercial común
+BASE-002;Panadol Antigripal;;Tableta;Caja x 100;Paracetamol + fenilefrina + clorfenamina;Haleon;1.20;MEDICINE;Producto comercial común
+BASE-003;Panadol Niños;160mg/5mL;Jarabe;Frasco 60mL;Paracetamol;Haleon;14.00;MEDICINE;Producto comercial común
+BASE-004;Kitadol;500mg;Tableta;;Paracetamol;;0.50;MEDICINE;Producto comercial común
+BASE-005;Aspirina;500mg;Tableta;Caja x 100;Ácido acetilsalicílico;Bayer;0.80;MEDICINE;Producto comercial común
+BASE-006;Aspirina 100;100mg;Tableta;Caja x 28;Ácido acetilsalicílico;Bayer;0.60;MEDICINE;Producto comercial común
+BASE-007;Alka-Seltzer;;Tableta efervescente;Sobre x 2;Ácido acetilsalicílico + bicarbonato de sodio + ácido cítrico;Bayer;1.50;MEDICINE;Producto comercial común
+BASE-008;Apronax;275mg;Tableta;;Naproxeno sódico;Bayer;1.20;MEDICINE;Producto comercial común
+BASE-009;Apronax;550mg;Tableta;;Naproxeno sódico;Bayer;2.00;MEDICINE;Producto comercial común
+BASE-010;Antalgina;500mg;Tableta;;Metamizol sódico;;0.50;MEDICINE;Producto comercial común
+BASE-011;Ponstan;500mg;Tableta;;Ácido mefenámico;;1.20;MEDICINE;Producto comercial común
+BASE-012;Voltaren;50mg;Tableta;;Diclofenaco sódico;;1.50;MEDICINE;Producto comercial común
+BASE-013;Voltaren Emulgel;1%;Gel tópico;Tubo 50g;Diclofenaco;;28.00;MEDICINE;Producto comercial común
+BASE-014;Advil;200mg;Cápsula blanda;;Ibuprofeno;Haleon;1.00;MEDICINE;Producto comercial común
+BASE-015;Buscapina;10mg;Tableta;;Butilbromuro de hioscina;;1.20;MEDICINE;Producto comercial común
+BASE-016;Buscapina Compositum;;Tableta;;Butilbromuro de hioscina + metamizol;;1.80;MEDICINE;Producto comercial común
+BASE-017;Dristan Antigripal;;Tableta;;;;1.00;MEDICINE;Producto comercial común
+BASE-018;Nastizol Compositum;;Tableta;;;;1.20;MEDICINE;Producto comercial común
+BASE-019;Bismutol;;Suspensión oral;Frasco 150mL;Subsalicilato de bismuto;;12.00;MEDICINE;Producto comercial común
+BASE-020;Sal de Andrews;;Polvo efervescente;Sobre 5g;;Haleon;1.00;MEDICINE;Producto comercial común
+BASE-021;Gravol;50mg;Tableta;;Dimenhidrinato;;0.80;MEDICINE;Producto comercial común
+BASE-022;Hepabionta;;Cápsula;;;;1.20;MEDICINE;Producto comercial común
+BASE-023;Redoxon;1g;Tableta efervescente;Tubo x 10;Ácido ascórbico (vitamina C);Bayer;2.50;MEDICINE;Producto comercial común
+BASE-024;Clarityne;10mg;Tableta;;Loratadina;Bayer;2.50;MEDICINE;Producto comercial común
+BASE-025;Allegra;120mg;Tableta;;Fexofenadina;;3.00;MEDICINE;Producto comercial común
+BASE-026;Canesten;1%;Crema tópica;Tubo 20g;Clotrimazol;Bayer;18.00;MEDICINE;Producto comercial común
+BASE-027;Enterogermina;;Suspensión oral;Frasco 5mL;Bacillus clausii;;3.50;MEDICINE;Producto comercial común
+BASE-028;Vick VapoRub;;Ungüento tópico;Lata 12g;;Procter & Gamble;5.00;MEDICINE;Producto comercial común
+BASE-029;Vick VapoRub;;Ungüento tópico;Frasco 50g;;Procter & Gamble;14.00;MEDICINE;Producto comercial común
+BASE-030;Mentholatum;;Ungüento tópico;Lata 12g;;;4.00;MEDICINE;Producto comercial común
+BASE-031;Dolo-Neurobión;;Tableta;;Diclofenaco + vitaminas B1, B6, B12;;2.50;MEDICINE;Producto comercial común
+BASE-032;Neurobión;;Tableta;;Vitaminas B1, B6, B12;;1.50;MEDICINE;Producto comercial común
+BASE-033;Ibuprofeno;400mg;Tableta;Caja x 100;Ibuprofeno;;0.20;MEDICINE;Producto comercial común
+BASE-034;Ibuprofeno;600mg;Tableta;Caja x 100;Ibuprofeno;;0.40;MEDICINE;Producto comercial común
+BASE-035;Ibuprofeno;800mg;Tableta;Caja x 100;Ibuprofeno;;0.50;MEDICINE;Producto comercial común
+BASE-036;Paracetamol;1g;Tableta;Caja x 100;Paracetamol;;0.30;MEDICINE;Producto comercial común
+BASE-037;Naproxeno sódico;550mg;Tableta;Caja x 100;Naproxeno sódico;;0.50;MEDICINE;Producto comercial común
+BASE-038;Diclofenaco sódico;50mg;Tableta;Caja x 100;Diclofenaco sódico;;0.15;MEDICINE;Producto comercial común
+BASE-039;Diclofenaco;1%;Gel tópico;Tubo 50g;Diclofenaco dietilamina;;8.00;MEDICINE;Producto comercial común
+BASE-040;Ketorolaco;10mg;Tableta;Caja x 100;Ketorolaco trometamina;;0.30;MEDICINE;Producto comercial común
+BASE-041;Ketorolaco;60mg/2mL;Inyectable;Ampolla 2mL;Ketorolaco trometamina;;3.00;MEDICINE;Producto comercial común
+BASE-042;Meloxicam;15mg;Tableta;Caja x 100;Meloxicam;;0.40;MEDICINE;Producto comercial común
+BASE-043;Ácido mefenámico;500mg;Tableta;Caja x 100;Ácido mefenámico;;0.30;MEDICINE;Producto comercial común
+BASE-044;Metamizol sódico;500mg;Tableta;Caja x 100;Metamizol sódico;;0.15;MEDICINE;Producto comercial común
+BASE-045;Orfenadrina + paracetamol;;Tableta;Caja x 100;Orfenadrina citrato + paracetamol;;0.80;MEDICINE;Producto comercial común
+BASE-046;Clorfenamina + paracetamol + fenilefrina;;Tableta;Caja x 100;Paracetamol + clorfenamina + fenilefrina;;0.40;MEDICINE;Producto comercial común
+BASE-047;Cetirizina;10mg;Tableta;Caja x 100;Cetirizina diclorhidrato;;0.20;MEDICINE;Producto comercial común
+BASE-048;Cetirizina;5mg/5mL;Jarabe;Frasco 60mL;Cetirizina diclorhidrato;;6.00;MEDICINE;Producto comercial común
+BASE-049;Desloratadina;5mg;Tableta;Caja x 100;Desloratadina;;0.60;MEDICINE;Producto comercial común
+BASE-050;Ambroxol;30mg/5mL;Jarabe;Frasco 120mL;Ambroxol clorhidrato;;6.00;MEDICINE;Producto comercial común
+BASE-051;Ambroxol;15mg/5mL;Jarabe pediátrico;Frasco 120mL;Ambroxol clorhidrato;;5.00;MEDICINE;Producto comercial común
+BASE-052;Bromhexina;4mg/5mL;Jarabe;Frasco 120mL;Bromhexina clorhidrato;;6.00;MEDICINE;Producto comercial común
+BASE-053;Acetilcisteína;600mg;Sobre granulado;Caja x 10;Acetilcisteína;;2.00;MEDICINE;Producto comercial común
+BASE-054;Pantoprazol;40mg;Tableta;Caja x 100;Pantoprazol;;0.50;MEDICINE;Producto comercial común
+BASE-055;Esomeprazol;40mg;Tableta;Caja x 30;Esomeprazol;;1.50;MEDICINE;Producto comercial común
+BASE-056;Hidróxido de aluminio + magnesio + simeticona;;Suspensión oral;Frasco 360mL;Hidróxido de aluminio + hidróxido de magnesio + simeticona;;12.00;MEDICINE;Producto comercial común
+BASE-057;Domperidona;10mg;Tableta;Caja x 100;Domperidona;;0.40;MEDICINE;Producto comercial común
+BASE-058;Nitazoxanida;500mg;Tableta;Caja x 6;Nitazoxanida;;2.50;MEDICINE;Producto comercial común
+BASE-059;Nitazoxanida;100mg/5mL;Suspensión oral;Frasco 30mL;Nitazoxanida;;12.00;MEDICINE;Producto comercial común
+BASE-060;Ciprofloxacino;500mg;Tableta;Caja x 100;Ciprofloxacino;;0.40;MEDICINE;Producto comercial común
+BASE-061;Amoxicilina;500mg;Cápsula;Caja x 100;Amoxicilina;;0.30;MEDICINE;Producto comercial común
+BASE-062;Cefadroxilo;500mg;Cápsula;Caja x 100;Cefadroxilo;;0.80;MEDICINE;Producto comercial común
+BASE-063;Fluconazol;150mg;Cápsula;Caja x 1;Fluconazol;;1.00;MEDICINE;Producto comercial común
+BASE-064;Terbinafina;1%;Crema tópica;Tubo 15g;Terbinafina;;10.00;MEDICINE;Producto comercial común
+BASE-065;Ketoconazol;2%;Crema tópica;Tubo 20g;Ketoconazol;;6.00;MEDICINE;Producto comercial común
+BASE-066;Ketoconazol;2%;Champú;Frasco 120mL;Ketoconazol;;15.00;MEDICINE;Producto comercial común
+BASE-067;Gentamicina + betametasona + clotrimazol;;Crema tópica;Tubo 20g;Gentamicina + betametasona + clotrimazol;;8.00;MEDICINE;Producto comercial común
+BASE-068;Óxido de zinc;;Pasta tópica;Tubo 60g;Óxido de zinc;;6.00;MEDICINE;Producto comercial común
+BASE-069;Lágrimas artificiales;;Solución oftálmica;Frasco 15mL;Hipromelosa;;12.00;MEDICINE;Producto comercial común
+BASE-070;Nafazolina;0.1%;Solución oftálmica;Frasco 15mL;Nafazolina;;6.00;MEDICINE;Producto comercial común
+BASE-071;Oximetazolina;0.05%;Spray nasal;Frasco 15mL;Oximetazolina;;10.00;MEDICINE;Producto comercial común
+BASE-072;Suero de rehidratación oral;;Solución oral;Botella 500mL;Sales de rehidratación oral;;4.00;MEDICINE;Producto comercial común
+BASE-073;Electrolit;;Solución oral;Botella 625mL;Electrolitos;;7.00;MEDICINE;Producto comercial común
+BASE-074;Vitamina C;500mg;Tableta masticable;Caja x 100;Ácido ascórbico;;0.30;MEDICINE;Producto comercial común
+BASE-075;Vitamina C;1g;Tableta efervescente;Tubo x 10;Ácido ascórbico;;1.00;MEDICINE;Producto comercial común
+BASE-076;Complejo B;;Tableta;Caja x 100;Vitaminas del complejo B;;0.20;MEDICINE;Producto comercial común
+BASE-077;Complejo B;;Inyectable;Ampolla;Vitaminas del complejo B;;3.00;MEDICINE;Producto comercial común
+BASE-078;Calcio + vitamina D;;Tableta;Frasco x 30;Carbonato de calcio + colecalciferol;;1.00;MEDICINE;Producto comercial común
+BASE-079;Sulfato ferroso + ácido fólico;;Tableta;Caja x 100;Sulfato ferroso + ácido fólico;;0.20;MEDICINE;Producto comercial común
+BASE-080;Multivitamínico;;Jarabe;Frasco 240mL;Multivitamínico;;15.00;MEDICINE;Producto comercial común
+BASE-081;Glucosamina + condroitina;;Tableta;Frasco x 60;Glucosamina + condroitina;;1.20;MEDICINE;Producto comercial común
+BASE-082;Levonorgestrel;1.5mg;Tableta;Caja x 1;Levonorgestrel;;10.00;MEDICINE;Producto comercial común
+BASE-083;Anticonceptivo oral combinado;;Tableta;Blíster x 28;Levonorgestrel + etinilestradiol;;6.00;MEDICINE;Producto comercial común
+BASE-084;Medroxiprogesterona;150mg/mL;Inyectable;Ampolla 1mL;Medroxiprogesterona acetato;;10.00;MEDICINE;Producto comercial común
+BASE-085;Sildenafilo;50mg;Tableta;Caja x 2;Sildenafilo;;3.00;MEDICINE;Producto comercial común
+BASE-086;Sildenafilo;100mg;Tableta;Caja x 2;Sildenafilo;;4.00;MEDICINE;Producto comercial común
+BASE-087;Tadalafilo;20mg;Tableta;Caja x 2;Tadalafilo;;5.00;MEDICINE;Producto comercial común
+BASE-088;Losartán;100mg;Tableta;Caja x 100;Losartán potásico;;0.40;MEDICINE;Producto comercial común
+BASE-089;Glimepirida;2mg;Tableta;Caja x 30;Glimepirida;;0.60;MEDICINE;Producto comercial común
+BASE-090;Hioscina butilbromuro;20mg/mL;Inyectable;Ampolla 1mL;Butilbromuro de hioscina;;2.50;MEDICINE;Producto comercial común
+BASE-091;Dexametasona;4mg/mL;Inyectable;Ampolla 2mL;Dexametasona fosfato;;2.00;MEDICINE;Producto comercial común
+BASE-092;Diclofenaco + complejo B;;Inyectable;Ampolla;Diclofenaco + vitaminas B1, B6, B12;;5.00;MEDICINE;Producto comercial común
+BASE-093;Gel anestésico bucal;;Gel tópico;Tubo 10g;Benzocaína;;10.00;MEDICINE;Producto comercial común
+BASE-094;Pastillas para la garganta;;Pastilla;Unidad;;;0.50;MEDICINE;Producto comercial común
+BASE-095;Jarabe para la tos;15mg/5mL;Jarabe;Frasco 120mL;Dextrometorfano;;8.00;MEDICINE;Producto comercial común
+BASE-096;Alcohol medicinal 70°;;Solución tópica;Frasco 250mL;Alcohol etílico;;3.50;SUPPLY;Producto comercial común
+BASE-097;Alcohol medicinal 70°;;Solución tópica;Frasco 1L;Alcohol etílico;;9.00;SUPPLY;Producto comercial común
+BASE-098;Alcohol en gel;;Gel;Frasco 250mL;Alcohol etílico;;6.00;SUPPLY;Producto comercial común
+BASE-099;Agua oxigenada;;Solución tópica;Frasco 120mL;Peróxido de hidrógeno;;2.00;SUPPLY;Producto comercial común
+BASE-100;Yodopovidona;10%;Solución tópica;Frasco 120mL;Povidona yodada;;6.00;SUPPLY;Producto comercial común
+BASE-101;Suero fisiológico 0.9%;;Solución;Frasco 1L;Cloruro de sodio;;6.00;SUPPLY;Producto comercial común
+BASE-102;Algodón;;Algodón hidrófilo;Paquete 50g;;;3.00;SUPPLY;Producto comercial común
+BASE-103;Algodón;;Algodón hidrófilo;Paquete 100g;;;5.00;SUPPLY;Producto comercial común
+BASE-104;Gasa estéril;;Gasa;Sobre 10x10cm;;;0.80;SUPPLY;Producto comercial común
+BASE-105;Venda elástica;;Venda;4 pulgadas;;;4.00;SUPPLY;Producto comercial común
+BASE-106;Esparadrapo;;Cinta adhesiva;Rollo 1 pulgada;;;3.50;SUPPLY;Producto comercial común
+BASE-107;Micropore;;Cinta adhesiva;Rollo 1 pulgada;;;4.00;SUPPLY;Producto comercial común
+BASE-108;Curitas;;Apósito adhesivo;Unidad;;;0.20;SUPPLY;Producto comercial común
+BASE-109;Jeringa descartable;3mL;Jeringa;Unidad con aguja;;;0.50;SUPPLY;Producto comercial común
+BASE-110;Jeringa descartable;5mL;Jeringa;Unidad con aguja;;;0.60;SUPPLY;Producto comercial común
+BASE-111;Jeringa descartable;10mL;Jeringa;Unidad con aguja;;;0.80;SUPPLY;Producto comercial común
+BASE-112;Mascarilla descartable;;Mascarilla;Unidad;;;0.30;SUPPLY;Producto comercial común
+BASE-113;Guantes de examen;;Guante;Par;;;0.80;SUPPLY;Producto comercial común
+BASE-114;Termómetro digital;;Termómetro;Unidad;;;12.00;SUPPLY;Producto comercial común
+BASE-115;Preservativo;;Preservativo;Unidad;;;1.50;SUPPLY;Producto comercial común
+BASE-116;Preservativo;;Preservativo;Caja x 3;;;5.00;SUPPLY;Producto comercial común
+BASE-117;Prueba de embarazo;;Prueba rápida;Unidad;;;5.00;SUPPLY;Producto comercial común
+BASE-118;Vaselina sólida;;Pomada;Pote 50g;Vaselina;;3.00;SUPPLY;Producto comercial común
+BASE-119;Glicerina;;Líquido;Frasco 60mL;Glicerina;;3.00;SUPPLY;Producto comercial común
+BASE-120;Bolsa de agua caliente;;Accesorio;Unidad;;;15.00;SUPPLY;Producto comercial común
+BASE-121;Toallas higiénicas;;Toalla higiénica;Paquete x 10;;;5.00;SUPPLY;Producto comercial común
+BASE-122;Pañal para adulto;;Pañal;Unidad;;;2.50;SUPPLY;Producto comercial común
+BASE-123;Pañal para bebé;;Pañal;Unidad;;;1.00;SUPPLY;Producto comercial común
+BASE-124;Toallitas húmedas;;Toallitas;Paquete x 50;;;6.00;SUPPLY;Producto comercial común
+BASE-125;Bloqueador solar FPS 50;;Crema;Frasco 120mL;;;35.00;SUPPLY;Producto comercial común
+BASE-126;Repelente de insectos;;Loción;Frasco 120mL;;;15.00;SUPPLY;Producto comercial común
+BASE-127;Sales de Epsom;;Polvo;Sobre 100g;Sulfato de magnesio;;3.00;SUPPLY;Producto comercial común
+BASE-128;Agua destilada;;Solución;Ampolla 5mL;;;0.50;SUPPLY;Producto comercial común
+BASE-129;Tiras reactivas de glucosa;;Tira reactiva;Caja x 50;;;60.00;SUPPLY;Producto comercial común
+BASE-130;Lanceta;;Lanceta;Unidad;;;0.30;SUPPLY;Producto comercial común
+BASE-131;Nebulizador (kit de mascarilla);;Accesorio;Unidad;;;8.00;SUPPLY;Producto comercial común

@@ -70,7 +70,7 @@ function dateTime(value: string) {
 }
 
 function message(error: unknown) {
-  return apiErrorMessage(error, "No se pudo cargar el kardex.");
+  return apiErrorMessage(error, "No se pudo cargar el historial del producto.");
 }
 
 export function KardexPage() {
@@ -127,7 +127,7 @@ export function KardexPage() {
   return (
     <>
       <PageHeader
-        title="Kardex"
+        title="Historial del producto"
         description="Historial inmutable de entradas y salidas de inventario."
         actions={<span className="readonly-badge"><i className="fas fa-lock" aria-hidden="true" /> Solo lectura</span>}
       />
@@ -162,7 +162,7 @@ export function KardexPage() {
           error={movementsQuery.error ? message(movementsQuery.error) : undefined}
           onRetry={() => void movementsQuery.refetch()}
           emptyTitle="No hay movimientos registrados"
-          caption="Kardex"
+          caption="Historial del producto"
         />
       </section>
     </>

@@ -8,7 +8,7 @@ import { apiEndpoints } from "@/features/shared/api/endpoints";
 import type { ApiPage } from "@/features/shared/api/types";
 import { Modal } from "@/features/shared/ui/modal/modal";
 import type { NamedOption, Product } from "@/features/products/types/api";
-import { roundDecimal } from "@/features/shared/utils/formatters";
+import { toMoneyInput } from "@/features/shared/utils/formatters";
 
 type QuickType = "category" | "laboratory" | "active_ingredient";
 
@@ -267,12 +267,12 @@ export function ProductCreateModal({ open, onClose, product }: Props) {
               </label>
               <label>
                 <span>Precio de venta *</span>
-                <input required type="number" min="0.1" step="0.01" placeholder="S/" value={form.base_sale_price} onChange={(event) => field("base_sale_price", event.target.value)} onBlur={(event) => field("base_sale_price", String(roundDecimal(Number(event.target.value))))} />
+                <input required type="number" min="0.1" step="0.01" placeholder="S/" value={form.base_sale_price} onChange={(event) => field("base_sale_price", event.target.value)} onBlur={(event) => field("base_sale_price", toMoneyInput(event.target.value, ""))} />
                 {errors.base_sale_price ? <small className="field-error">{errors.base_sale_price}</small> : null}
               </label>
               <label>
                 <span>Costo de compra</span>
-                <input type="number" min="0" step="0.01" placeholder="S/ (opcional)" value={form.purchase_pack_price} onChange={(event) => field("purchase_pack_price", event.target.value)} onBlur={(event) => field("purchase_pack_price", String(roundDecimal(Number(event.target.value))))} />
+                <input type="number" min="0" step="0.01" placeholder="S/ (opcional)" value={form.purchase_pack_price} onChange={(event) => field("purchase_pack_price", event.target.value)} onBlur={(event) => field("purchase_pack_price", toMoneyInput(event.target.value))} />
               </label>
             </>
           ) : null}

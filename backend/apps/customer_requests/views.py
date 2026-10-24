@@ -5,6 +5,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from apps.accounts.models import SALES_ROLES
+from apps.core.features import FeatureGatedMixin
 from apps.core.permissions import CompanyScopedViewSetMixin, HasCompanyAccess, HasCompanyRole
 from apps.customer_requests.models import CustomerRequest, CustomerRequestStatus
 from apps.customer_requests.serializers import (
@@ -15,7 +16,8 @@ from apps.customer_requests.services import CustomerRequestService
 from apps.sales.serializers import SaleSerializer
 
 
-class CustomerRequestViewSet(CompanyScopedViewSetMixin, viewsets.ModelViewSet):
+class CustomerRequestViewSet(FeatureGatedMixin, CompanyScopedViewSetMixin, viewsets.ModelViewSet):
+    feature = "customer_requests"
     queryset = CustomerRequest.objects.select_related(
         "customer", "branch", "created_by", "converted_sale"
     ).prefetch_related("items__variant__product", "items__preferred_lot")

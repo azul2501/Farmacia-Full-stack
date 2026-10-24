@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const publicRoutes = new Set(["/login", "/forgot-password", "/reset-password"]);
+const publicRoutes = new Set(["/login", "/signup", "/forgot-password", "/reset-password"]);
 
 export function middleware(request: NextRequest) {
   if (process.env.NEXT_PUBLIC_DATA_SOURCE !== "api") return NextResponse.next();

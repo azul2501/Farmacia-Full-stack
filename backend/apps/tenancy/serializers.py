@@ -5,10 +5,25 @@ from apps.tenancy.models import Branch, Company, POSTerminal, Warehouse
 
 
 class CompanySerializer(serializers.ModelSerializer):
+    plan_name = serializers.CharField(source="subscription_plan.name", read_only=True, default=None)
+    can_operate = serializers.BooleanField(read_only=True)
+
     class Meta:
         model = Company
-        fields = ["id", "legal_name", "trade_name", "tax_id", "timezone", "currency", "is_active"]
-        read_only_fields = ["id"]
+        fields = [
+            "id",
+            "legal_name",
+            "trade_name",
+            "tax_id",
+            "timezone",
+            "currency",
+            "is_active",
+            "subscription_status",
+            "trial_ends_at",
+            "plan_name",
+            "can_operate",
+        ]
+        read_only_fields = ["id", "subscription_status", "trial_ends_at"]
 
 
 class BranchSummarySerializer(serializers.ModelSerializer):

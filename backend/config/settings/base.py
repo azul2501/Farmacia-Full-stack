@@ -3,6 +3,7 @@ from datetime import timedelta
 from pathlib import Path
 
 from corsheaders.defaults import default_headers
+from django.urls import reverse_lazy
 
 BASE_DIR = Path(__file__).resolve().parents[2]
 
@@ -19,7 +20,20 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "unsafe-development-key-change-befor
 DEBUG = env_bool("DJANGO_DEBUG")
 ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1")
 
+# Version publicada del producto. Debe coincidir con NEXT_PUBLIC_APP_VERSION del frontend.
+APP_VERSION = int(os.getenv("APP_VERSION", "1"))
+# Version minima que habilita cada funcion opcional (ver apps/core/features.py).
+FEATURE_VERSIONS = {
+    "credit_sales": 2,
+    "finance": 2,
+    "multi_branch": 3,
+    "transfers": 3,
+    "customer_requests": 3,
+}
+
 INSTALLED_APPS = [
+    # Tema del panel de superadmin; debe ir antes de django.contrib.admin.
+    "unfold",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -46,6 +60,7 @@ INSTALLED_APPS = [
     "apps.finance",
     "apps.customer_requests",
     "apps.reports",
+    "apps.digemid",
 ]
 
 MIDDLEWARE = [
@@ -63,7 +78,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -112,7 +127,15 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DATETIME_FORMAT": "%Y-%m-%dT%H:%M:%S%z",
     "COERCE_DECIMAL_TO_STRING": True,
+    # Solo las vistas con throttle_scope usan estos limites (por ejemplo, el registro publico).
+    "DEFAULT_THROTTLE_RATES": {"signup": os.getenv("SIGNUP_THROTTLE_RATE", "5/hour")},
 }
+
+# Registro de boticas: consulta de RUC. La URL lleva {ruc}; vacia = no consultar (queda por verificar).
+RUC_LOOKUP_URL = os.getenv("RUC_LOOKUP_URL", "")
+RUC_LOOKUP_TIMEOUT = float(os.getenv("RUC_LOOKUP_TIMEOUT", "5"))
+# Alertas sanitarias de DIGEMID (comando sync_digemid_alerts).
+DIGEMID_ALERTS_TIMEOUT = float(os.getenv("DIGEMID_ALERTS_TIMEOUT", "15"))
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
@@ -200,4 +223,90 @@ LOGGING = {
     "handlers": {"console": {"class": "logging.StreamHandler", "formatter": "simple"}},
     "root": {"handlers": ["console"], "level": os.getenv("DJANGO_LOG_LEVEL", "INFO")},
     "loggers": {"django.db.backends": {"level": "WARNING"}},
+}
+
+
+# Panel de superadmin (/admin/) con Django Unfold.
+UNFOLD = {
+    "SITE_TITLE": "Botica Farma – Admin",
+    "SITE_HEADER": "Botica Farma",
+    "SITE_SUBHEADER": "Panel de superadmin",
+    "ENVIRONMENT": "apps.tenancy.dashboard.environment_callback",
+    "DASHBOARD_CALLBACK": "apps.tenancy.dashboard.dashboard_callback",
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": True,
+        "navigation": [
+            {
+                "title": "Clientes",
+                "items": [
+                    {
+                        "title": "Inicio",
+                        "icon": "dashboard",
+                        "link": reverse_lazy("admin:index"),
+                    },
+                    {
+                        "title": "Boticas",
+                        "icon": "storefront",
+                        "link": reverse_lazy("admin:tenancy_company_changelist"),
+                    },
+                    {
+                        "title": "Planes",
+                        "icon": "workspace_premium",
+                        "link": reverse_lazy("admin:tenancy_subscriptionplan_changelist"),
+                    },
+                    {
+                        "title": "Usuarios",
+                        "icon": "person",
+                        "link": reverse_lazy("admin:accounts_user_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": "Operación (solo lectura)",
+                "items": [
+                    {
+                        "title": "Ventas",
+                        "icon": "receipt_long",
+                        "link": reverse_lazy("admin:sales_sale_changelist"),
+                    },
+                    {
+                        "title": "Productos",
+                        "icon": "medication",
+                        "link": reverse_lazy("admin:catalog_product_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": "DIGEMID",
+                "items": [
+                    {
+                        "title": "Catálogo maestro",
+                        "icon": "inventory_2",
+                        "link": reverse_lazy("admin:digemid_masterproduct_changelist"),
+                    },
+                    {
+                        "title": "Alertas sanitarias",
+                        "icon": "campaign",
+                        "link": reverse_lazy("admin:digemid_digemidalert_changelist"),
+                    },
+                    {
+                        "title": "Códigos de barras",
+                        "icon": "barcode",
+                        "link": reverse_lazy("admin:digemid_masterbarcode_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": "Sistema",
+                "items": [
+                    {
+                        "title": "Auditoría",
+                        "icon": "history",
+                        "link": reverse_lazy("admin:audit_auditevent_changelist"),
+                    },
+                ],
+            },
+        ],
+    },
 }

@@ -5,6 +5,7 @@ export const apiEndpoints = {
     logout: "/auth/logout/",
     context: "/auth/context/",
   },
+  signup: "/signup/",
   companies: "/companies/",
   branches: "/branches/",
   warehouses: "/warehouses/",
@@ -42,4 +43,6 @@ export const apiEndpoints = {
   financialCategories: "/financial-categories/",
   financialMovements: "/financial-movements/",
   customerRequests: "/customer-requests/",
+  digemidProducts: "/digemid/products/",
+  digemidAlerts: "/digemid/alerts/",
 } as const;

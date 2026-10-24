@@ -1,0 +1,64 @@
+{% extends 'admin/base.html' %}
+
+{% load i18n %}
+
+{% block title %}
+    {% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}
+{% endblock %}
+
+{% block branding %}
+    {% include "unfold/helpers/site_branding.html" %}
+{% endblock %}
+
+{% block content %}
+<style>
+  .bf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .bf-card { border: 1px solid rgba(127, 127, 127, 0.25); border-radius: 8px; padding: 14px 16px; }
+  .bf-card span { display: block; font-size: 12px; opacity: 0.7; }
+  .bf-card strong { display: block; margin-top: 6px; font-size: 22px; }
+  .bf-panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+  .bf-panel { border: 1px solid rgba(127, 127, 127, 0.25); border-radius: 8px; padding: 14px 16px; }
+  .bf-panel h2 { margin: 0 0 10px; font-size: 15px; font-weight: 600; }
+  .bf-panel table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .bf-panel td { padding: 6px 4px; border-top: 1px solid rgba(127, 127, 127, 0.15); }
+  .bf-panel a { text-decoration: underline; }
+  .bf-muted { opacity: 0.7; }
+</style>
+
+<div class="bf-grid">
+  {% for kpi in kpis %}
+    <div class="bf-card"><span>{{ kpi.label }}</span><strong>{{ kpi.value }}</strong></div>
+  {% endfor %}
+</div>
+
+<div class="bf-panels">
+  <section class="bf-panel">
+    <h2>Últimos registros</h2>
+    <table>
+      {% for company in recent_signups %}
+        <tr>
+          <td><a href="{% url 'admin:tenancy_company_change' company.pk %}">{{ company.trade_name }}</a><br><span class="bf-muted">RUC {{ company.tax_id }}{% if not company.tax_id_verified %} · por verificar{% endif %}</span></td>
+          <td>{{ company.get_subscription_status_display }}</td>
+          <td class="bf-muted">{{ company.created_at|date:"d/m/Y" }}</td>
+        </tr>
+      {% empty %}
+        <tr><td class="bf-muted">Todavía no hay boticas registradas.</td></tr>
+      {% endfor %}
+    </table>
+  </section>
+
+  <section class="bf-panel">
+    <h2>Sin ventas en 7 días</h2>
+    <table>
+      {% for company in inactive_companies %}
+        <tr>
+          <td><a href="{% url 'admin:tenancy_company_change' company.pk %}">{{ company.trade_name }}</a></td>
+          <td class="bf-muted">{% if company.last_sale %}Última venta {{ company.last_sale|date:"d/m/Y" }}{% else %}Nunca vendió{% endif %}</td>
+        </tr>
+      {% empty %}
+        <tr><td class="bf-muted">Todas las boticas vendieron esta semana.</td></tr>
+      {% endfor %}
+    </table>
+  </section>
+</div>
+{% endblock %}

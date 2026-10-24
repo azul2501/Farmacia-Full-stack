@@ -6,13 +6,15 @@ from rest_framework.response import Response
 
 from apps.accounts.models import INVENTORY_ROLES
 from apps.audit.services import record_audit
+from apps.core.features import FeatureGatedMixin
 from apps.core.permissions import CompanyScopedViewSetMixin, HasCompanyAccess, HasCompanyRole
 from apps.transfers.models import Transfer, TransferStatus
 from apps.transfers.serializers import ReceiveTransferSerializer, TransferSerializer
 from apps.transfers.services import TransferService
 
 
-class TransferViewSet(CompanyScopedViewSetMixin, viewsets.ModelViewSet):
+class TransferViewSet(FeatureGatedMixin, CompanyScopedViewSetMixin, viewsets.ModelViewSet):
+    feature = "transfers"
     queryset = Transfer.objects.select_related(
         "origin_branch", "origin_warehouse", "destination_branch", "destination_warehouse"
     ).prefetch_related("items__variant__product", "items__lot", "receipts__received_by", "receipts__items")

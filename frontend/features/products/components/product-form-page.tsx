@@ -7,6 +7,7 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PageHeader } from "@/components/ui/page-header";
 import { useSession } from "@/features/auth/context/session-context";
+import { isFeatureEnabled } from "@/lib/features";
 import { ApiError, apiRequest, apiRequestAll } from "@/features/shared/api/client";
 import { apiErrorMessage } from "@/features/shared/api/error-message";
 import { apiEndpoints } from "@/features/shared/api/endpoints";
@@ -14,7 +15,7 @@ import type { ApiPage } from "@/features/shared/api/types";
 import { Modal } from "@/features/shared/ui/modal/modal";
 import { useToast } from "@/features/shared/ui/toast/toast-provider";
 import { calculatePriceMetrics } from "@/features/products/utils/pricing";
-import { roundDecimal, roundInteger } from "@/features/shared/utils/formatters";
+import { roundInteger, toIntegerInput, toMoneyInput } from "@/features/shared/utils/formatters";
 import type { NamedOption, Product, ProductVariant, SupplierOption } from "@/features/products/types/api";
 
 type ProductFormPageProps = {
@@ -167,15 +168,15 @@ function productToForm(product: Product): FormState {
     usual_supplier: product.usual_supplier ?? "",
     unit_of_measure: main?.unit_of_measure ?? "UNIDAD",
     presentation: main?.presentation ?? "",
-    purchase_factor: main?.purchase_factor ?? "1",
-    purchase_pack_price: main?.purchase_pack_price ?? "",
+    purchase_factor: toIntegerInput(main?.purchase_factor, "1"),
+    purchase_pack_price: toMoneyInput(main?.purchase_pack_price),
     sell_unit: Boolean(unit?.is_active),
-    unit_price: unit?.base_sale_price ?? "",
+    unit_price: toMoneyInput(unit?.base_sale_price),
     sell_blister: Boolean(blister?.is_active),
-    blister_units: blister?.sale_factor ?? "10",
-    blister_price: blister?.base_sale_price ?? "",
+    blister_units: toIntegerInput(blister?.sale_factor, "10"),
+    blister_price: toMoneyInput(blister?.base_sale_price),
     sell_box: Boolean(box?.is_active),
-    box_price: box?.base_sale_price ?? "",
+    box_price: toMoneyInput(box?.base_sale_price),
     requires_lot: product.requires_lot,
     requires_expiry: product.requires_expiry,
     requires_prescription: product.requires_prescription,
@@ -385,7 +386,8 @@ export function ProductFormPage({ mode, productId }: ProductFormPageProps) {
         base_sale_price: firstSale.base_sale_price,
         currency: "PEN",
         barcode: form.barcode,
-        warehouse: form.warehouse || null,
+        // Con una sola tienda, la ubicación queda en su único almacén.
+        warehouse: form.warehouse || (isFeatureEnabled("multi_branch") ? null : warehouses[0]?.id ?? null),
         location_code: form.location_code,
         location_description: form.location_description,
       },
@@ -483,7 +485,7 @@ export function ProductFormPage({ mode, productId }: ProductFormPageProps) {
               <div className="form-grid compact-product-grid">
                 <label><span>Se compra por</span><select value={form.purchase_unit} onChange={(event) => field("purchase_unit", event.target.value)}>{purchaseUnits.map((unit) => <option value={unit} key={unit}>{unit}</option>)}</select></label>
                 <label><span>La caja contiene</span><input type="number" min="1" step="1" value={form.purchase_factor} onChange={(event) => field("purchase_factor", event.target.value)} onBlur={(event) => field("purchase_factor", String(roundInteger(Number(event.target.value)) || 1))} />{errors.purchase_factor ? <small className="field-error">{errors.purchase_factor}</small> : null}</label>
-                <label><span>Costo de compra por caja</span><input type="number" min="0" step="0.01" value={form.purchase_pack_price} onChange={(event) => field("purchase_pack_price", event.target.value)} onBlur={(event) => field("purchase_pack_price", String(roundDecimal(Number(event.target.value))))} />{errors.purchase_pack_price ? <small className="field-error">{errors.purchase_pack_price}</small> : null}</label>
+                <label><span>Costo de compra por caja</span><input type="number" min="0" step="0.01" value={form.purchase_pack_price} onChange={(event) => field("purchase_pack_price", event.target.value)} onBlur={(event) => field("purchase_pack_price", toMoneyInput(event.target.value))} />{errors.purchase_pack_price ? <small className="field-error">{errors.purchase_pack_price}</small> : null}</label>
               </div>
               <output className="price-calculation"><span>Costo aproximado por unidad</span><strong>{unitMetrics.unitCost ? money(unitMetrics.unitCost) : "Cantidad inválida"}</strong></output>
             </div>
@@ -491,9 +493,9 @@ export function ProductFormPage({ mode, productId }: ProductFormPageProps) {
             <div className="sale-box">
               <h3>¿Cómo vendes este producto?</h3>
               <div className="sale-form-list">
-                <label className="sale-form-row"><input type="checkbox" checked={form.sell_unit} onChange={(event) => field("sell_unit", event.target.checked)} /><span>Por unidad</span><input aria-label="Precio por unidad" type="number" min="0.1" step="0.01" placeholder="Precio S/" value={form.unit_price} onChange={(event) => field("unit_price", event.target.value)} onBlur={(event) => field("unit_price", String(roundDecimal(Number(event.target.value))))} /></label>
-                <label className="sale-form-row"><input type="checkbox" checked={form.sell_blister} onChange={(event) => field("sell_blister", event.target.checked)} /><span>Por blíster</span><input aria-label="Unidades por blíster" type="number" min="1" step="1" value={form.blister_units} onChange={(event) => field("blister_units", event.target.value)} onBlur={(event) => field("blister_units", String(roundInteger(Number(event.target.value)) || 1))} /><input aria-label="Precio por blíster" type="number" min="0.1" step="0.01" placeholder="Precio S/" value={form.blister_price} onChange={(event) => field("blister_price", event.target.value)} onBlur={(event) => field("blister_price", String(roundDecimal(Number(event.target.value))))} /></label>
-                <label className="sale-form-row"><input type="checkbox" checked={form.sell_box} onChange={(event) => field("sell_box", event.target.checked)} /><span>Por caja</span><input aria-label="Precio por caja" type="number" min="0.1" step="0.01" placeholder="Precio S/" value={form.box_price} onChange={(event) => field("box_price", event.target.value)} onBlur={(event) => field("box_price", String(roundDecimal(Number(event.target.value))))} /></label>
+                <label className="sale-form-row"><input type="checkbox" checked={form.sell_unit} onChange={(event) => field("sell_unit", event.target.checked)} /><span>Por unidad</span><input aria-label="Precio por unidad" type="number" min="0.1" step="0.01" placeholder="Precio S/" value={form.unit_price} onChange={(event) => field("unit_price", event.target.value)} onBlur={(event) => field("unit_price", toMoneyInput(event.target.value, ""))} /></label>
+                <label className="sale-form-row"><input type="checkbox" checked={form.sell_blister} onChange={(event) => field("sell_blister", event.target.checked)} /><span>Por blíster</span><input aria-label="Unidades por blíster" type="number" min="1" step="1" value={form.blister_units} onChange={(event) => field("blister_units", event.target.value)} onBlur={(event) => field("blister_units", String(roundInteger(Number(event.target.value)) || 1))} /><input aria-label="Precio por blíster" type="number" min="0.1" step="0.01" placeholder="Precio S/" value={form.blister_price} onChange={(event) => field("blister_price", event.target.value)} onBlur={(event) => field("blister_price", toMoneyInput(event.target.value, ""))} /></label>
+                <label className="sale-form-row"><input type="checkbox" checked={form.sell_box} onChange={(event) => field("sell_box", event.target.checked)} /><span>Por caja</span><input aria-label="Precio por caja" type="number" min="0.1" step="0.01" placeholder="Precio S/" value={form.box_price} onChange={(event) => field("box_price", event.target.value)} onBlur={(event) => field("box_price", toMoneyInput(event.target.value, ""))} /></label>
               </div>
               {errors.sale_forms ? <small className="field-error">{errors.sale_forms}</small> : null}
               <div className="price-chip-grid">
@@ -515,12 +517,12 @@ export function ProductFormPage({ mode, productId }: ProductFormPageProps) {
           </div>
           {hasWarehouses ? (
             <div className="form-grid compact-product-grid">
-              <label><span>Almacén</span><select value={form.warehouse} onChange={(event) => field("warehouse", event.target.value)}><option value="">Sin ubicación al crear</option>{warehouses.map((warehouse) => <option value={warehouse.id} key={warehouse.id}>{warehouse.name}</option>)}</select></label>
+              {isFeatureEnabled("multi_branch") ? <label><span>Almacén</span><select value={form.warehouse} onChange={(event) => field("warehouse", event.target.value)}><option value="">Sin ubicación al crear</option>{warehouses.map((warehouse) => <option value={warehouse.id} key={warehouse.id}>{warehouse.name}</option>)}</select></label> : null}
               {selectWithQuick("location_code", "Ubicación física", <><option value="">Sin ubicación</option>{form.location_code ? <option value={form.location_code}>{form.location_code}</option> : null}</>, "location")}
               <label><span>Descripción de ubicación</span><input value={form.location_description} onChange={(event) => field("location_description", event.target.value)} /></label>
             </div>
           ) : (
-            <p className="field-warning">No hay almacenes configurados. Puedes crear el producto sin ubicación y asignarla luego. <Link href="/almacenes">Crear almacén</Link></p>
+            <p className="field-warning">No hay almacenes configurados. Puedes crear el producto sin ubicación y asignarla luego.{isFeatureEnabled("multi_branch") ? <> <Link href="/almacenes">Crear almacén</Link></> : null}</p>
           )}
         </fieldset>
 

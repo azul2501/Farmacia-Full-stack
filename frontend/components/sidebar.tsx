@@ -7,13 +7,13 @@ import { useEffect, useMemo, useState } from "react";
 import { useSession } from "@/features/auth/context/session-context";
 import type { Permission } from "@/features/auth/types/demo-session";
 import { useAppLayout } from "@/features/shared/context/layout-context";
+import { isRouteEnabled } from "@/lib/modules";
 
 type SidebarItem = {
   href: string;
   label: string;
   icon: string;
   permission: Permission;
-  status?: "available" | "upcoming";
 };
 
 type SidebarGroup = {
@@ -22,6 +22,7 @@ type SidebarGroup = {
   items: SidebarItem[];
 };
 
+// La versión de cada ruta vive en lib/modules.ts; aquí solo se arma el menú.
 const sidebarGroups: SidebarGroup[] = [
   {
     label: "Ventas",
@@ -35,18 +36,20 @@ const sidebarGroups: SidebarGroup[] = [
     ],
   },
   {
-    label: "Almacén",
+    label: "Productos y stock",
     icon: "fas fa-boxes",
     items: [
       { href: "/producto", label: "Productos", icon: "fas fa-capsules", permission: "products.view" },
-      { href: "/compra", label: "Compras", icon: "fas fa-cart-plus", permission: "purchases.view" },
-      { href: "/inventario", label: "Stock e inventario", icon: "fas fa-warehouse", permission: "inventory.view" },
-      { href: "/consulta/kardex", label: "Kardex", icon: "fas fa-exchange-alt", permission: "inventory.view" },
+      { href: "/compra", label: "Ingreso de mercadería", icon: "fas fa-cart-plus", permission: "purchases.view" },
+      { href: "/inventario", label: "Stock y vencimientos", icon: "fas fa-warehouse", permission: "inventory.view" },
+      { href: "/consulta/kardex", label: "Historial del producto", icon: "fas fa-exchange-alt", permission: "inventory.view" },
+      { href: "/proveedor", label: "Proveedores", icon: "fas fa-truck", permission: "suppliers.view" },
+      { href: "/atributo", label: "Atributos de producto", icon: "fas fa-tags", permission: "catalogs.view" },
       { href: "/traslado", label: "Transferencias", icon: "fas fa-truck-loading", permission: "transfers.view" },
     ],
   },
   {
-    label: "Caja y finanzas",
+    label: "Caja",
     icon: "fas fa-coins",
     items: [
       { href: "/caja", label: "Caja y arqueo", icon: "fas fa-cash-register", permission: "cash.view" },
@@ -56,25 +59,15 @@ const sidebarGroups: SidebarGroup[] = [
     ],
   },
   {
-    label: "Catálogos",
-    icon: "fas fa-tags",
-    items: [
-      { href: "/atributo", label: "Atributos de producto", icon: "fas fa-tags", permission: "catalogs.view" },
-      { href: "/proveedor", label: "Proveedores", icon: "fas fa-truck", permission: "suppliers.view" },
-    ],
-  },
-  {
     label: "Administración",
     icon: "fas fa-building",
     items: [
+      { href: "/usuario", label: "Usuarios", icon: "fas fa-users", permission: "users.view" },
+      { href: "/reporte", label: "Reportes", icon: "fas fa-chart-bar", permission: "reports.view" },
       { href: "/establecimiento", label: "Sucursales", icon: "fas fa-store", permission: "branches.view" },
       { href: "/almacenes", label: "Almacenes", icon: "fas fa-warehouse", permission: "warehouses.view" },
       { href: "/cajas", label: "Cajas", icon: "fas fa-cash-register", permission: "cash.view" },
       { href: "/terminales", label: "Terminales POS", icon: "fas fa-desktop", permission: "cash.view" },
-      { href: "/usuario", label: "Usuarios", icon: "fas fa-users", permission: "users.view" },
-      { href: "/roles", label: "Roles y permisos", icon: "fas fa-user-shield", permission: "roles.view", status: "upcoming" },
-      { href: "/reporte", label: "Reportes", icon: "fas fa-chart-bar", permission: "reports.view" },
-      { href: "/empresa", label: "Configuración", icon: "fas fa-cog", permission: "settings.view", status: "upcoming" },
     ],
   },
 ];
@@ -108,7 +101,10 @@ export function Sidebar() {
   const { sidebarCollapsed, mobileSidebarOpen, toggleSidebar, closeMobileSidebar } = useAppLayout();
   const visibleGroups = useMemo(
     () => sidebarGroups
-      .map((group) => ({ ...group, items: group.items.filter((item) => hasPermission(item.permission)) }))
+      .map((group) => ({
+        ...group,
+        items: group.items.filter((item) => isRouteEnabled(item.href) && hasPermission(item.permission)),
+      }))
       .filter((group) => group.items.length),
     [hasPermission],
   );
@@ -139,9 +135,9 @@ export function Sidebar() {
 
       <nav className="sidebar-nav">
         {hasPermission("dashboard.view") ? (
-          <Link href="/" title="Dashboard" className={`sidebar-link ${pathname === "/" ? "is-active" : ""}`} onClick={closeMobileSidebar}>
+          <Link href="/" title="Inicio" className={`sidebar-link ${pathname === "/" ? "is-active" : ""}`} onClick={closeMobileSidebar}>
             <i className="sidebar-icon fas fa-tachometer-alt" />
-            <span className="sidebar-label">Dashboard</span>
+            <span className="sidebar-label">Inicio</span>
           </Link>
         ) : null}
 
@@ -158,20 +154,12 @@ export function Sidebar() {
 
               {isOpen ? (
                 <div className="sidebar-subnav">
-                  {group.items.map((item) =>
-                    item.status === "upcoming" ? (
-                      <div className="sidebar-sublink is-disabled" title={`${item.label}: proximamente`} key={item.href}>
-                        <i className={`sidebar-subicon ${item.icon}`} />
-                        <span>{item.label}</span>
-                        <small>Proximamente</small>
-                      </div>
-                    ) : (
-                      <Link href={item.href} className={`sidebar-sublink ${routeIsActive(pathname, item.href) ? "is-active" : ""}`} key={item.href} onClick={closeMobileSidebar}>
-                        <i className={`sidebar-subicon ${item.icon}`} />
-                        <span>{item.label}</span>
-                      </Link>
-                    ),
-                  )}
+                  {group.items.map((item) => (
+                    <Link href={item.href} className={`sidebar-sublink ${routeIsActive(pathname, item.href) ? "is-active" : ""}`} key={item.href} onClick={closeMobileSidebar}>
+                      <i className={`sidebar-subicon ${item.icon}`} />
+                      <span>{item.label}</span>
+                    </Link>
+                  ))}
                 </div>
               ) : null}
             </section>

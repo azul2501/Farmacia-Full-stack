@@ -104,7 +104,7 @@ export function StockPage() {
     onSuccess: (response, { commit }) => {
       setImportPreview(response);
       if (!commit) return;
-      showToast({ title: "Stock inicial cargado", description: `${response.imported} fila(s) registradas en el kardex.`, tone: "success" });
+      showToast({ title: "Stock inicial cargado", description: `${response.imported} fila(s) registradas en el historial del producto.`, tone: "success" });
       setImportOpen(false);
       void invalidateOperationalData(queryClient);
     },
@@ -131,7 +131,7 @@ export function StockPage() {
         body: { warehouse: row.warehouse, variant: row.variant, lot: row.lot, ...adjustment },
       }),
     onSuccess: () => {
-      showToast({ title: "Ajuste registrado", description: "El movimiento ya aparece en el kardex.", tone: "success" });
+      showToast({ title: "Ajuste registrado", description: "El movimiento ya aparece en el historial del producto.", tone: "success" });
       setAdjusting(null);
       void invalidateOperationalData(queryClient);
     },
@@ -189,7 +189,7 @@ export function StockPage() {
     <>
       <PageHeader
         title="Stock por almacén y lote"
-        description="Existencias reales calculadas por movimientos de inventario. Para corregir una cantidad registra un ajuste; queda en el kardex."
+        description="Existencias reales calculadas por movimientos de inventario. Para corregir una cantidad registra un ajuste; queda en el historial del producto."
         actions={canAdjust ? <>
           <button type="button" className="ghost-button" onClick={() => void downloadTemplate()}><i className="fa fa-download" aria-hidden="true" /> Plantilla stock inicial</button>
           <button type="button" className="app-button primary" onClick={() => { setImportFile(null); setImportPreview(null); importMutation.reset(); setImportOpen(true); }}><i className="fa fa-file-import" aria-hidden="true" /> Importar stock inicial</button>
@@ -258,7 +258,7 @@ export function StockPage() {
           <label><span>Archivo CSV guardado desde Excel</span><input type="file" accept=".csv,text/csv" onChange={(event) => { setImportFile(event.target.files?.[0] ?? null); setImportPreview(null); }} /></label>
           {importMutation.error ? <p className="field-error" role="alert">{apiErrorMessage(importMutation.error, "No se pudo leer el archivo.")}</p> : null}
           {importPreview ? <div className="import-summary"><strong>{importPreview.valid_count} filas válidas</strong><span>{importPreview.error_count} filas con errores{importPreview.error_count ? " (corrígelas y vuelve a validar)" : ""}</span></div> : null}
-          {importPreview ? <div className="table-wrap"><table className="data-table"><thead><tr><th>Fila</th><th>Producto</th><th>Almacén</th><th>Lote</th><th>Vence</th><th>Cantidad</th><th>Errores</th></tr></thead><tbody>{importPreview.rows.map((row) => <tr key={row.row}><td>{row.row}</td><td>{row.product || "-"}</td><td>{row.warehouse}</td><td>{row.lot || "-"}</td><td>{row.expiry_date ?? "-"}</td><td>{row.quantity}</td><td>{row.errors.join(" · ") || "Lista"}</td></tr>)}</tbody></table></div> : null}
+          {importPreview ? <div className="table-wrap"><table className="data-table"><thead><tr><th>Fila</th><th>Producto</th><th>Almacén</th><th>Lote</th><th>Vence</th><th>Cantidad</th><th>Errores</th></tr></thead><tbody>{importPreview.rows.map((row) => <tr key={row.row}><td>{row.row}</td><td>{row.product || "-"}</td><td>{row.warehouse}</td><td>{row.lot || "-"}</td><td>{row.expiry_date ?? "-"}</td><td>{formatQuantity(Number(row.quantity))}</td><td>{row.errors.join(" · ") || "Lista"}</td></tr>)}</tbody></table></div> : null}
         </div>
       </Modal>
     </>

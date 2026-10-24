@@ -28,6 +28,7 @@ from apps.catalog.views import (
 )
 from apps.core.views import HealthView
 from apps.customer_requests.views import CustomerRequestViewSet
+from apps.digemid.views import DigemidAlertListView, MasterProductViewSet
 from apps.finance.views import (
     FinancialCategoryViewSet,
     FinancialMovementViewSet,
@@ -38,6 +39,7 @@ from apps.inventory.views import InventoryMovementViewSet, LotViewSet, StockView
 from apps.purchases.views import PurchaseViewSet
 from apps.reports.views import BasicSalesReportView, DashboardReportView
 from apps.sales.views import SaleViewSet
+from apps.tenancy.signup import SignupView
 from apps.tenancy.views import BranchViewSet, CompanyViewSet, POSTerminalViewSet, WarehouseViewSet
 from apps.transfers.views import TransferViewSet
 
@@ -71,6 +73,7 @@ router.register("receivables", ReceivableAccountViewSet, basename="receivable")
 router.register("financial-categories", FinancialCategoryViewSet, basename="financial-category")
 router.register("financial-movements", FinancialMovementViewSet, basename="financial-movement")
 router.register("customer-requests", CustomerRequestViewSet, basename="customer-request")
+router.register("digemid/products", MasterProductViewSet, basename="digemid-product")
 
 api_patterns = [
     path("auth/login/", CookieTokenObtainPairView.as_view(), name="cookie-token-obtain"),
@@ -80,6 +83,8 @@ api_patterns = [
     path("auth/token/refresh/", TokenRefreshView.as_view(), name="token-refresh"),
     path("auth/context/", SessionContextView.as_view(), name="session-context"),
     path("auth/password/change/", ChangeOwnPasswordView.as_view(), name="change-own-password"),
+    path("signup/", SignupView.as_view(), name="signup"),
+    path("digemid/alerts/", DigemidAlertListView.as_view(), name="digemid-alerts"),
     path("reports/dashboard/", DashboardReportView.as_view(), name="dashboard-report"),
     path("reports/sales/", BasicSalesReportView.as_view(), name="sales-report"),
     path("", include(router.urls)),

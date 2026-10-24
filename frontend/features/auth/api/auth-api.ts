@@ -16,7 +16,39 @@ export type ApiCompany = {
   timezone: string;
   currency: string;
   is_active: boolean;
+  subscription_status?: "TRIAL" | "ACTIVE" | "SUSPENDED";
+  trial_ends_at?: string | null;
+  plan_name?: string | null;
+  can_operate?: boolean;
 };
+
+export type SignupInput = {
+  trade_name: string;
+  ruc: string;
+  address: string;
+  owner_full_name: string;
+  phone: string;
+  email: string;
+  password: string;
+};
+
+export type SignupResult = {
+  company_id: string;
+  trade_name: string;
+  email: string;
+  ruc_verified: boolean;
+  trial_ends_at: string | null;
+};
+
+/** Registro público de una botica nueva. No requiere sesión. */
+export function signupPharmacy(input: SignupInput) {
+  return apiRequest<SignupResult>(apiEndpoints.signup, {
+    method: "POST",
+    body: input,
+    authenticated: false,
+    retryAfterRefresh: false,
+  });
+}
 
 export type ApiBranch = {
   id: string;

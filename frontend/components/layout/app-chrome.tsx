@@ -12,6 +12,14 @@ import { apiEndpoints } from "@/features/shared/api/endpoints";
 
 type TopbarAlerts = { lowStock: number; expiringLots: number; expiredLots: number };
 
+// Pantallas que se muestran sin sesión y sin el marco de la aplicación.
+const publicPaths = new Set(["/login", "/signup"]);
+
+function trialDaysLeft(trialEndsAt: string | null | undefined) {
+  if (!trialEndsAt) return null;
+  return Math.max(0, Math.ceil((new Date(trialEndsAt).getTime() - Date.now()) / 86_400_000));
+}
+
 type AppChromeProps = {
   children: React.ReactNode;
 };
@@ -54,13 +62,13 @@ export function AppChrome({ children }: AppChromeProps) {
   const alerts = alertsQuery.data;
 
   useEffect(() => {
-    if (pathname !== "/login" && status === "unauthenticated") router.replace("/login");
+    if (!publicPaths.has(pathname) && status === "unauthenticated") router.replace("/login");
     if (pathname === "/" && status === "authenticated" && !permissions.includes("dashboard.view")) {
       router.replace(role === "CASHIER" ? "/pos" : "/inventario");
     }
   }, [pathname, permissions, role, router, status]);
 
-  if (pathname === "/login") return <>{children}</>;
+  if (publicPaths.has(pathname)) return <>{children}</>;
   const requiredPermission = pathname === "/" ? null : requiredPermissionFor(pathname);
   if (status === "blocked") {
     return (
@@ -124,6 +132,19 @@ export function AppChrome({ children }: AppChromeProps) {
             <i className="fas fa-flask" aria-hidden="true" />
             <strong>Modo demostración</strong>
             <span>Los cambios son temporales y la persistencia se habilitará al conectar la API.</span>
+          </div>
+        ) : null}
+        {company.canOperate === false ? (
+          <div className="subscription-banner is-blocked" role="alert">
+            <i className="fas fa-lock" aria-hidden="true" />
+            <strong>Tu cuenta no puede vender por ahora.</strong>
+            <span>La prueba gratis terminó o la cuenta está suspendida. Puedes revisar tus datos; para volver a vender, escríbenos y activamos tu plan.</span>
+          </div>
+        ) : company.subscriptionStatus === "TRIAL" && trialDaysLeft(company.trialEndsAt) !== null ? (
+          <div className="subscription-banner" role="status">
+            <i className="fas fa-gift" aria-hidden="true" />
+            <strong>Prueba gratis:</strong>
+            <span>te quedan {trialDaysLeft(company.trialEndsAt)} día(s).</span>
           </div>
         ) : null}
         <header className="topbar">

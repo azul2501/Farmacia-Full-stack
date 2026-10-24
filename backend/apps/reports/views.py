@@ -10,6 +10,7 @@ from rest_framework.response import Response
 
 from apps.accounts.models import MANAGEMENT_ROLES
 from apps.cash.models import CashSession, CashSessionStatus
+from apps.core.features import feature_enabled
 from apps.core.permissions import HasCompanyAccess, HasCompanyRole, allowed_branch_ids, ensure_branch_access
 from apps.inventory.models import Stock
 from apps.sales.models import Sale, SalePayment, SaleStatus
@@ -86,9 +87,11 @@ class DashboardReportView(generics.GenericAPIView):
             status=CashSessionStatus.CLOSED_WITH_DIFFERENCE,
             closed_at__date=today,
         ).aggregate(total=Coalesce(Sum("difference"), Decimal("0")))["total"]
-        pending_transfers = transfers.filter(
-            status__in=[TransferStatus.DISPATCHED, TransferStatus.IN_TRANSIT],
-        ).count()
+        pending_transfers = (
+            transfers.filter(status__in=[TransferStatus.DISPATCHED, TransferStatus.IN_TRANSIT]).count()
+            if feature_enabled("transfers")
+            else 0
+        )
 
         return Response(
             {

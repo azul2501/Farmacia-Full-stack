@@ -1,6 +1,9 @@
+import { notFound } from "next/navigation";
 import { ModuleShell } from "@/components/module-shell";
-import { modules } from "@/lib/modules";
+import { findModuleByHref } from "@/lib/modules";
 
 export default function CashPage() {
-  return <ModuleShell module={modules.find((module) => module.href === "/caja")!} />;
+  const appModule = findModuleByHref("/caja");
+  if (!appModule) notFound();
+  return <ModuleShell module={appModule} />;
 }

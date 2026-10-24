@@ -2849,3 +2849,268 @@ input:disabled {
   .pos-cart-lines article { padding: 12px; }
   .app-content { overflow-x: hidden; }
 }
+
+/* V1 · Registro de boticas */
+.login-card.signup-card {
+  width: min(520px, 100%);
+}
+
+.signup-section {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+.signup-section legend {
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.login-card .signup-switch {
+  text-align: center;
+  font-size: 13px;
+}
+
+.login-card .signup-switch a {
+  color: var(--primary-strong);
+  font-weight: 600;
+}
+
+/* V1 · Aviso de suscripción (prueba gratis / cuenta bloqueada) */
+.subscription-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  min-height: 32px;
+  padding: 5px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--primary-soft);
+  color: var(--primary-strong);
+  font-size: 12px;
+}
+
+.subscription-banner.is-blocked {
+  background: var(--danger-soft);
+  color: var(--danger-strong);
+}
+
+/* V1 · Primeros pasos en Inicio */
+.onboarding-steps {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.onboarding-steps li {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.onboarding-steps li > i {
+  color: var(--faint);
+  font-size: 18px;
+}
+
+.onboarding-steps li.is-done > i {
+  color: var(--success);
+}
+
+.onboarding-steps li.is-done strong {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.onboarding-steps small {
+  display: block;
+  color: var(--muted);
+}
+
+.onboarding-progress {
+  height: 6px;
+  margin-top: 4px;
+  border-radius: 999px;
+  background: var(--panel-border);
+  overflow: hidden;
+}
+
+.onboarding-progress span {
+  display: block;
+  height: 100%;
+  background: var(--primary);
+}
+
+/* V1 · Catálogo maestro DIGEMID */
+.master-catalog {
+  display: grid;
+  gap: 12px;
+}
+
+.master-catalog-search {
+  display: grid;
+  gap: 6px;
+}
+
+.master-catalog-hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.master-catalog-results {
+  display: grid;
+  max-height: 360px;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm);
+}
+
+.master-catalog-results li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.master-catalog-results li:last-child {
+  border-bottom: 0;
+}
+
+.master-catalog-results small,
+.master-catalog-meta span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.master-catalog-results input[type="checkbox"],
+.master-catalog-check-all input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+}
+
+.master-catalog-check-all {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.master-catalog-bulk {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--primary-soft);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm);
+}
+
+.master-catalog-bulk small {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.master-catalog-bulk-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.master-catalog-added {
+  color: var(--success);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.master-catalog-meta {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+}
+
+/* V1 · Alertas DIGEMID en Inicio */
+.digemid-alerts ul {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.digemid-alerts li {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 8px;
+  font-size: 13px;
+}
+
+.digemid-alerts li > i {
+  margin-top: 2px;
+  color: var(--muted);
+}
+
+.digemid-alerts li a {
+  color: var(--text);
+}
+
+.digemid-alerts li small {
+  display: block;
+  color: var(--muted);
+}
+
+.digemid-alerts li.is-affected {
+  border-radius: var(--radius-sm);
+  padding: 8px;
+  background: var(--danger-soft);
+}
+
+.digemid-alerts li.is-affected > i,
+.digemid-alerts li.is-affected strong {
+  color: var(--danger-strong);
+}
+
+.digemid-alerts li strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+/* Select con buscador (react-select; features/shared/ui/search-select) */
+.search-select {
+  min-width: 0;
+}
+
+.search-select-count {
+  min-width: 22px;
+  padding: 1px 7px;
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  background: var(--panel-tint);
+  border-radius: 999px;
+}

@@ -11,6 +11,7 @@ from apps.cash.models import CashMovementType, CashSession, CashSessionStatus
 from apps.cash.services import CashService
 from apps.catalog.models import ProductVariant
 from apps.core.choices import PaymentCondition, PaymentMethod
+from apps.core.features import ensure_company_can_operate, feature_enabled
 from apps.core.permissions import ensure_branch_access
 from apps.inventory.models import Lot, MovementType, Stock
 from apps.inventory.services import InventoryService, MovementCommand
@@ -144,6 +145,7 @@ class SaleService:
         existing = Sale.objects.filter(company=company, idempotency_key=idempotency_key).first()
         if existing:
             return existing, False
+        ensure_company_can_operate(company)
         if not lines:
             raise ValidationError("La venta debe incluir al menos un producto.")
         if any(entity.company_id != company.id for entity in (branch, warehouse, terminal)):
@@ -242,6 +244,8 @@ class SaleService:
         if payment_condition == PaymentCondition.CASH and amount_paid != total:
             raise ValidationError("Una venta al contado debe pagarse completamente.")
         if payment_condition == PaymentCondition.CREDIT:
+            if not feature_enabled("credit_sales"):
+                raise ValidationError("Las ventas a crédito no están disponibles en esta versión.")
             from apps.accounts.models import Membership
             from apps.accounts.permissions import permissions_for_role
 

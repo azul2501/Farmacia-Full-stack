@@ -49,12 +49,22 @@ services:
       timeout: 3s
       retries: 10
 
+  # Consulta gratuita de RUC (solo red interna).
+  ruc:
+    image: ${RUC_IMAGE:-giansalex/peru-consult-api:latest}
+    restart: unless-stopped
+    environment:
+      API_TOKEN: ${RUC_API_TOKEN:?RUC_API_TOKEN es obligatorio}
+
   api:
     build: ./backend
     restart: unless-stopped
-    command: sh -c "python manage.py migrate --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers ${GUNICORN_WORKERS:-3} --access-logfile -"
+    command: sh -c "python manage.py migrate --noinput && python manage.py load_base_catalog --if-empty && gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers ${GUNICORN_WORKERS:-3} --access-logfile -"
     environment: &backend_environment
       DJANGO_SETTINGS_MODULE: config.settings.production
+      APP_VERSION: ${APP_VERSION:-1}
+      RUC_LOOKUP_URL: ${RUC_LOOKUP_URL:-http://ruc:8080/api/v1/ruc/{ruc}?token=${RUC_API_TOKEN:?RUC_API_TOKEN es obligatorio}}
+      SIGNUP_THROTTLE_RATE: ${SIGNUP_THROTTLE_RATE:-5/hour}
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?DJANGO_SECRET_KEY es obligatorio}
       DJANGO_DEBUG: "false"
       DJANGO_HTTPS: "true"
@@ -85,8 +95,22 @@ services:
       redis:
         condition: service_healthy
 
+  # Descarga una vez al día las alertas sanitarias nuevas de DIGEMID.
+  digemid-sync:
+    build: ./backend
+    restart: unless-stopped
+    command: sh -c "while true; do python manage.py sync_digemid_alerts || true; sleep 86400; done"
+    healthcheck:
+      disable: true
+    environment: *backend_environment
+    depends_on:
+      api:
+        condition: service_healthy
+
+  # Celery no tiene tareas en la V1: se levanta solo con --profile worker.
   worker:
     build: ./backend
+    profiles: ["worker"]
     restart: unless-stopped
     command: celery -A config worker -l INFO --concurrency ${CELERY_CONCURRENCY:-2}
     healthcheck:
@@ -102,6 +126,7 @@ services:
     build:
       context: ./frontend
       args:
+        NEXT_PUBLIC_APP_VERSION: ${APP_VERSION:-1}
         NEXT_PUBLIC_DATA_SOURCE: api
         NEXT_PUBLIC_API_BASE_URL: https://${API_DOMAIN}/api/v1
         NEXT_PUBLIC_SHOW_DEMO_CREDENTIALS: "false"

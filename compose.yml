@@ -1,3 +1,8 @@
+# Desarrollo local: docker compose up -d --build
+# Servicios opcionales (perfiles): s3 (MinIO), worker (Celery, sin tareas en la V1), jobs (alertas DIGEMID) y tests.
+#   docker compose --profile worker up -d
+#   docker compose run --rm tests        -> corre la suite de pytest con config.settings.test
+
 services:
   db:
     image: postgres:17-alpine
@@ -49,11 +54,22 @@ services:
       mc mb --ignore-existing local/${AWS_STORAGE_BUCKET_NAME:-boticas-local};
       exit 0;"
 
+  # Consulta gratuita de RUC en SUNAT para el registro de boticas (fase 3).
+  # Si no responde, el registro sigue y la botica queda "RUC por verificar" en el admin.
+  ruc:
+    image: ${RUC_IMAGE:-giansalex/peru-consult-api:latest}
+    environment:
+      API_TOKEN: ${RUC_API_TOKEN:-local-ruc-token}
+
   api:
     build: ./backend
-    command: sh -c "python manage.py migrate --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3 --access-logfile -"
+    command: sh -c "python manage.py migrate --noinput && python manage.py load_base_catalog --if-empty && gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3 --access-logfile -"
     environment: &backend_environment
       DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE:-config.settings.production}
+      # Version publicada del producto (1, 2 o 3). Debe coincidir con NEXT_PUBLIC_APP_VERSION del frontend.
+      APP_VERSION: ${APP_VERSION:-1}
+      RUC_LOOKUP_URL: ${RUC_LOOKUP_URL:-http://ruc:8080/api/v1/ruc/{ruc}?token=${RUC_API_TOKEN:-local-ruc-token}}
+      SIGNUP_THROTTLE_RATE: ${SIGNUP_THROTTLE_RATE:-5/hour}
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-local-compose-only-change-before-production}
       DJANGO_DEBUG: ${DJANGO_DEBUG:-false}
       # Compose local corre la imagen de produccion sobre http; en un servidor real usar true.
@@ -89,6 +105,7 @@ services:
 
   worker:
     build: ./backend
+    profiles: ["worker"]
     command: celery -A config worker -l INFO
     healthcheck:
       disable: true
@@ -99,19 +116,26 @@ services:
       redis:
         condition: service_healthy
 
-  web:
-    build:
-      context: ./frontend
-      args:
-        NEXT_PUBLIC_DATA_SOURCE: api
-        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000/api/v1}
-        NEXT_PUBLIC_SHOW_DEMO_CREDENTIALS: ${NEXT_PUBLIC_SHOW_DEMO_CREDENTIALS:-false}
-        NEXT_PUBLIC_REFRESH_COOKIE_NAME: ${JWT_REFRESH_COOKIE_NAME:-boticas_refresh}
-    ports:
-      - "3000:3000"
+  # Descarga una vez al día las alertas sanitarias nuevas de DIGEMID: docker compose --profile jobs up -d
+  digemid-sync:
+    build: ./backend
+    profiles: ["jobs"]
+    command: sh -c "while true; do python manage.py sync_digemid_alerts || true; sleep 86400; done"
+    healthcheck:
+      disable: true
+    environment: *backend_environment
     depends_on:
       api:
         condition: service_healthy
+
+  # Suite de pruebas del backend (SQLite en memoria, no toca la base de datos de db).
+  tests:
+    build: ./backend
+    profiles: ["tests"]
+    user: root
+    command: sh -c "pip install -q -r requirements-dev.txt && pytest"
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.test
 
 volumes:
   boticas_postgres_data:

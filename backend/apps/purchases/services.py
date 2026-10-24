@@ -3,6 +3,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from apps.audit.services import record_audit
+from apps.core.features import ensure_company_can_operate
 from apps.core.permissions import ensure_resource_access
 from apps.inventory.models import Lot, MovementType
 from apps.inventory.services import InventoryService, MovementCommand
@@ -26,6 +27,7 @@ class PurchaseService:
     @staticmethod
     @transaction.atomic
     def receive(*, purchase_id, company, user):
+        ensure_company_can_operate(company)
         purchase = (
             Purchase.objects.select_for_update()
             .select_related("destination_warehouse")

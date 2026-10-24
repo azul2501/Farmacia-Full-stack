@@ -68,6 +68,9 @@ function mapCompany(company: ApiCompany) {
     tradeName: company.trade_name,
     taxId: company.tax_id,
     status: company.is_active ? ("active" as const) : ("inactive" as const),
+    subscriptionStatus: company.subscription_status,
+    trialEndsAt: company.trial_ends_at ?? null,
+    canOperate: company.can_operate ?? true,
   };
 }
 

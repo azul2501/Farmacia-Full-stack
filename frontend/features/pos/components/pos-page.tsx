@@ -11,7 +11,8 @@ import { apiEndpoints } from "@/features/shared/api/endpoints";
 import type { ApiPage } from "@/features/shared/api/types";
 import { EmptyState, ErrorState, LoadingState } from "@/features/shared/ui/states/async-state";
 import { useToast } from "@/features/shared/ui/toast/toast-provider";
-import { roundDecimal, roundInteger, localDateIso } from "@/features/shared/utils/formatters";
+import { roundDecimal, roundInteger, localDateIso, toMoneyInput } from "@/features/shared/utils/formatters";
+import { isFeatureEnabled } from "@/lib/features";
 
 type ApiVariant = {
   id: string;
@@ -329,7 +330,7 @@ export function PosPage() {
                     <button type="button" key={variant.id} onClick={() => void addProduct(product.commercial_name, variant)} disabled={addingVariantId === variant.id || !hasStock}>
                       <span>
                         <strong>{product.commercial_name}</strong>
-                        <small>{variant.presentation} · SKU {variant.sku}{stock?.batchNumber ? ` · Lote ${stock.batchNumber}${expiryText}` : ""}</small>
+                        <small>{variant.presentation}{stock?.batchNumber ? ` · Lote ${stock.batchNumber}${expiryText}` : ""}</small>
                       </span>
                       <span>
                         <span className={`pos-stock-pill ${tier}`}>{hasStock ? `Stock ${Math.trunc(available).toLocaleString("es-PE")}` : "Sin stock"}</span>
@@ -377,13 +378,13 @@ export function PosPage() {
           <div className="pos-checkout-fields">
             <label><span>Cliente</span><select ref={customerSelectRef} value={customerId} onChange={(event) => setCustomerId(event.target.value)}><option value="">Público general</option>{customersQuery.data?.items.map((customer) => <option value={customer.id} key={customer.id}>{customer.full_name}</option>)}</select></label>
             <label><span>Observación (opcional)</span><input value={notes} maxLength={500} placeholder="Ej: entrega después de las 5pm" onChange={(event) => setNotes(event.target.value)} /></label>
-            {hasPermission("sales.credit") ? <label><span>Condición</span><select value={paymentCondition} onChange={(event) => setPaymentCondition(event.target.value as "CASH" | "CREDIT")}><option value="CASH">Contado</option><option value="CREDIT">Crédito</option></select></label> : null}
-            {paymentCondition === "CREDIT" ? <><label><span>Vencimiento</span><input type="date" required value={paymentDueDate} onChange={(event) => setPaymentDueDate(event.target.value)} /></label><label><span>Pago inicial</span><input type="number" min="0" max={total} step="0.01" value={creditPayment} onChange={(event) => setCreditPayment(event.target.value)} onBlur={(event) => setCreditPayment(String(roundDecimal(Number(event.target.value))))} /></label></> : null}
+            {isFeatureEnabled("credit_sales") && hasPermission("sales.credit") ? <label><span>Condición</span><select value={paymentCondition} onChange={(event) => setPaymentCondition(event.target.value as "CASH" | "CREDIT")}><option value="CASH">Contado</option><option value="CREDIT">Crédito</option></select></label> : null}
+            {paymentCondition === "CREDIT" ? <><label><span>Vencimiento</span><input type="date" required value={paymentDueDate} onChange={(event) => setPaymentDueDate(event.target.value)} /></label><label><span>Pago inicial</span><input type="number" min="0" max={total} step="0.01" value={creditPayment} onChange={(event) => setCreditPayment(event.target.value)} onBlur={(event) => setCreditPayment(toMoneyInput(event.target.value, "0.00"))} /></label></> : null}
             <fieldset>
               <legend>Medio de pago</legend>
               <div className="payment-methods">{paymentMethods.map((method) => <button type="button" className={paymentMethod === method ? "is-active" : ""} key={method} onClick={() => setPaymentMethod(method)}>{paymentMethodLabels[method]}</button>)}</div>
             </fieldset>
-            {paymentMethod === "CASH" && amountToPay > 0 ? <label><span>Efectivo recibido</span><input type="number" min="0" step="0.01" value={cashReceived} onChange={(event) => setCashReceived(event.target.value)} onBlur={(event) => setCashReceived(String(roundDecimal(Number(event.target.value))))} /></label> : null}
+            {paymentMethod === "CASH" && amountToPay > 0 ? <label><span>Efectivo recibido</span><input type="number" min="0" step="0.01" value={cashReceived} onChange={(event) => setCashReceived(event.target.value)} onBlur={(event) => setCashReceived(toMoneyInput(event.target.value, "0.00"))} /></label> : null}
           </div>
           <div className="pos-totals">
             <div><span>Subtotal</span><span>{currency(subtotal)}</span></div>

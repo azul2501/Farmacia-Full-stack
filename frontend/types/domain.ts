@@ -1,10 +1,11 @@
-export type ModuleStatus = "legacy" | "api-ready" | "next-ready";
+/** Versión del producto en la que se habilita un módulo (ver NEXT_PUBLIC_APP_VERSION). */
+export type ModuleVersion = 1 | 2 | 3;
 
 export type AppModule = {
   href: string;
   label: string;
   description: string;
-  status: ModuleStatus;
+  version: ModuleVersion;
 };
 
 export type Pharmacy = {

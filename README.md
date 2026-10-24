@@ -3,13 +3,23 @@
 Sistema de gestion para boticas/farmacias (multiempresa): POS, ventas, compras, inventario por lotes
 (FEFO), caja, transferencias, finanzas y reportes.
 
+## Version publicada: V1
+
+La V1 es un punto de venta para una botica de una sola tienda: vende al contado, controla stock por lote
+y vencimiento, y cierra su caja. La botica se registra sola en `/signup` con 30 dias de prueba, y el
+superadmin la gestiona en `/admin/` (Django Unfold). Los modulos de V2 y V3 siguen en el codigo y se
+habilitan subiendo `APP_VERSION` (backend) y `NEXT_PUBLIC_APP_VERSION` (frontend).
+
+- [docs/v1.md](docs/v1.md): que hace cada modulo, que APIs usa y para que.
+- [docs/v1-pruebas.md](docs/v1-pruebas.md): lista de pruebas de la V1.
+
 | Carpeta | Contenido |
 | --- | --- |
 | `backend/` | API Django 6 + DRF, PostgreSQL, Redis, Celery. Ver [backend/README.md](backend/README.md). |
 | `frontend/` | Portal operativo Next.js 15 (App Router). Ver [frontend/README.md](frontend/README.md). |
 | `docs/` | Arquitectura, auditorias y estado de modulos. |
 | `diseño/` | Prototipos HTML del rediseño. |
-| `compose.yml` | Stack completo: db, redis, api, worker y web. |
+| `compose.yml` | Backend en Docker: db, redis, ruc y api (worker, MinIO, alertas y tests como perfiles opcionales). El frontend se corre aparte con `npm run dev`. |
 
 ## Requisitos
 
@@ -42,16 +52,27 @@ Entrar en `http://localhost:3000` con `owner@botica.demo` / `Demo12345!`.
 Usa siempre `localhost` (no `127.0.0.1`) en el navegador y en `NEXT_PUBLIC_API_BASE_URL`: la cookie
 de sesion es por host y mezclar ambos hace que se pierda la sesion al recargar.
 
-## Opcion B: stack completo con Docker
+## Opcion B: backend con Docker y frontend con npm
+
+Docker levanta solo el backend y lo que necesita (PostgreSQL, Redis, consulta RUC y la API). El
+frontend no está en Docker: se corre aparte.
 
 ```bash
+# Terminal 1 - backend (desde la raíz del proyecto)
 cp .env.example .env      # opcional: los valores por defecto ya funcionan en local
 docker compose up -d --build
 docker compose exec api python manage.py bootstrap_demo
+
+# Terminal 2 - frontend
+cd frontend
+npm run dev
 ```
 
-- Web: `http://localhost:3000`
-- API: `http://localhost:8000/api/v1/` (docs en `/api/docs/`, admin en `/admin/`)
+- Web: `http://localhost:3000` (registro de boticas en `/signup`)
+- API: `http://localhost:8000/api/v1/` (docs en `/api/docs/`, panel de superadmin en `/admin/`)
+- Superadmin: `docker compose exec api python manage.py createsuperuser`
+- Pruebas del backend: `docker compose run --rm tests`
+- Servicios opcionales: `--profile worker` (Celery, sin tareas en la V1) y `--profile s3` (MinIO).
 
 MinIO (S3 local para adjuntos) es opcional: `docker compose --profile s3 up -d` con `USE_S3=true`.
 

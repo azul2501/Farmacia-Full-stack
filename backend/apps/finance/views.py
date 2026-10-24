@@ -7,6 +7,7 @@ from rest_framework.response import Response
 
 from apps.accounts.models import MANAGEMENT_ROLES, SALES_ROLES
 from apps.cash.models import CashSession
+from apps.core.features import FeatureGatedMixin
 from apps.core.permissions import CompanyScopedViewSetMixin, HasCompanyAccess, HasCompanyRole
 from apps.core.role_policies import MANAGEMENT_CRUD
 from apps.finance.models import FinancialCategory, FinancialMovement, PayableAccount, ReceivableAccount
@@ -25,7 +26,8 @@ from apps.finance.services import FinanceService
 from apps.tenancy.models import Branch
 
 
-class PayableAccountViewSet(CompanyScopedViewSetMixin, viewsets.ReadOnlyModelViewSet):
+class PayableAccountViewSet(FeatureGatedMixin, CompanyScopedViewSetMixin, viewsets.ReadOnlyModelViewSet):
+    feature = "finance"
     queryset = PayableAccount.objects.select_related("supplier", "purchase", "branch", "created_by").prefetch_related(
         "payments__performed_by"
     )
@@ -62,7 +64,8 @@ class PayableAccountViewSet(CompanyScopedViewSetMixin, viewsets.ReadOnlyModelVie
         )
 
 
-class ReceivableAccountViewSet(CompanyScopedViewSetMixin, viewsets.ReadOnlyModelViewSet):
+class ReceivableAccountViewSet(FeatureGatedMixin, CompanyScopedViewSetMixin, viewsets.ReadOnlyModelViewSet):
+    feature = "finance"
     queryset = ReceivableAccount.objects.select_related("customer", "sale", "branch", "created_by").prefetch_related(
         "collections__performed_by"
     )
@@ -99,7 +102,8 @@ class ReceivableAccountViewSet(CompanyScopedViewSetMixin, viewsets.ReadOnlyModel
         )
 
 
-class FinancialCategoryViewSet(CompanyScopedViewSetMixin, viewsets.ModelViewSet):
+class FinancialCategoryViewSet(FeatureGatedMixin, CompanyScopedViewSetMixin, viewsets.ModelViewSet):
+    feature = "finance"
     queryset = FinancialCategory.objects.all()
     serializer_class = FinancialCategorySerializer
     permission_classes = [HasCompanyAccess, HasCompanyRole]
@@ -109,7 +113,8 @@ class FinancialCategoryViewSet(CompanyScopedViewSetMixin, viewsets.ModelViewSet)
     filterset_fields = ["category_type", "is_active"]
 
 
-class FinancialMovementViewSet(CompanyScopedViewSetMixin, viewsets.ReadOnlyModelViewSet):
+class FinancialMovementViewSet(FeatureGatedMixin, CompanyScopedViewSetMixin, viewsets.ReadOnlyModelViewSet):
+    feature = "finance"
     queryset = FinancialMovement.objects.select_related("branch", "cash_session", "category", "created_by")
     serializer_class = FinancialMovementSerializer
     permission_classes = [HasCompanyAccess, HasCompanyRole]

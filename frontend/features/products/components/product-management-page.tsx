@@ -15,6 +15,7 @@ import { useConfirm } from "@/features/shared/ui/confirm/confirm-provider";
 import { Modal } from "@/features/shared/ui/modal/modal";
 import { useToast } from "@/features/shared/ui/toast/toast-provider";
 import { ProductCreateModal } from "@/features/products/components/product-create-modal";
+import { MasterCatalogModal } from "@/features/products/components/master-catalog-modal";
 import type { ImportPreviewResponse, Product } from "@/features/products/types/api";
 
 function apiMessage(error: unknown) {
@@ -54,6 +55,7 @@ export function ProductManagementPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<ImportPreviewResponse | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
+  const [catalogOpen, setCatalogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [labFilter, setLabFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
@@ -194,6 +196,7 @@ export function ProductManagementPage() {
         <button type="button" className="ghost-button" onClick={() => setImportOpen(true)}><i className="fa fa-file-import" /> Importar</button>
         <button type="button" className="ghost-button" onClick={() => void download(apiEndpoints.productExport, "productos.csv")}><i className="fa fa-file-export" /> Exportar</button>
         <button type="button" className="ghost-button" onClick={() => void download(apiEndpoints.productTemplate, "plantilla-productos.csv")}><i className="fa fa-download" /> Plantilla</button>
+        {hasPermission("records.update") ? <button type="button" className="ghost-button" onClick={() => setCatalogOpen(true)}><i className="fa fa-book-medical" /> Agregar desde el catálogo</button> : null}
         {hasPermission("records.create") ? <button type="button" className="app-button primary" onClick={() => setCreateOpen(true)}><i className="fa fa-plus" /> Nuevo producto</button> : null}
       </>}
     />
@@ -260,6 +263,7 @@ export function ProductManagementPage() {
       </div>
     </Modal>
     <ProductCreateModal open={createOpen} onClose={() => setCreateOpen(false)} />
+    <MasterCatalogModal open={catalogOpen} onClose={() => setCatalogOpen(false)} />
     <ProductCreateModal open={editingProduct !== null} onClose={() => setEditingProduct(null)} product={editingProduct ?? undefined} />
   </>;
 }

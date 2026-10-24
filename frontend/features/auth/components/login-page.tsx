@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/features/auth/context/session-context";
@@ -94,6 +95,7 @@ export function LoginPage() {
           <i className={`fas ${isSubmitting ? "fa-circle-notch fa-spin" : "fa-sign-in-alt"}`} aria-hidden="true" />
           {isSubmitting ? "Iniciando sesión..." : "Iniciar sesión"}
         </button>
+        <p className="signup-switch">¿Tu botica aún no tiene cuenta? <Link href="/signup">Regístrala gratis</Link></p>
       </form>
     </main>
   );

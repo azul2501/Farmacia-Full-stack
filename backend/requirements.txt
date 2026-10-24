@@ -10,3 +10,6 @@ django-filter>=25,<27
 drf-spectacular>=0.28,<1
 gunicorn>=23,<24
 whitenoise>=6.9,<7
+django-unfold>=0.95,<1
+openpyxl>=3.1,<4
+pypdf>=5,<7
