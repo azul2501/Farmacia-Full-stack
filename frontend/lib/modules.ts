@@ -76,7 +76,7 @@ export const modules: AppModule[] = [
   {
     href: "/compra",
     label: "Compras",
-    description: "Compra de mercaderia.",
+    description: "Compra de mercadería.",
     status: "legacy",
   },
   {

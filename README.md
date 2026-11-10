@@ -67,8 +67,10 @@ Checklist minimo antes de desplegar:
 5. Frontend y API en el mismo dominio padre (p. ej. `app.midominio.com` y `api.midominio.com`) con
    `JWT_COOKIE_DOMAIN=.midominio.com`, `CORS_ALLOWED_ORIGINS=https://app.midominio.com` y la imagen web
    construida con `NEXT_PUBLIC_API_BASE_URL=https://api.midominio.com/api/v1`.
-6. No ejecutar `bootstrap_demo`/`seed_demo` en produccion; crear empresas y usuarios desde Django Admin
-   (`python manage.py createsuperuser`).
+6. No ejecutar `bootstrap_demo`/`seed_demo` en produccion; crear la empresa real y su usuario dueño con
+   `python manage.py crear_empresa` (ver `docs/despliegue.md`).
+
+Guía paso a paso para un VPS con HTTPS automático: [docs/despliegue.md](docs/despliegue.md).
 
 Las imagenes ya incluyen: usuario no root, `collectstatic` con WhiteNoise, healthcheck en `/health/`,
 migraciones al arrancar la API y logs a stdout.

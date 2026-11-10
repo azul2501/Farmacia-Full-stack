@@ -16,6 +16,12 @@ class PurchaseItemSerializer(serializers.ModelSerializer):
         model = PurchaseItem
         exclude = ["company", "purchase"]
         read_only_fields = ["id", "quantity", "unit_cost", "line_total", "lot", "created_at", "updated_at"]
+        # La cantidad y el costo unitario se calculan a partir del empaque.
+        extra_kwargs = {
+            "pack_quantity": {"required": True},
+            "purchase_pack_price": {"required": True},
+            "purchase_factor": {"required": True},
+        }
 
 
 class PurchaseSerializer(serializers.ModelSerializer):
