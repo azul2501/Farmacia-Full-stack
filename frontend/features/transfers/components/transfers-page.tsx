@@ -196,7 +196,7 @@ export function TransfersPage() {
     event.preventDefault();
     try {
       await createMutation.mutateAsync();
-      showToast({ tone: "success", title: "Transferencia creada", description: "Quedo en borrador. Despachala cuando la mercaderia salga del almacén." });
+      showToast({ tone: "success", title: "Transferencia creada", description: "Quedó en borrador. Despáchala cuando la mercadería salga del almacén." });
       setCreateOpen(false);
       resetCreateForm();
     } catch (error) {
@@ -213,7 +213,7 @@ export function TransfersPage() {
       },
       "start-transit": {
         title: "Marcar en tránsito",
-        description: "Confirma que la mercaderia salio hacia el almacén de destino.",
+        description: "Confirma que la mercadería salió hacia el almacén de destino.",
         success: "Transferencia en tránsito",
       },
       cancel: {

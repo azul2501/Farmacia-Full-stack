@@ -277,7 +277,7 @@ export const purchaseListResource: ResourceConfig = {
   endpoint: apiEndpoints.purchases,
   title: "Compras",
   singular: "compra",
-  description: "Compras registradas y estado de recepción de mercaderia.",
+  description: "Compras registradas y estado de recepción de mercadería.",
   permission: "purchases.view",
   readOnly: true,
   columns: [
